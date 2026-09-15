@@ -5,8 +5,8 @@
   "name": "KELLA Analytics Pro",
   "orientation": "any",
   "scope": "/",
-  "short_name": "KELLAanalytics",
+  "short_name": "KELLA Analytics",
   "start_url": "/",
   "theme_color": "#ffffff",
-  "id": "KELLA Analytics Pro"
+  "id": "./"
 }
