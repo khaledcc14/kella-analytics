@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KELLA Analytics Pro</title>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --success: #16a34a;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding-bottom: 70px;
+        }
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        header p {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-top: 0.2rem;
+        }
+        .container {
+            padding: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+        }
+        .card-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--accent);
+        }
+        .match-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .match-item:last-child {
+            border-bottom: none;
+        }
+        .team {
+            font-weight: 500;
+            font-size: 0.9rem;
+            flex: 1;
+            text-align: center;
+        }
+        .score {
+            background: #f1f5f9;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin: 0 0.5rem;
+        }
+        .live-badge {
+            background: #dcfce7;
+            color: var(--success);
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .ai-insight {
+            background: #eff6ff;
+            border-right: 4px solid var(--accent);
+            padding: 0.75rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: #1e3a8a;
+            margin-top: 0.5rem;
+        }
+        nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-around;
+            padding: 0.5rem 0;
+            box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .nav-item {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-light);
+            text-decoration: none;
+            flex: 1;
+            font-weight: 500;
+        }
+        .nav-item.active {
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>KELLA Analytics Pro</h1>
+        <p>تحليلات كرة القدم الذكية والنتائج الحية</p>
+    </header>
+
+    <div class="container">
+        <!-- المباريات الحية -->
+        <div class="card">
+            <div class="card-title">
+                <span>المباريات الحية الآن</span>
+                <span class="live-badge">مباشر 78'</span>
+            </div>
+            <div class="match-item">
+                <span class="team">ريال مدريد</span>
+                <span class="score">2 - 1</span>
+                <span class="team">برشلونة</span>
+            </div>
+            <div class="ai-insight">
+                🤖 <strong>تحليل الذكاء الاصطناعي:</strong> ضغط هكلي عالي لريال مدريد في الشوط الثاني مع احتمالية تسجيل هدف ثالث بنسبة 68%.
+            </div>
+        </div>
+
+        <!-- جدول الترتيب المصغر -->
+        <div class="card">
+            <div class="card-title">ترتيب الدوريات الكبرى</div>
+            <div class="match-item" style="justify-content: space-between;">
+                <span>1. ريال مدريد</span>
+                <span style="color: var(--text-light);">24 نقطة</span>
+            </div>
+            <div class="match-item" style="justify-content: space-between;">
+                <span>2. برشلونة</span>
+                <span style="color: var(--text-light);">22 نقطة</span>
+            </div>
+        </div>
+    </div>
+
+    <nav>
+        <a href="#" class="nav-item active">🏠 الرئيسية</a>
+        <a href="#" class="nav-item">📊 المباريات</a>
+        <a href="#" class="nav-item">🤖 الذكاء الاصطناعي</a>
+        <a href="#" class="nav-item">⚙️ الإعدادات</a>
+    </nav>
+
+</body>
+</html>
