@@ -61,11 +61,12 @@
             padding: 6px;
             border-radius: 6px;
         }
-        .odds-badge {
-            font-size: 11px;
-            color: #166534;
-            margin-top: 5px;
-            display: block;
+        .loading {
+            text-align: center;
+            padding: 25px;
+            color: #0284c7;
+            font-weight: bold;
+            font-size: 13px;
         }
     </style>
 </head>
@@ -73,66 +74,84 @@
 
     <header>
         <h1>KELLA Analytics Pro ⚽</h1>
-        <p style="font-size: 12px; color: #64748b;">منصة تحليلات كرة القدم الذكية واللحظية</p>
+        <p style="font-size: 12px; color: #64748b;">منصة تحليلات كرة القدم الحية والذكية</p>
     </header>
 
     <!-- أزرار اختيار التواريخ -->
     <div class="date-selector">
-        <button class="date-btn active" onclick="loadMatches('2026-09-15', this)">مباريات اليوم (15 سبتمبر)</button>
-        <button class="date-btn" onclick="loadMatches('2026-09-16', this)">مباريات 16 سبتمبر</button>
+        <button class="date-btn active" onclick="fetchLiveMatches('2026-09-15', this)">مباريات اليوم (15 سبتمبر)</button>
+        <button class="date-btn" onclick="fetchLiveMatches('2026-09-16', this)">مباريات 16 سبتمبر</button>
     </div>
 
     <!-- حاوية عرض المباريات -->
-    <div id="matchesList"></div>
+    <div id="matchesList" class="loading">جاري جلب المباريات الحية والواقعية من السيرفر...</div>
 
     <script>
-        // قاعدة البيانات المحدثة لمباريات دوري أبطال أوروبا والأندية الكبرى لليوم 15 و 16 سبتمبر 2026
-        const liveDatabase = {
-            "2026-09-15": [
-                { league: "دوري أبطال أوروبا (UEFA Champions League)", home: "يوفنتوس", away: "بوروسيا دورتموند", time: "18:45", odds: "1: 2.10 | X: 3.40 | 2: 3.20", ai: "تحليل AI: تقارب كبير في المستوى، توقع تسجيل الفريقين (BTTS)." },
-                { league: "دوري أبطال أوروبا (UEFA Champions League)", home: "ريال مدريد", away: "مارسيليا", time: "21:00", odds: "1: 1.35 | X: 5.20 | 2: 8.50", ai: "تحليل AI: أفضلية واضحة لأصحاب الأرض، توقع فوز مريح لريال مدريد." },
-                { league: "دوري أبطال أوروبا (UEFA Champions League)", home: "بايرن ميونخ", away: "تشيلسي", time: "21:00", odds: "1: 1.95 | X: 3.60 | 2: 3.70", ai: "تحليل AI: قمة الجولة، هجوم ناري وتوقع أهداف غزيرة من الطرفين." }
-            ],
-            "2026-09-16": [
-                { league: "دوري أبطال أوروبا (UEFA Champions League)", home: "مانشستر سيتي", away: "إنتر ميلان", time: "21:00", odds: "1: 1.65 | X: 3.90 | 2: 4.80", ai: "تحليل AI: صراع تكتيكي قوي، يميل المؤشر لفوز السيتي بفارق ضئيل." },
-                { league: "دوري أبطال أوروبا (UEFA Champions League)", home: "باريس سان جيرمان", away: "جيرونا", time: "21:00", odds: "1: 1.40 | X: 4.80 | 2: 7.00", ai: "تحليل AI: سيطرة باريسية متوقعة وخيارات قوية لنظيف الشباك (Clean Sheet)." }
-            ]
-        };
+        const API_TOKEN = 'e7db796720e24c48b1524b2f112c970b';
 
-        function loadMatches(dateStr, btnElement) {
-            document.querySelectorAll('.date-btn').forEach(btn => btn.classList.remove('active'));
-            if(btnElement) btnElement.classList.add('active');
+        async function fetchLiveMatches(dateStr, btnElement) {
+            if (btnElement) {
+                document.querySelectorAll('.date-btn').forEach(btn => btn.classList.remove('active'));
+                btnElement.classList.add('active');
+            }
 
             const container = document.getElementById('matchesList');
-            const matches = liveDatabase[dateStr] || [];
+            container.innerHTML = `<div class="loading">🔄 جاري الاتصال وجلب المباريات الحقيقية ليوم ${dateStr}...</div>`;
 
-            let html = `<div style="padding: 8px 15px; font-size: 11px; color: #166534; text-align: center; font-weight: bold; background: #dcfce7; margin-bottom: 10px; border-radius: 6px;">✅ تم الاتصال بنجاح: عرض مباريات تاريخ ${dateStr} (${matches.length} مباريات)</div>`;
+            try {
+                // استخدام وسيط آمن لتجاوز حظر المتصفح وجلب البيانات الحية الحقيقية
+                const targetUrl = `https://api.football-data.org/v4/matches?date=${dateStr}`;
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
 
-            if (matches.length === 0) {
-                html += `<div style="text-align:center; padding:20px; color:#64748b; font-size:13px;">لا توجد مباريات مسجلة في هذا التاريخ.</div>`;
-            } else {
-                matches.forEach((m) => {
-                    html += `
-                        <div class="match-card">
-                            <div style="font-size: 10px; color: #0284c7; margin-bottom: 4px; font-weight: bold;">🏆 ${m.league}</div>
-                            <div class="match-teams">
-                                <span>${m.home} vs ${m.away}</span>
-                                <span style="color:#0f172a; font-size:12px;">⏰ ${m.time}</span>
-                            </div>
-                            <div class="match-info">
-                                💡 <strong>${m.ai}</strong>
-                            </div>
-                            <span class="odds-badge">📊 أسواق الرهان والـ Odds: ${m.odds}</span>
-                        </div>
-                    `;
+                const response = await fetch(proxyUrl, {
+                    headers: {
+                        'X-Auth-Token': API_TOKEN
+                    }
                 });
+
+                if (!response.ok) {
+                    throw new Error('فشل جلب البيانات من الخادم العالمي');
+                }
+
+                const data = await response.json();
+                const matches = data.matches || [];
+
+                let html = `<div style="padding: 8px 15px; font-size: 11px; color: #166534; text-align: center; font-weight: bold; background: #dcfce7; margin-bottom: 10px; border-radius: 6px;">✅ بيانات حقيقية ومحدثة: ${matches.length} مباراة ليوم ${dateStr}</div>`;
+
+                if (matches.length === 0) {
+                    html += `<div style="text-align:center; padding:20px; color:#64748b; font-size:13px;">لا توجد مباريات مسجلة رسمياً في هذا التاريخ عبر السيرفر العالمي.</div>`;
+                } else {
+                    matches.forEach((m) => {
+                        const time = new Date(m.utcDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        const homeTeam = m.homeTeam.name;
+                        const awayTeam = m.awayTeam.name;
+                        const competition = m.competition.name;
+                        const status = m.status;
+
+                        html += `
+                            <div class="match-card">
+                                <div style="font-size: 10px; color: #0284c7; margin-bottom: 4px; font-weight: bold;">🏆 ${competition}</div>
+                                <div class="match-teams">
+                                    <span>${homeTeam} vs ${awayTeam}</span>
+                                    <span style="color:#0f172a; font-size:12px;">⏰ ${time} (${status})</span>
+                                </div>
+                                <div class="match-info">
+                                    💡 <strong>تحليل AI:</strong> جاهز للمتابعة الحية وأسواق الرهان المباشرة.
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                container.innerHTML = html;
+
+            } catch (error) {
+                container.innerHTML = `<div style="text-align:center; padding:20px; color:#dc2626; font-size:13px;">⚠️ تعذر الاتصال بالخادم الحي: ${error.message}</div>`;
             }
-            container.innerHTML = html;
         }
 
-        // تشغيل التطبيق على مباريات اليوم افتراضياً
+        // جلب مباريات اليوم تلقائياً عند فتح التطبيق
         window.onload = function() {
-            loadMatches('2026-09-15');
+            fetchLiveMatches('2026-09-15');
         };
     </script>
 </body>
