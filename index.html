@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLA Analytics Pro - Match Center & Live Tracker</title>
+    <title>KELLA Analytics Pro - Smart Notifications Engine</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -40,6 +40,17 @@
         .date-btn.active {
             background: #0284c7;
             color: white;
+        }
+        .notif-bar {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            color: #166534;
+            text-align: center;
+            margin-bottom: 12px;
+            font-weight: bold;
         }
         .match-card {
             background: white;
@@ -132,8 +143,14 @@
 
     <header>
         <h1>KELLA Analytics Pro ⚽</h1>
-        <p style="font-size: 12px; color: #64748b;">Match Center & Live Timeline Engine</p>
+        <p style="font-size: 12px; color: #64748b;">Match Center & Live Notifications</p>
     </header>
+
+    <!-- شريط تفعيل الإشعارات -->
+    <div class="notif-bar" id="notifBar">
+        🔔 Activez les notifications pour recevoir les alertes des matchs ! 
+        <br><button onclick="requestNotificationPermission()" style="margin-top:5px; padding:5px 10px; background:#166534; color:white; border:none; border-radius:4px; font-size:10px; cursor:pointer;">Activer les alertes</button>
+    </div>
 
     <!-- أزرار التبديل للمواعيد والأدوار -->
     <div class="date-selector">
@@ -168,6 +185,23 @@
 
         let activeTab = 'today';
 
+        function requestNotificationPermission() {
+            if (!("Notification" in window)) {
+                alert("Ce navigateur ne supporte pas les notifications desktop/mobile.");
+                return;
+            }
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    document.getElementById('notifBar').style.background = "#dcfce7";
+                    document.getElementById('notifBar').style.color = "#166534";
+                    document.getElementById('notifBar').innerHTML = "✅ Notifications activées avec succès ! Vous recevrez les alertes en direct.";
+                    new Notification("KELLA Analytics Pro", { body: "Système d'alertes en direct activé avec succès !" });
+                } else {
+                    alert("Permission refusée pour les notifications.");
+                }
+            });
+        }
+
         function switchDay(dayType, btnElement) {
             document.querySelectorAll('.date-btn').forEach(btn => btn.classList.remove('active'));
             btnElement.classList.add('active');
@@ -180,22 +214,33 @@
             const match = matches.find(m => m.id === id);
             if(match) {
                 const randomMinute = Math.floor(Math.random() * 85) + 5;
+                let notifText = "";
                 if(type === 'home+') {
                     match.homeGoals++;
+                    notifText = `⚽ But pour ${match.home} (${match.homeGoals}-${match.awayGoals})!`;
                     match.timeline.unshift(`⚽ <strong>But pour ${match.home} !</strong> (${randomMinute}')`);
                 }
                 if(type === 'home-' && match.homeGoals > 0) {
                     match.homeGoals--;
+                    notifText = `❌ Annulation d'un but pour ${match.home}`;
                     match.timeline.unshift(`❌ Annulation d'un but pour ${match.home}`);
                 }
                 if(type === 'away+') {
                     match.awayGoals++;
+                    notifText = `⚽ But pour ${match.away} (${match.homeGoals}-${match.awayGoals})!`;
                     match.timeline.unshift(`⚽ <strong>But pour ${match.away} !</strong> (${randomMinute}')`);
                 }
                 if(type === 'away-' && match.awayGoals > 0) {
                     match.awayGoals--;
+                    notifText = `❌ Annulation d'un but pour ${match.away}`;
                     match.timeline.unshift(`❌ Annulation d'un but pour ${match.away}`);
                 }
+
+                // إرسال تنبيه فوري للمتصفح إذا تم السماح بذلك
+                if (Notification.permission === "granted") {
+                    new Notification(`🚨 ${match.home} vs ${match.away}`, { body: notifText });
+                }
+
                 renderView();
             }
         }
@@ -222,7 +267,6 @@
                         </div>
                         <div style="font-size: 11px; color: #64748b; margin-bottom: 6px;">⏰ ${m.time}</div>
                         
-                        <!-- لوحة التحكم الحي والتسجيل الفوري -->
                         <div class="live-control-panel">
                             <span style="font-size: 10px; font-weight: bold; color: #334155;">Tracker:</span>
                             <button class="control-btn btn-goal-home" onclick="triggerAction(${m.id}, 'home+')">⚽ (${m.home})</button>
@@ -231,7 +275,6 @@
                             <button class="control-btn btn-goal-away" onclick="triggerAction(${m.id}, 'away-')">-1</button>
                         </div>
 
-                        <!-- الشريط الزمني الحي للأحداث -->
                         <div class="timeline-box">
                             <div style="font-weight: bold; font-size: 10px; color: #0284c7; margin-bottom: 3px;">📜 Fil d'actualité en direct :</div>
                             ${timelineHtml}
@@ -253,6 +296,11 @@
 
         window.onload = function() {
             renderView();
+            if (Notification.permission === "granted") {
+                document.getElementById('notifBar').style.background = "#dcfce7";
+                document.getElementById('notifBar').style.color = "#166534";
+                document.getElementById('notifBar').innerHTML = "✅ Les alertes et notifications en direct sont activées.";
+            }
         };
     </script>
 </body>
