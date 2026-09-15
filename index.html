@@ -9,10 +9,9 @@
             --primary: #0f172a;
             --accent: #2563eb;
             --success: #16a34a;
-            --warning: #d97706;
-            --bg: #f8fafc;
+            --bg: #f1f5f9;
             --card-bg: #ffffff;
-            --text: #1e293b;
+            --text: #0f172a;
             --text-light: #64748b;
             --border: #e2e8f0;
         }
@@ -21,7 +20,6 @@
             --primary: #f8fafc;
             --accent: #3b82f6;
             --success: #22c55e;
-            --warning: #f59e0b;
             --bg: #0f172a;
             --card-bg: #1e293b;
             --text: #f8fafc;
@@ -32,76 +30,83 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; transition: background 0.3s, color 0.3s; }
         body { background-color: var(--bg); color: var(--text); padding-bottom: 75px; }
 
+        /* شريط العنوان العلوي */
         header {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: white; padding: 20px 16px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            background: var(--card-bg); color: var(--text); padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
             display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 1000;
         }
+        .header-title { font-size: 1.2rem; font-weight: 800; color: var(--accent); display: flex; align-items: center; gap: 6px; }
 
-        .header-content { display: flex; align-items: center; gap: 12px; }
-        .logo-box { background: var(--accent); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-        h1 { font-size: 1.25rem; font-weight: 700; }
-        .subtitle { font-size: 0.8rem; color: #94a3b8; margin-top: 2px; }
+        /* شريط التواريخ والأيام (مثل FotMob) */
+        .dates-bar {
+            background: var(--card-bg); display: flex; overflow-x: auto; padding: 10px 12px;
+            gap: 12px; border-bottom: 1px solid var(--border); white-space: nowrap;
+            scrollbar-width: none;
+        }
+        .dates-bar::-webkit-scrollbar { display: none; }
+        .date-item {
+            font-size: 0.85rem; color: var(--text-light); padding: 6px 12px; border-radius: 20px; cursor: pointer; font-weight: 600;
+        }
+        .date-item.active { background: var(--accent); color: white; }
 
-        .container { padding: 16px; max-width: 600px; margin: 0 auto; }
+        .container { padding: 12px; max-width: 600px; margin: 0 auto; }
         .page-content { display: none; }
         .page-content.active { display: block; }
 
-        .card {
+        /* بطاقة الدوري (مثل FotMob) */
+        .league-card {
             background: var(--card-bg); border: 1px solid var(--border);
-            border-radius: 12px; padding: 16px; margin-bottom: 16px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 12px; margin-bottom: 12px; overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .league-header {
+            background: rgba(0,0,0,0.02); [data-theme="dark"] & { background: rgba(255,255,255,0.02); }
+            padding: 10px 14px; font-size: 0.9rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid var(--border);
         }
 
-        .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        /* صف المباراة الواحد */
+        .match-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 14px; border-bottom: 1px solid var(--border);
+            cursor: pointer;
+        }
+        .match-row:last-child { border-bottom: none; }
+        .match-row:hover { background: rgba(0,0,0,0.01); }
 
-        .time-tabs {
-            display: flex; gap: 8px; margin-bottom: 16px;
-            background: var(--border); padding: 4px; border-radius: 8px;
-        }
-        .time-tab {
-            flex: 1; background: none; border: none; padding: 8px;
-            font-size: 0.85rem; font-weight: 600; color: var(--text-light);
-            border-radius: 6px; cursor: pointer; text-align: center;
-        }
-        .time-tab.active { background: var(--card-bg); color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .team { width: 38%; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .team.home { justify-content: flex-end; text-align: left; }
+        .team.away { justify-content: flex-start; text-align: right; }
 
-        .match-card {
-            background: var(--card-bg); border: 1px solid var(--border);
-            border-radius: 12px; padding: 16px; margin-bottom: 12px;
+        .match-info {
+            width: 24%; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 2px;
         }
-        .match-header { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-light); margin-bottom: 8px; }
-        .match-teams { display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 1.05rem; margin-bottom: 10px; }
-        
-        .score-predict-badge {
-            background: var(--warning); color: white; padding: 4px 10px;
-            border-radius: 20px; font-size: 0.8rem; font-weight: bold; text-align: center; margin-bottom: 10px; display: inline-block;
-        }
+        .match-time { font-size: 0.8rem; font-weight: 700; background: var(--bg); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); }
+        .match-badge-ai { font-size: 0.65rem; color: var(--accent); font-weight: bold; }
 
-        .prob-bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: var(--border); margin-bottom: 8px; }
-        .prob-home { background: var(--accent); height: 100%; }
-        .prob-away { background: var(--success); height: 100%; }
-        .prob-text { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-light); margin-bottom: 10px; }
-        .ai-advice { background: rgba(59, 130, 246, 0.1); border-right: 3px solid var(--accent); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); margin-bottom: 10px; }
-
-        .live-stream-box {
-            background: #000; border-radius: 8px; overflow: hidden; position: relative;
-            aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; color: white; margin-bottom: 12px;
+        /* نافذة تفاصيل التحليل بالذكاء الاصطناعي عند النقر على المباراة */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; padding: 16px;
         }
-        .live-badge {
-            position: absolute; top: 10px; right: 10px; background: #dc2626; color: white;
-            padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold;
+        .modal-content {
+            background: var(--card-bg); width: 100%; max-width: 450px; border-radius: 16px; padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative; animation: slideUp 0.3s ease;
         }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
+        /* الشريط السفلي (تصميم FotMob) */
         nav {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: var(--card-bg); border-top: 1px solid var(--border);
-            display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000;
+            display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000;
         }
         nav button {
             background: none; border: none; color: var(--text-light);
-            font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex: 1;
+            font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; flex: 1;
         }
         nav button.active { color: var(--accent); font-weight: 700; }
         nav button .icon { font-size: 1.25rem; }
@@ -110,96 +115,75 @@
 <body>
 
     <header>
-        <div class="header-content">
-            <div class="logo-box">⚽</div>
-            <div>
-                <h1>KELLA Analytics Pro</h1>
-                <div class="subtitle">توقع الأهداف والبث المباشر الذكي</div>
-            </div>
+        <div class="header-title">
+            <span>⚡ KELLA FotMob</span>
         </div>
         <button id="themeBtn" onclick="toggleTheme()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">☀️</button>
     </header>
 
+    <!-- شريط الأيام العلوي -->
+    <div class="dates-bar">
+        <div class="date-item" onclick="filterByDay('yesterday', this)">الأمس</div>
+        <div class="date-item active" onclick="filterByDay('today', this)">اليوم</div>
+        <div class="date-item" onclick="filterByDay('tomorrow', this)">الغد</div>
+        <div class="date-item" onclick="filterByDay('weekend', this)">السبت والأحد</div>
+    </div>
+
     <div class="container">
-        <!-- الرئيسية -->
-        <div id="page-home" class="page-content active">
-            <div class="card">
-                <div class="section-title">🏠 أهلاً بك يا سي خالد</div>
-                <p style="font-size: 0.9rem; color: var(--text-light); line-height: 1.6;">
-                    تطبيقك يضم الآن محركاً متطوراً <b>لتوقع الأهداف وتوقع النتيجة بدقة</b>، بالإضافة إلى قسم <b>البث المباشر</b>. انتقل للتبويبات بالأسفل!
-                </p>
-            </div>
+        <!-- صفحة المباريات (على طراز FotMob) -->
+        <div id="page-matches" class="page-content active">
+            <div id="leagues-container"></div>
         </div>
 
-        <!-- البث المباشر -->
+        <!-- صفحة البث المباشر -->
         <div id="page-live" class="page-content">
-            <div class="section-title">🔴 البث الحي لمباريات اليوم</div>
-            <div class="card">
-                <div class="live-stream-box">
-                    <div class="live-badge">LIVE 🔴</div>
-                    <div style="text-align: center; padding: 20px;">
-                        <p style="font-size: 1rem; font-weight: bold; margin-bottom: 6px;">البث المباشر يعمل الآن</p>
-                        <p style="font-size: 0.8rem; color: #94a3b8;">جاري بث القمة الكروية بجودة عالية...</p>
-                    </div>
-                </div>
-                <div style="font-weight: 700; font-size: 1rem; margin-bottom: 4px;">ريال مدريد ضد باريس سان جيرمان</div>
-                <div style="font-size: 0.85rem; color: var(--text-light);">دوري أبطال أوروبا | المعلق: حفيظ دراجي</div>
+            <div style="background: #000; color: #fff; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 12px;">
+                <span style="background: red; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">LIVE 🔴</span>
+                <p style="margin-top: 10px; font-weight: bold;">البث الحي للقمم الكروية يعمل الآن بجودة عالية</p>
             </div>
         </div>
 
-        <!-- الذكاء الاصطناعي وتوقع الأهداف -->
-        <div id="page-ai" class="page-content">
-            <div class="section-title">🤖 توقعات الأهداف والنتيجة (AI Goals)</div>
-            
-            <div class="time-tabs">
-                <button class="time-tab active" onclick="loadMatches('daily', this)">اليوم</button>
-                <button class="time-tab" onclick="loadMatches('weekly', this)">الأسبوع</button>
-                <button class="time-tab" onclick="loadMatches('monthly', this)">الشهر</button>
-            </div>
-
-            <div id="ai-matches-container"></div>
-        </div>
-
-        <!-- الإعدادات -->
+        <!-- صفحة الإعدادات -->
         <div id="page-settings" class="page-content">
-            <div class="card">
-                <div class="section-title">⚙️ الإعدادات</div>
-                <p style="font-size: 0.9rem; color: var(--text-light);">إصدار المنصة: Goals & Streaming v4.1.</p>
+            <div style="background: var(--card-bg); padding: 16px; border-radius: 12px; border: 1px solid var(--border);">
+                <h3>⚙️ إعدادات التطبيق</h3>
+                <p style="color: var(--text-light); font-size: 0.85rem; margin-top: 6px;">الإصدار: FotMob Style v6.0</p>
             </div>
         </div>
     </div>
 
+    <!-- نافذة تفاصيل توقعات الذكاء الاصطناعي -->
+    <div id="matchModal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div id="modalBody"></div>
+            <button onclick="document.getElementById('matchModal').style.display='none'" style="width: 100%; margin-top: 15px; padding: 10px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- الشريط السفلي -->
     <nav>
-        <button onclick="switchPage('home', this)" class="active" id="btn-home">
-            <span class="icon">🏠</span>
-            <span>الرئيسية</span>
+        <button onclick="switchPage('matches', this)" class="active">
+            <span class="icon">⚽</span>
+            <span>المباريات</span>
         </button>
-        <button onclick="switchPage('live', this)" id="btn-live">
+        <button onclick="switchPage('live', this)">
             <span class="icon">📺</span>
             <span>المباشر</span>
         </button>
-        <button onclick="switchPage('ai', this)" id="btn-ai">
-            <span class="icon">🤖</span>
-            <span>الذكاء الاصطناعي</span>
-        </button>
-        <button onclick="switchPage('settings', this)" id="btn-settings">
+        <button onclick="switchPage('settings', this)">
             <span class="icon">⚙️</span>
             <span>الإعدادات</span>
         </button>
     </nav>
 
-    <script src="ai-predictor.js?v=4.1"></script>
+    <script src="ai-predictor.js?v=6.0"></script>
 
     <script>
         function switchPage(pageId, btn) {
             document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
             document.getElementById('page-' + pageId).classList.add('active');
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-            
-            // تحديد الزر النشط بدقة
-            if(btn) {
-                btn.classList.add('active');
-            }
+            if(btn) btn.classList.add('active');
         }
 
         function toggleTheme() {
@@ -214,59 +198,77 @@
             }
         }
 
-        function loadMatches(type, btn) {
-            document.querySelectorAll('.time-tab').forEach(t => t.classList.remove('active'));
-            if(btn) btn.classList.add('active');
-
-            if (!window.kellaPredictor) return;
-
-            let matches = [];
-            if (type === 'daily') matches = window.kellaPredictor.getDailyMatches();
-            else if (type === 'weekly') matches = window.kellaPredictor.getWeeklyMatches();
-            else if (type === 'monthly') matches = window.kellaPredictor.getMonthlyMatches();
-
-            const container = document.getElementById('ai-matches-container');
-            container.innerHTML = '';
-
-            matches.forEach(m => {
-                let html = `
-                    <div class="match-card">
-                        <div class="match-header">
-                            <span>🏆 ${m.competition}</span>
-                            <span>📅 ${m.date} | ⏰ ${m.time}</span>
-                        </div>
-                        <div class="match-teams">
-                            <span>${m.homeTeam}</span>
-                            <span style="font-size: 0.8rem; color: var(--text-light);">VS</span>
-                            <span>${m.awayTeam}</span>
-                        </div>
-                        <div style="text-align: center;">
-                            <span class="score-predict-badge">⚽ توقع النتيجة الآلية: ${m.predictedScore} (${m.expectedGoals})</span>
-                        </div>
-                        <div class="prob-text">
-                            <span>${m.homeTeam}: ${m.homeWinProb}%</span>
-                            <span>تعادل: ${m.drawProb}%</span>
-                            <span>${m.awayTeam}: ${m.awayWinProb}%</span>
-                        </div>
-                        <div class="prob-bar">
-                            <div class="prob-home" style="width: ${m.homeWinProb}%"></div>
-                            <div class="prob-away" style="width: ${m.awayWinProb}%"></div>
-                        </div>
-                        <div class="ai-advice">💡 <b>تحليل الأهداف:</b> ${m.aiAdvice}</div>
-                    </div>
-                `;
-                container.innerHTML += html;
-            });
+        function filterByDay(day, el) {
+            document.querySelectorAll('.date-item').forEach(d => d.classList.remove('active'));
+            el.classList.add('active');
+            loadFotMobMatches(day);
         }
 
-        // ربط أزرار القائمة السفلية بالدوال بشكل سليم
-        document.addEventListener("DOMContentLoaded", () => {
-            document.getElementById('btn-home').onclick = function() { switchPage('home', this); };
-            document.getElementById('btn-live').onclick = function() { switchPage('live', this); };
-            document.getElementById('btn-ai').onclick = function() { switchPage('ai', this); };
-            document.getElementById('btn-settings').onclick = function() { switchPage('settings', this); };
+        function loadFotMobMatches(day = 'today') {
+            if (!window.kellaPredictor) return;
+            const matches = window.kellaPredictor.getAllMatches(day);
+            const container = document.getElementById('leagues-container');
+            container.innerHTML = '';
 
-            loadMatches('daily');
+            // تجميع المباريات حسب الدوري
+            let grouped = {};
+            matches.forEach(m => {
+                if (!grouped[m.competition]) grouped[m.competition] = [];
+                grouped[m.competition].push(m);
+            });
+
+            for (let league in grouped) {
+                let html = `
+                    <div class="league-card">
+                        <div class="league-header">
+                            <span>🏆 ${league}</span>
+                            <span style="font-size: 0.75rem; color: var(--text-light);">${grouped[league].length} مباريات</span>
+                        </div>
+                `;
+                grouped[league].forEach(m => {
+                    html += `
+                        <div class="match-row" onclick='openMatchDetails(${JSON.stringify(m)})'>
+                            <div class="team home"><span>${m.homeTeam}</span></div>
+                            <div class="match-info">
+                                <span class="match-time">${m.time}</span>
+                                <span class="match-badge-ai">🤖 ${m.predictedScore}</span>
+                            </div>
+                            <div class="team away"><span>${m.awayTeam}</span></div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+                container.innerHTML += html;
+            }
+        }
+
+        function openMatchDetails(m) {
+            const modal = document.getElementById('matchModal');
+            const body = document.getElementById('modalBody');
+            body.innerHTML = `
+                <h3 style="text-align: center; margin-bottom: 10px;">${m.competition}</h3>
+                <div style="text-align: center; font-size: 1.1rem; font-weight: bold; margin-bottom: 15px;">
+                    ${m.homeTeam} VS ${m.awayTeam}
+                </div>
+                <div style="background: var(--bg); padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 10px;">
+                    <span style="background: var(--accent); color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: bold;">توقع النتيجة: ${m.predictedScore}</span>
+                    <p style="font-size: 0.8rem; color: var(--text-light); margin-top: 6px;">${m.expectedGoals}</p>
+                </div>
+                <div style="font-size: 0.85rem; line-height: 1.5; color: var(--text);">
+                    <b>تحليل الذكاء الاصطناعي:</b> ${m.aiAdvice}
+                </div>
+            `;
+            modal.style.display = 'flex';
+        }
+
+        function closeModal(e) {
+            if (e.target.id === 'matchModal') {
+                document.getElementById('matchModal').style.display = 'none';
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadFotMobMatches('today');
         });
     </script>
 </body>
