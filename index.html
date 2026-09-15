@@ -137,8 +137,10 @@
     <div class="header">KELLA Analytics Pro ⚽</div>
     <div class="api-status">🔗 متصل بالـ API ومحرك تحليل الرهانات الرياضية (Odds)</div>
 
+    <!-- شريط التواريخ -->
     <div class="date-container" id="dateBar"></div>
 
+    <!-- قائمة المباريات -->
     <div id="matchesList"></div>
 
     <!-- نافذة التحليل العميق -->
@@ -168,6 +170,7 @@
 
         function buildDates() {
             const bar = document.getElementById('dateBar');
+            if (!bar) return;
             bar.innerHTML = '';
             const today = new Date();
             
@@ -193,21 +196,20 @@
             }
         }
 
-        // محرك متطور لجلب مباريات فريدة وغير مكررة حسب التاريخ مع تحليل الـ AI والـ Odds
         function loadApiMatches(dateStr) {
             const container = document.getElementById('matchesList');
+            if (!container) return;
             container.innerHTML = `<div style="text-align: center; padding: 20px; color: #0284c7; font-weight:bold;">🔄 جاري جلب ومزامنة مباريات الـ API ليوم ${dateStr}...</div>`;
 
             setTimeout(() => {
                 let matches = getUniqueMatches(dateStr);
                 renderMatches(matches, dateStr);
-            }, 400);
+            }, 300);
         }
 
         function getUniqueMatches(dateStr) {
             let seed = dateStr.split('-').reduce((a, b) => parseInt(a) + parseInt(b), 0);
             
-            // قائمة مباريات متنوعة ومنسقة بدون أي تكرار
             const masterPool = [
                 { league: "دوري أبطال أوروبا (UEFA)", home: "ريال مدريد", away: "مانشستر سيتي", time: "21:00" },
                 { league: "الدوري الإنجليزي الممتاز", home: "أرسنال", away: "ليفربول", time: "18:30" },
@@ -218,12 +220,10 @@
             ];
 
             let dayMatches = [];
-            // اختيار 4 مباريات فريدة ومختلفة لكل يوم
             for (let i = 0; i < 4; i++) {
                 let index = (seed + i * 2) % masterPool.length;
                 let match = masterPool[index];
                 
-                // منع التكرار في نفس اليوم
                 if (dayMatches.some(m => m.home === match.home)) {
                     index = (index + 1) % masterPool.length;
                     match = masterPool[index];
@@ -254,6 +254,7 @@
 
         function renderMatches(matches, dateStr) {
             const container = document.getElementById('matchesList');
+            if (!container) return;
             let html = `<div style="padding: 8px 15px; font-size: 11px; color: #0369a1; text-align: center; font-weight: bold; background: #e0f2fe;">📅 جدول المباريات وأسواق الرهان ليوم: ${dateStr}</div>`;
             
             matches.forEach(m => {
@@ -275,8 +276,8 @@
         }
 
         function openAIModal(home, away, pick, score, odds, league) {
-            document.getElementById('modalTitle'].innerText = `تحليل الـ AI: ${home} ضد ${away}`;
-            document.getElementById('modalBody'].innerHTML = `
+            document.getElementById('modalTitle').innerText = `تحليل الـ AI: ${home} ضد ${away}`;
+            document.getElementById('modalBody').innerHTML = `
                 الدوري / المنافسة: <strong>${league}</strong><br><br>
                 النتيجة المتوقعة بحسابات الذكاء الاصطناعي: <strong style="color:#0284c7;">${score}</strong><br><br>
                 أسواق الاحتمالات ومنصات الرهان (Odds):<br>
