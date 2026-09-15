@@ -17,8 +17,7 @@ const matchesDatabase = {
     ]
 };
 
-// نقطة النهاية (API Endpoint) لجلب المباريات حسب التاريخ
-api/matches/:date
+// نقطة النهاية (API Endpoint) لجلب المباريات حسب التاريخ بشكل صحيح
 app.get('/api/matches/:date', (req, res) => {
     const date = req.params.date;
     const matches = matchesDatabase[date] || [];
