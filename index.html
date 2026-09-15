@@ -3,142 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLA Analytics Pro - Ultimate Live API</title>
+    <title>KELLA Analytics Pro - Global Live Center</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #0f172a;
             color: #f8fafc;
             margin: 0;
-            padding: 15px;
+            padding: 10px;
         }
         header {
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         h1 {
-            font-size: 20px;
+            font-size: 18px;
             color: #38bdf8;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
         .notif-bar {
             background: #1e293b;
             border: 1px solid #334155;
-            padding: 10px;
+            padding: 8px;
             border-radius: 8px;
             font-size: 11px;
             color: #38bdf8;
             text-align: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             font-weight: bold;
         }
-        .date-selector {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-        .date-btn {
-            padding: 6px 12px;
+        .widget-container {
             background: #1e293b;
             border: 1px solid #334155;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: bold;
-            color: #94a3b8;
-            cursor: pointer;
-        }
-        .date-btn.active {
-            background: #0284c7;
-            color: white;
-            border-color: #0284c7;
-        }
-        .match-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            padding: 12px;
             border-radius: 10px;
-            margin-bottom: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            border-left: 4px solid #38bdf8;
-        }
-        .match-teams {
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            font-size: 15px;
-            margin: 8px 0;
-            align-items: center;
-        }
-        .live-score {
-            background: #0284c7;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-family: monospace;
-        }
-        .timeline-box {
-            background: #0f172a;
-            border: 1px solid #334155;
-            padding: 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            color: #cbd5e1;
-            margin-top: 8px;
-            max-height: 80px;
-            overflow-y: auto;
-        }
-        .timeline-event {
-            margin-bottom: 3px;
-            border-bottom: 1px dashed #334155;
-            padding-bottom: 2px;
-        }
-        .ai-box {
-            background: #0f172a;
-            border-left: 3px solid #38bdf8;
-            padding: 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            color: #e2e8f0;
-            margin-top: 8px;
-        }
-        .score-prediction-box {
-            background: #422006;
-            border: 1px solid #ca8a04;
-            padding: 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            color: #fef08a;
-            margin-top: 8px;
-            font-weight: bold;
-        }
-        .live-control-panel {
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             margin-top: 10px;
-            padding-top: 8px;
-            border-top: 1px dashed #334155;
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .control-btn {
-            padding: 5px 8px;
-            font-size: 10px;
-            font-weight: bold;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .btn-goal-home { background: #166534; color: #dcfce7; }
-        .btn-goal-away { background: #991b1b; color: #fee2e2; }
-        .loading {
-            text-align: center;
-            padding: 20px;
-            font-size: 13px;
-            color: #38bdf8;
-            font-weight: bold;
         }
     </style>
 </head>
@@ -146,47 +46,21 @@
 
     <header>
         <h1>KELLA Analytics Pro ⚽</h1>
-        <p style="font-size: 11px; color: #94a3b8;">Live API Match Center & AI Predictions</p>
+        <p style="font-size: 10px; color: #94a3b8;">Centre Mondial des Matchs en Direct & IA</p>
     </header>
 
-    <!-- شريط الإشعارات -->
+    <!-- شريط الإشعارات والتحكم -->
     <div class="notif-bar" id="notifBar">
-        🔔 Activez les notifications pour recevoir les alertes des matchs ! 
-        <br><button onclick="requestNotificationPermission()" style="margin-top:6px; padding:5px 10px; background:#0284c7; color:white; border:none; border-radius:4px; font-size:10px; cursor:pointer;">Activer les alertes</button>
+        🔔 Centre mondial connecté : Tous les championnats du monde en direct !
+        <br><button onclick="requestNotificationPermission()" style="margin-top:5px; padding:4px 8px; background:#0284c7; color:white; border:none; border-radius:4px; font-size:10px; cursor:pointer;">Activer les alertes</button>
     </div>
 
-    <!-- أزرار التنقل الأربعة -->
-    <div class="date-selector">
-        <button class="date-btn active" onclick="switchMode('api', this)">🌐 Matchs Directs (API)</button>
-        <button class="date-btn" onclick="switchMode('tomorrow', this)">📆 Demain</button>
-        <button class="date-btn" onclick="switchMode('week', this)">🗓️ Semaine</button>
-        <button class="date-btn" onclick="switchMode('aller', this)" style="background: #ca8a04; color: white; border-color: #ca8a04;">🏆 Matchs Aller</button>
-    </div>
-
-    <!-- حاوية المباريات -->
-    <div id="matchesContainer">
-        <div class="loading">🔄 Connexion au serveur API et chargement des matchs...</div>
+    <!-- فضاء عرض كل مباريات العالم الحية تلقائياً (بدون قيود وبدون عدد محدود) -->
+    <div class="widget-container">
+        <iframe src="https://www.scorebat.com/embed/livescore/" frameborder="0" width="100%" height="650px" allowfullscreen style="display:block;"></iframe>
     </div>
 
     <script>
-        // قاعدة بيانات محلية احتياطية (للأيام والأدوار الأخرى لضمان عدم ضياع أي ميزة)
-        const staticDatabase = {
-            tomorrow: [
-                { id: 101, league: "UEFA Champions League", home: "Manchester City", away: "Inter Milan", time: "21:00", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Choc monumental en perspective."], prob: "Man City: 58% | Nul: 25% | Inter: 17%", score1: "2 - 1", score2: "1 - 0", aiPre: "Analyse Pro: Bataille tactique de haut vol." },
-                { id: 102, league: "UEFA Champions League", home: "Paris Saint-Germain", away: "Girona", time: "21:00", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Le PSG entre en lice."], prob: "PSG: 65% | Nul: 20% | Girona: 15%", score1: "3 - 1", score2: "2 - 1", aiPre: "Analyse Pro: Possession et vitesse parisiennes." }
-            ],
-            week: [
-                { id: 103, league: "UEFA Champions League", home: "Atalanta", away: "Arsenal", time: "21:00", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Programmée pour cette semaine."], prob: "Atalanta: 30% | Nul: 30% | Arsenal: 40%", score1: "1 - 1", score2: "1 - 2", aiPre: "Analyse Semaine: Pression intense des Gunners." }
-            ],
-            aller: [
-                { id: 104, league: "UEFA Champions League (Match Aller)", home: "Real Madrid", away: "Bayern Munich", time: "21:00", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Phase aller des grands rendez-vous."], prob: "Real: 45% | Nul: 25% | Bayern: 30%", score1: "2 - 1", score2: "1 - 1", aiPre: "Analyse Aller: Choc des titans." }
-            ]
-        };
-
-        let currentMode = 'api';
-        let liveMatches = [];
-
-        // طلب إذن الإشعارات
         function requestNotificationPermission() {
             if (!("Notification" in window)) {
                 alert("Ce navigateur ne supporte pas les notifications.");
@@ -196,150 +70,13 @@
                 if (permission === "granted") {
                     document.getElementById('notifBar').style.background = "#166534";
                     document.getElementById('notifBar').style.color = "#dcfce7";
-                    document.getElementById('notifBar').innerHTML = "✅ Notifications activées avec succès !";
-                    new Notification("KELLA Analytics Pro", { body: "Système d'alertes en direct activé !" });
+                    document.getElementById('notifBar').innerHTML = "✅ Notifications et alertes mondiales activées !";
+                    new Notification("KELLA Analytics Pro", { body: "Le système d'alertes live est opérationnel !" });
                 } else {
                     alert("Permission refusée pour les notifications.");
                 }
             });
         }
-
-        // جلب المباريات الحية من الـ API المجاني
-        async function fetchLiveMatchesFromAPI() {
-            const container = document.getElementById('matchesContainer');
-            container.innerHTML = `<div class="loading">🔄 Récupération des données en direct depuis l'API...</div>`;
-            
-            try {
-                // استخدام API عام ومجاني للمباريات (Football-Data Public Proxy / CORS-friendly)
-                const response = await fetch('https://api.football-data.org/v4/matches?status=LIVE,SCHEDULED', {
-                    headers: { 'X-Auth-Token': 'FREE_API_KEY_OR_PUBLIC' } // أو محاكاة جلب حقيقي إن لم يتوفر مفتاح
-                });
-                
-                // بما أن بعض متصفحات الهاتف تحجب الـ API المباشر بدون مفتاح خاص، قمنا بوضع نظام احتياطي ذكي يعرض مباريات حية حقيقية بالوقت الفعلي:
-                loadSimulatedApiData();
-            } catch (error) {
-                loadSimulatedApiData();
-            }
-        }
-
-        // دالة البيانات الحية (تدمج جلب الشبكة مع الاستقرار التام)
-        function loadSimulatedApiData() {
-            liveMatches = [
-                { id: 1, league: "UEFA Champions League (Live API)", home: "AC Milan", away: "Liverpool", time: "En Direct", homeGoals: 1, awayGoals: 1, timeline: ["⏱️ 35' - But égalisateur de Liverpool !", "⏱️ 12' - Ouverture du score par Milan."], prob: "Milan: 40% | Nul: 25% | Liverpool: 35%", score1: "2 - 2", score2: "1 - 2", aiPre: "Analyse Live API: Pression forte des Reds après l'égalisation." },
-                { id: 2, league: "UEFA Champions League (Live API)", home: "Real Madrid", away: "Stuttgart", time: "En Direct", homeGoals: 2, awayGoals: 0, timeline: ["⏱️ 60' - Maîtrise totale du Real Madrid."], prob: "Real: 85% | Nul: 10% | Stuttgart: 5%", score1: "3 - 0", score2: "4 - 1", aiPre: "Analyse Live API: Le Real gère son avance tranquillement." },
-                { id: 3, league: "La Liga (Live API)", home: "FC Barcelona", away: "Villarreal", time: "En Direct", homeGoals: 1, awayGoals: 1, timeline: ["⏱️ 45' - Match très ouvert, grosses occasions."], prob: "Barca: 50% | Nul: 30% | Villarreal: 20%", score1: "2 - 1", score2: "3 - 2", aiPre: "Analyse Live API: Jeu offensif des deux côtés." }
-            ];
-            renderView();
-        }
-
-        function switchMode(mode, btnElement) {
-            document.querySelectorAll('.date-btn').forEach(btn => btn.classList.remove('active'));
-            btnElement.classList.add('active');
-            currentMode = mode;
-            renderView();
-        }
-
-        // نظام التحكم الحي (Tracker) وتحديث الأهداف والـ Timeline
-        function triggerAction(id, type) {
-            let collection = (currentMode === 'api') ? liveMatches : staticDatabase[currentMode];
-            const match = collection.find(m => m.id === id);
-            
-            if(match) {
-                const randomMinute = Math.floor(Math.random() * 85) + 5;
-                let notifText = "";
-                if(type === 'home+') {
-                    match.homeGoals++;
-                    notifText = `⚽ But pour ${match.home} (${match.homeGoals}-${match.awayGoals})!`;
-                    match.timeline.unshift(`⚽ <strong>But pour ${match.home} !</strong> (${randomMinute}')`);
-                }
-                if(type === 'home-' && match.homeGoals > 0) {
-                    match.homeGoals--;
-                    notifText = `❌ Annulation d'un but pour ${match.home}`;
-                    match.timeline.unshift(`❌ Annulation d'un but pour ${match.home}`);
-                }
-                if(type === 'away+') {
-                    match.awayGoals++;
-                    notifText = `⚽ But pour ${match.away} (${match.homeGoals}-${match.awayGoals})!`;
-                    match.timeline.unshift(`⚽ <strong>But pour ${match.away} !</strong> (${randomMinute}')`);
-                }
-                if(type === 'away-' && match.awayGoals > 0) {
-                    match.awayGoals--;
-                    notifText = `❌ Annulation d'un but pour ${match.away}`;
-                    match.timeline.unshift(`❌ Annulation d'un but pour ${match.away}`);
-                }
-
-                if (Notification.permission === "granted") {
-                    new Notification(`🚨 ${match.home} vs ${match.away}`, { body: notifText });
-                }
-
-                renderView();
-            }
-        }
-
-        function renderView() {
-            const container = document.getElementById('matchesContainer');
-            let matches = [];
-            let titleText = "";
-
-            if(currentMode === 'api') {
-                matches = liveMatches;
-                titleText = "Match Center - Direct API (Aujourd'hui)";
-            } else {
-                matches = staticDatabase[currentMode];
-                if(currentMode === 'tomorrow') titleText = "Match Center - Demain";
-                if(currentMode === 'week') titleText = "Match Center - Semaine";
-                if(currentMode === 'aller') titleText = "Match Center - Matchs Aller";
-            }
-
-            let html = `<div style="padding: 8px 15px; font-size: 11px; color: #38bdf8; text-align: center; font-weight: bold; background: #1e293b; margin-bottom: 10px; border-radius: 6px; border: 1px solid #334155;">⚡ ${titleText} (${matches.length} matchs)</div>`;
-
-            matches.forEach((m) => {
-                let timelineHtml = m.timeline.map(ev => `<div class="timeline-event">${ev}</div>`).join('');
-                
-                html += `
-                    <div class="match-card">
-                        <div style="font-size: 10px; color: #94a3b8; margin-bottom: 4px; font-weight: bold; text-transform: uppercase;">🏆 ${m.league}</div>
-                        <div class="match-teams">
-                           <span>${m.home} vs ${m.away}</span>
-                           <div class="live-score">${m.homeGoals} - ${m.awayGoals}</div>
-                        </div>
-                        <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">⏰ ${m.time}</div>
-                        
-                        <div class="live-control-panel">
-                            <span style="font-size: 10px; font-weight: bold; color: #38bdf8;">Tracker:</span>
-                            <button class="control-btn btn-goal-home" onclick="triggerAction(${m.id}, 'home+')">⚽ (${m.home})</button>
-                            <button class="control-btn btn-goal-home" onclick="triggerAction(${m.id}, 'home-')">-1</button>
-                            <button class="control-btn btn-goal-away" onclick="triggerAction(${m.id}, 'away+')">⚽ (${m.away})</button>
-                            <button class="control-btn btn-goal-away" onclick="triggerAction(${m.id}, 'away-')">-1</button>
-                        </div>
-
-                        <div class="timeline-box">
-                            <div style="font-weight: bold; font-size: 10px; color: #38bdf8; margin-bottom: 3px;">📜 Fil d'actualité en direct :</div>
-                            ${timelineHtml}
-                        </div>
-
-                        <div class="ai-box">
-                            🧠 <strong>${m.aiPre}</strong><br>
-                            📊 <strong>Probabilités:</strong> ${m.prob}
-                        </div>
-                        <div class="score-prediction-box">
-                            🎯 <strong>Prédiction de Score (AI):</strong><br>
-                            • Principal: <strong>${m.score1}</strong> | Alternatif: <strong>${m.score2}</strong>
-                        </div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
-        window.onload = function() {
-            fetchLiveMatchesFromAPI();
-            if (Notification.permission === "granted") {
-                document.getElementById('notifBar').style.background = "#166534";
-                document.getElementById('notifBar').style.color = "#dcfce7";
-                document.getElementById('notifBar').innerHTML = "✅ Les alertes et notifications en direct sont activées.";
-            }
-        };
     </script>
 </body>
 </html>
