@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLA Analytics Pro - Ultimate Live Engine</title>
+    <title>KELLA Analytics Pro - Future Engine</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -24,16 +24,16 @@
         .date-selector {
             display: flex;
             justify-content: center;
-            gap: 6px;
+            gap: 5px;
             margin-bottom: 15px;
             flex-wrap: wrap;
         }
         .date-btn {
-            padding: 6px 12px;
+            padding: 5px 10px;
             background: #e2e8f0;
             border: none;
             border-radius: 8px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
             cursor: pointer;
         }
@@ -103,7 +103,6 @@
         }
         .btn-goal-home { background: #dcfce7; color: #166534; }
         .btn-goal-away { background: #fee2e2; color: #991b1b; }
-        .btn-card { background: #fef3c7; color: #92400e; }
         .loading {
             text-align: center;
             padding: 20px;
@@ -117,17 +116,18 @@
 
     <header>
         <h1>KELLA Analytics Pro ⚽</h1>
-        <p style="font-size: 12px; color: #64748b;">Moteur AI + Live Tracker Interactif</p>
+        <p style="font-size: 12px; color: #64748b;">Moteur Pro + Planification Aller</p>
     </header>
 
-    <!-- أزرار التبديل للأيام والأسبوع -->
+    <!-- أزرار التبديل الموسعة لتشمل الشهر القادم ومباريات الذهاب -->
     <div class="date-selector">
-        <button class="date-btn active" onclick="switchDay('today', this)">📅 Matchs du Jour</button>
-        <button class="date-btn" onclick="switchDay('tomorrow', this)">📆 Demain (16 Sep)</button>
-        <button class="date-btn" onclick="switchDay('week', this)">🗓️ Semaine (17-21 Sep)</button>
+        <button class="date-btn active" onclick="switchDay('today', this)">📅 Aujourd'hui</button>
+        <button class="date-btn" onclick="switchDay('tomorrow', this)">📆 Demain</button>
+        <button class="date-btn" onclick="switchDay('week', this)">🗓️ Semaine</button>
+        <button class="date-btn" onclick="switchDay('aller', this)" style="background: #f59e0b; color: white;">🏆 Matchs Aller (Oct)</button>
     </div>
 
-    <!-- حاوية عرض المباريات والتحكم الحي -->
+    <!-- حاوية عرض المباريات والتحكم -->
     <div id="matchesContainer">
         <div class="loading">🔄 Chargement du système...</div>
     </div>
@@ -137,16 +137,19 @@
             today: [
                 { id: 1, league: "España: La Liga", home: "Rayo Vallecano", away: "Espanyol", time: "18:00", homeGoals: 0, awayGoals: 0, prob: "Rayo: 48% | Nul: 30% | Espanyol: 22%", score1: "2 - 1", score2: "1 - 1", aiPre: "Analyse Pro: Domination territoriale attendue de Rayo." },
                 { id: 2, league: "España: La Liga", home: "Deportivo Alavés", away: "Valencia", time: "19:00", homeGoals: 0, awayGoals: 0, prob: "Alavés: 40% | Nul: 33% | Valencia: 27%", score1: "1 - 0", score2: "0 - 0", aiPre: "Analyse Pro: Match fermé, prudence tactique." },
-                { id: 3, league: "España: La Liga", home: "Elche", away: "Real Madrid", time: "20:30", homeGoals: 0, awayGoals: 0, prob: "Elche: 10% | Nul: 15% | Real: 75%", score1: "0 - 2", score2: "1 - 3", aiPre: "Analyse Pro: Supériorité technique évidente du Real." },
-                { id: 4, league: "AFC Champions League Elite", home: "Al Ain", away: "Al Nassr", time: "17:00", homeGoals: 0, awayGoals: 0, prob: "Al Ain: 35% | Nul: 28% | Al Nassr: 37%", score1: "1 - 2", score2: "2 - 2", aiPre: "Analyse Pro: Duel offensif explosif (BTTS)." }
+                { id: 3, league: "España: La Liga", home: "Elche", away: "Real Madrid", time: "20:30", homeGoals: 0, awayGoals: 0, prob: "Elche: 10% | Nul: 15% | Real: 75%", score1: "0 - 2", score2: "1 - 3", aiPre: "Analyse Pro: Supériorité technique évidente du Real." }
             ],
             tomorrow: [
-                { id: 5, league: "UEFA Champions League", home: "Manchester City", away: "Inter Milan", time: "20:00", homeGoals: 0, awayGoals: 0, prob: "Man City: 58% | Nul: 25% | Inter: 17%", score1: "2 - 1", score2: "1 - 0", aiPre: "Analyse Pro: Bataille tactique au milieu, City favori." },
-                { id: 6, league: "UEFA Champions League", home: "Paris Saint-Germain", away: "Girona", time: "20:00", homeGoals: 0, awayGoals: 0, prob: "PSG: 65% | Nul: 22% | Girona: 13%", score1: "2 - 0", score2: "3 - 1", aiPre: "Analyse Pro: Vitesse sur les ailes pour percer Girona." }
+                { id: 4, league: "UEFA Champions League", home: "Manchester City", away: "Inter Milan", time: "20:00", homeGoals: 0, awayGoals: 0, prob: "Man City: 58% | Nul: 25% | Inter: 17%", score1: "2 - 1", score2: "1 - 0", aiPre: "Analyse Pro: Bataille tactique au milieu, City favori." },
+                { id: 5, league: "UEFA Champions League", home: "Paris Saint-Germain", away: "Girona", time: "20:00", homeGoals: 0, awayGoals: 0, prob: "PSG: 65% | Nul: 22% | Girona: 13%", score1: "2 - 0", score2: "3 - 1", aiPre: "Analyse Pro: Vitesse sur les ailes pour percer Girona." }
             ],
             week: [
-                { id: 7, league: "UEFA Champions League (Jeudi)", home: "Atalanta", away: "Arsenal", time: "21:00", homeGoals: 0, awayGoals: 0, prob: "Atalanta: 30% | Nul: 30% | Arsenal: 40%", score1: "1 - 1", score2: "1 - 2", aiPre: "Analyse Semaine: Pression intense des Gunners à l'extérieur." },
-                { id: 8, league: "España: La Liga (Vendredi)", home: "Real Betis", away: "Leganés", time: "21:00", homeGoals: 0, awayGoals: 0, prob: "Betis: 60% | Nul: 25% | Leganés: 15%", score1: "2 - 0", score2: "1 - 0", aiPre: "Analyse Semaine: Betis cherche à contrôler le rythme." }
+                { id: 6, league: "UEFA Champions League", home: "Atalanta", away: "Arsenal", time: "21:00", homeGoals: 0, awayGoals: 0, prob: "Atalanta: 30% | Nul: 30% | Arsenal: 40%", score1: "1 - 1", score2: "1 - 2", aiPre: "Analyse Semaine: Pression intense des Gunners à l'extérieur." }
+            ],
+            aller: [
+                { id: 7, league: "UEFA Champions League (Match Aller)", home: "Real Madrid", away: "Bayern Munich", time: "21:00", homeGoals: 0, awayGoals: 0, prob: "Real: 45% | Nul: 25% | Bayern: 30%", score1: "2 - 1", score2: "1 - 1", aiPre: "Analyse Aller: Choc des titans, prudence tactique exigée au match aller." },
+                { id: 8, league: "UEFA Champions League (Match Aller)", home: "FC Barcelona", away: "Manchester City", time: "21:00", homeGoals: 0, awayGoals: 0, prob: "Barca: 40% | Nul: 26% | City: 34%", score1: "2 - 2", score2: "1 - 2", aiPre: "Analyse Aller: Bataille de possession au milieu de terrain." },
+                { id: 9, league: "UEFA Champions League (Match Aller)", home: "AC Milan", away: "Paris Saint-Germain", time: "21:00", homeGoals: 0, awayGoals: 0, prob: "Milan: 35% | Nul: 30% | PSG: 35%", score1: "1 - 1", score2: "0 - 1", aiPre: "Analyse Aller: San Siro bouillant, équilibre parfait des forces." }
             ]
         };
 
@@ -174,7 +177,10 @@
         function renderView() {
             const container = document.getElementById('matchesContainer');
             const matches = database[activeTab];
-            let titleText = activeTab === 'today' ? "Matchs du Jour (Live Tracker actif)" : (activeTab === 'tomorrow' ? "Matchs de Demain" : "Planning de la Semaine");
+            let titleText = "Matchs du Jour";
+            if(activeTab === 'tomorrow') titleText = "Matchs de Demain";
+            if(activeTab === 'week') titleText = "Planning de la Semaine";
+            if(activeTab === 'aller') titleText = "Matchs Aller - Mois Prochain (Phases Clés)";
 
             let html = `<div style="padding: 8px 15px; font-size: 11px; color: #166534; text-align: center; font-weight: bold; background: #dcfce7; margin-bottom: 10px; border-radius: 6px;">⚡ ${titleText} (${matches.length} matchs)</div>`;
 
@@ -188,12 +194,11 @@
                         </div>
                         <div style="font-size: 11px; color: #64748b; margin-bottom: 6px;">⏰ ${m.time}</div>
                         
-                        <!-- أزرار التحكم الحي المباشر -->
                         <div class="live-control-panel">
-                            <span style="font-size: 10px; font-weight: bold; color: #334155;">Live Tracker:</span>
-                            <button class="control-btn btn-goal-home" onclick="updateScore(${m.id}, 'home+')">⚽ But (${m.home})</button>
+                            <span style="font-size: 10px; font-weight: bold; color: #334155;">Tracker:</span>
+                            <button class="control-btn btn-goal-home" onclick="updateScore(${m.id}, 'home+')">⚽ (${m.home})</button>
                             <button class="control-btn btn-goal-home" onclick="updateScore(${m.id}, 'home-')">-1</button>
-                            <button class="control-btn btn-goal-away" onclick="updateScore(${m.id}, 'away+')">⚽ But (${m.away})</button>
+                            <button class="control-btn btn-goal-away" onclick="updateScore(${m.id}, 'away+')">⚽ (${m.away})</button>
                             <button class="control-btn btn-goal-away" onclick="updateScore(${m.id}, 'away-')">-1</button>
                         </div>
 
