@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLA Analytics Pro - Future Engine</title>
+    <title>KELLA Analytics Pro - Match Center & Live Tracker</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -65,6 +65,22 @@
             font-size: 14px;
             font-family: monospace;
         }
+        .timeline-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            color: #334155;
+            margin-top: 6px;
+            max-height: 80px;
+            overflow-y: auto;
+        }
+        .timeline-event {
+            margin-bottom: 3px;
+            border-bottom: 1px dashed #e2e8f0;
+            padding-bottom: 2px;
+        }
         .ai-box {
             background: #eff6ff;
             border: 1px solid #bfdbfe;
@@ -116,40 +132,37 @@
 
     <header>
         <h1>KELLA Analytics Pro ⚽</h1>
-        <p style="font-size: 12px; color: #64748b;">Moteur Pro + Planification Aller</p>
+        <p style="font-size: 12px; color: #64748b;">Match Center & Live Timeline Engine</p>
     </header>
 
-    <!-- أزرار التبديل الموسعة لتشمل الشهر القادم ومباريات الذهاب -->
+    <!-- أزرار التبديل للمواعيد والأدوار -->
     <div class="date-selector">
         <button class="date-btn active" onclick="switchDay('today', this)">📅 Aujourd'hui</button>
         <button class="date-btn" onclick="switchDay('tomorrow', this)">📆 Demain</button>
         <button class="date-btn" onclick="switchDay('week', this)">🗓️ Semaine</button>
-        <button class="date-btn" onclick="switchDay('aller', this)" style="background: #f59e0b; color: white;">🏆 Matchs Aller (Oct)</button>
+        <button class="date-btn" onclick="switchDay('aller', this)" style="background: #f59e0b; color: white;">🏆 Matchs Aller</button>
     </div>
 
     <!-- حاوية عرض المباريات والتحكم -->
     <div id="matchesContainer">
-        <div class="loading">🔄 Chargement du système...</div>
+        <div class="loading">🔄 Chargement du Match Center...</div>
     </div>
 
     <script>
         const database = {
             today: [
-                { id: 1, league: "España: La Liga", home: "Rayo Vallecano", away: "Espanyol", time: "18:00", homeGoals: 0, awayGoals: 0, prob: "Rayo: 48% | Nul: 30% | Espanyol: 22%", score1: "2 - 1", score2: "1 - 1", aiPre: "Analyse Pro: Domination territoriale attendue de Rayo." },
-                { id: 2, league: "España: La Liga", home: "Deportivo Alavés", away: "Valencia", time: "19:00", homeGoals: 0, awayGoals: 0, prob: "Alavés: 40% | Nul: 33% | Valencia: 27%", score1: "1 - 0", score2: "0 - 0", aiPre: "Analyse Pro: Match fermé, prudence tactique." },
-                { id: 3, league: "España: La Liga", home: "Elche", away: "Real Madrid", time: "20:30", homeGoals: 0, awayGoals: 0, prob: "Elche: 10% | Nul: 15% | Real: 75%", score1: "0 - 2", score2: "1 - 3", aiPre: "Analyse Pro: Supériorité technique évidente du Real." }
+                { id: 1, league: "España: La Liga", home: "Rayo Vallecano", away: "Espanyol", time: "18:00", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Coup d'envoi de la rencontre."], prob: "Rayo: 48% | Nul: 30% | Espanyol: 22%", score1: "2 - 1", score2: "1 - 1", aiPre: "Analyse Pro: Domination territoriale attendue de Rayo." },
+                { id: 2, league: "España: La Liga", home: "Deportivo Alavés", away: "Valencia", time: "19:00", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Début du match, observation tactique."], prob: "Alavés: 40% | Nul: 33% | Valencia: 27%", score1: "1 - 0", score2: "0 - 0", aiPre: "Analyse Pro: Match fermé, prudence tactique." },
+                { id: 3, league: "España: La Liga", home: "Elche", away: "Real Madrid", time: "20:30", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Les joueurs entrent sur la pelouse."], prob: "Elche: 10% | Nul: 15% | Real: 75%", score1: "0 - 2", score2: "1 - 3", aiPre: "Analyse Pro: Supériorité technique évidente du Real." }
             ],
             tomorrow: [
-                { id: 4, league: "UEFA Champions League", home: "Manchester City", away: "Inter Milan", time: "20:00", homeGoals: 0, awayGoals: 0, prob: "Man City: 58% | Nul: 25% | Inter: 17%", score1: "2 - 1", score2: "1 - 0", aiPre: "Analyse Pro: Bataille tactique au milieu, City favori." },
-                { id: 5, league: "UEFA Champions League", home: "Paris Saint-Germain", away: "Girona", time: "20:00", homeGoals: 0, awayGoals: 0, prob: "PSG: 65% | Nul: 22% | Girona: 13%", score1: "2 - 0", score2: "3 - 1", aiPre: "Analyse Pro: Vitesse sur les ailes pour percer Girona." }
+                { id: 4, league: "UEFA Champions League", home: "Manchester City", away: "Inter Milan", time: "20:00", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - En attente du coup d'envoi."], prob: "Man City: 58% | Nul: 25% | Inter: 17%", score1: "2 - 1", score2: "1 - 0", aiPre: "Analyse Pro: Bataille tactique au milieu, City favori." }
             ],
             week: [
-                { id: 6, league: "UEFA Champions League", home: "Atalanta", away: "Arsenal", time: "21:00", homeGoals: 0, awayGoals: 0, prob: "Atalanta: 30% | Nul: 30% | Arsenal: 40%", score1: "1 - 1", score2: "1 - 2", aiPre: "Analyse Semaine: Pression intense des Gunners à l'extérieur." }
+                { id: 5, league: "UEFA Champions League", home: "Atalanta", away: "Arsenal", time: "21:00", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Programmée pour cette semaine."], prob: "Atalanta: 30% | Nul: 30% | Arsenal: 40%", score1: "1 - 1", score2: "1 - 2", aiPre: "Analyse Semaine: Pression intense des Gunners à l'extérieur." }
             ],
             aller: [
-                { id: 7, league: "UEFA Champions League (Match Aller)", home: "Real Madrid", away: "Bayern Munich", time: "21:00", homeGoals: 0, awayGoals: 0, prob: "Real: 45% | Nul: 25% | Bayern: 30%", score1: "2 - 1", score2: "1 - 1", aiPre: "Analyse Aller: Choc des titans, prudence tactique exigée au match aller." },
-                { id: 8, league: "UEFA Champions League (Match Aller)", home: "FC Barcelona", away: "Manchester City", time: "21:00", homeGoals: 0, awayGoals: 0, prob: "Barca: 40% | Nul: 26% | City: 34%", score1: "2 - 2", score2: "1 - 2", aiPre: "Analyse Aller: Bataille de possession au milieu de terrain." },
-                { id: 9, league: "UEFA Champions League (Match Aller)", home: "AC Milan", away: "Paris Saint-Germain", time: "21:00", homeGoals: 0, awayGoals: 0, prob: "Milan: 35% | Nul: 30% | PSG: 35%", score1: "1 - 1", score2: "0 - 1", aiPre: "Analyse Aller: San Siro bouillant, équilibre parfait des forces." }
+                { id: 6, league: "UEFA Champions League (Match Aller)", home: "Real Madrid", away: "Bayern Munich", time: "21:00", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Phase aller des quarts de finale."], prob: "Real: 45% | Nul: 25% | Bayern: 30%", score1: "2 - 1", score2: "1 - 1", aiPre: "Analyse Aller: Choc des titans, prudence tactique exigée." }
             ]
         };
 
@@ -162,14 +175,27 @@
             renderView();
         }
 
-        function updateScore(id, type) {
+        function triggerAction(id, type) {
             const matches = database[activeTab];
             const match = matches.find(m => m.id === id);
             if(match) {
-                if(type === 'home+') match.homeGoals++;
-                if(type === 'home-' && match.homeGoals > 0) match.homeGoals--;
-                if(type === 'away+') match.awayGoals++;
-                if(type === 'away-' && match.awayGoals > 0) match.awayGoals--;
+                const randomMinute = Math.floor(Math.random() * 85) + 5;
+                if(type === 'home+') {
+                    match.homeGoals++;
+                    match.timeline.unshift(`⚽ <strong>But pour ${match.home} !</strong> (${randomMinute}')`);
+                }
+                if(type === 'home-' && match.homeGoals > 0) {
+                    match.homeGoals--;
+                    match.timeline.unshift(`❌ Annulation d'un but pour ${match.home}`);
+                }
+                if(type === 'away+') {
+                    match.awayGoals++;
+                    match.timeline.unshift(`⚽ <strong>But pour ${match.away} !</strong> (${randomMinute}')`);
+                }
+                if(type === 'away-' && match.awayGoals > 0) {
+                    match.awayGoals--;
+                    match.timeline.unshift(`❌ Annulation d'un but pour ${match.away}`);
+                }
                 renderView();
             }
         }
@@ -177,14 +203,16 @@
         function renderView() {
             const container = document.getElementById('matchesContainer');
             const matches = database[activeTab];
-            let titleText = "Matchs du Jour";
-            if(activeTab === 'tomorrow') titleText = "Matchs de Demain";
-            if(activeTab === 'week') titleText = "Planning de la Semaine";
-            if(activeTab === 'aller') titleText = "Matchs Aller - Mois Prochain (Phases Clés)";
+            let titleText = "Match Center - Aujourd'hui";
+            if(activeTab === 'tomorrow') titleText = "Match Center - Demain";
+            if(activeTab === 'week') titleText = "Match Center - Semaine";
+            if(activeTab === 'aller') titleText = "Match Center - Matchs Aller (Oct)";
 
             let html = `<div style="padding: 8px 15px; font-size: 11px; color: #166534; text-align: center; font-weight: bold; background: #dcfce7; margin-bottom: 10px; border-radius: 6px;">⚡ ${titleText} (${matches.length} matchs)</div>`;
 
             matches.forEach((m) => {
+                let timelineHtml = m.timeline.map(ev => `<div class="timeline-event">${ev}</div>`).join('');
+                
                 html += `
                     <div class="match-card">
                         <div style="font-size: 10px; color: #0284c7; margin-bottom: 4px; font-weight: bold;">🏆 ${m.league}</div>
@@ -194,12 +222,19 @@
                         </div>
                         <div style="font-size: 11px; color: #64748b; margin-bottom: 6px;">⏰ ${m.time}</div>
                         
+                        <!-- لوحة التحكم الحي والتسجيل الفوري -->
                         <div class="live-control-panel">
                             <span style="font-size: 10px; font-weight: bold; color: #334155;">Tracker:</span>
-                            <button class="control-btn btn-goal-home" onclick="updateScore(${m.id}, 'home+')">⚽ (${m.home})</button>
-                            <button class="control-btn btn-goal-home" onclick="updateScore(${m.id}, 'home-')">-1</button>
-                            <button class="control-btn btn-goal-away" onclick="updateScore(${m.id}, 'away+')">⚽ (${m.away})</button>
-                            <button class="control-btn btn-goal-away" onclick="updateScore(${m.id}, 'away-')">-1</button>
+                            <button class="control-btn btn-goal-home" onclick="triggerAction(${m.id}, 'home+')">⚽ (${m.home})</button>
+                            <button class="control-btn btn-goal-home" onclick="triggerAction(${m.id}, 'home-')">-1</button>
+                            <button class="control-btn btn-goal-away" onclick="triggerAction(${m.id}, 'away+')">⚽ (${m.away})</button>
+                            <button class="control-btn btn-goal-away" onclick="triggerAction(${m.id}, 'away-')">-1</button>
+                        </div>
+
+                        <!-- الشريط الزمني الحي للأحداث -->
+                        <div class="timeline-box">
+                            <div style="font-weight: bold; font-size: 10px; color: #0284c7; margin-bottom: 3px;">📜 Fil d'actualité en direct :</div>
+                            ${timelineHtml}
                         </div>
 
                         <div class="ai-box">
