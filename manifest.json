@@ -1,7 +1,7 @@
 {
   "name": "KELLA Analytics Pro",
   "short_name": "KELLA Analytics",
-  "start_url": "/kella-analytics/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#2563eb",
