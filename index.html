@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLA Analytics Pro - Smart Notifications Engine</title>
+    <title>KELLA Analytics Pro - Match Center Pro</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -29,11 +29,11 @@
             flex-wrap: wrap;
         }
         .date-btn {
-            padding: 5px 10px;
+            padding: 6px 12px;
             background: #e2e8f0;
             border: none;
             border-radius: 8px;
-            font-size: 10px;
+            font-size: 11px;
             font-weight: bold;
             cursor: pointer;
         }
@@ -168,18 +168,23 @@
     <script>
         const database = {
             today: [
-                { id: 1, league: "España: La Liga", home: "Rayo Vallecano", away: "Espanyol", time: "18:00", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Coup d'envoi de la rencontre."], prob: "Rayo: 48% | Nul: 30% | Espanyol: 22%", score1: "2 - 1", score2: "1 - 1", aiPre: "Analyse Pro: Domination territoriale attendue de Rayo." },
-                { id: 2, league: "España: La Liga", home: "Deportivo Alavés", away: "Valencia", time: "19:00", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Début du match, observation tactique."], prob: "Alavés: 40% | Nul: 33% | Valencia: 27%", score1: "1 - 0", score2: "0 - 0", aiPre: "Analyse Pro: Match fermé, prudence tactique." },
-                { id: 3, league: "España: La Liga", home: "Elche", away: "Real Madrid", time: "20:30", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Les joueurs entrent sur la pelouse."], prob: "Elche: 10% | Nul: 15% | Real: 75%", score1: "0 - 2", score2: "1 - 3", aiPre: "Analyse Pro: Supériorité technique évidente du Real." }
+                { id: 1, league: "UEFA Champions League", home: "AC Milan", away: "Liverpool", time: "18:45", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Coup d'envoi imminent à San Siro."], prob: "Milan: 35% | Nul: 30% | Liverpool: 35%", score1: "1 - 1", score2: "2 - 2", aiPre: "Analyse Pro: Choc classique, intensité maximale au milieu." },
+                { id: 2, league: "UEFA Champions League", home: "Young Boys", away: "Aston Villa", time: "18:45", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Début de la rencontre en Suisse."], prob: "Young Boys: 30% | Nul: 28% | Villa: 42%", score1: "1 - 2", score2: "0 - 1", aiPre: "Analyse Pro: Avantage technique pour les Villans." },
+                { id: 3, league: "UEFA Champions League", home: "Real Madrid", away: "Stuttgart", time: "21:00", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Le Real entre sur sa pelouse fétiche."], prob: "Real: 70% | Nul: 20% | Stuttgart: 10%", score1: "3 - 1", score2: "2 - 0", aiPre: "Analyse Pro: Supériorité offensive manifeste du Real." },
+                { id: 4, league: "UEFA Champions League", home: "Bayern Munich", away: "Dinamo Zagreb", time: "21:00", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - En attente du coup d'envoi en Bavière."], prob: "Bayern: 75% | Nul: 15% | Zagreb: 10%", score1: "4 - 1", score2: "3-0", aiPre: "Analyse Pro: Pression lourde et attaque placée du Bayern." },
+                { id: 5, league: "UEFA Champions League", home: "Sporting CP", away: "Lille", time: "21:00", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Début du match au Portugal."], prob: "Sporting: 50% | Nul: 28% | Lille: 22%", score1: "2 - 0", score2: "1 - 1", aiPre: "Analyse Pro: Équilibre tactique, Sporting favori à domicile." },
+                { id: 6, league: "UEFA Champions League", home: "Juventus", away: "PSV Eindhoven", time: "21:00", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Choc stratégique à Turin."], prob: "Juventus: 55% | Nul: 25% | PSV: 20%", score1: "2 - 1", score2: "1 - 0", aiPre: "Analyse Pro: Solidité défensive turinoise attendue." }
             ],
             tomorrow: [
-                { id: 4, league: "UEFA Champions League", home: "Manchester City", away: "Inter Milan", time: "20:00", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - En attente du coup d'envoi."], prob: "Man City: 58% | Nul: 25% | Inter: 17%", score1: "2 - 1", score2: "1 - 0", aiPre: "Analyse Pro: Bataille tactique au milieu, City favori." }
+                { id: 7, league: "UEFA Champions League", home: "Bologna", away: "Shakhtar Donetsk", time: "18:45", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - En attente de demain."], prob: "Bologna: 45% | Nul: 30% | Shakhtar: 25%", score1: "1 - 0", score2: "2 - 1", aiPre: "Analyse Pro: Bologna vise les trois points à la maison." },
+                { id: 8, league: "UEFA Champions League", home: "Manchester City", away: "Inter Milan", time: "21:00", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Choc monumental en perspective."], prob: "Man City: 58% | Nul: 25% | Inter: 17%", score1: "2 - 1", score2: "1 - 0", aiPre: "Analyse Pro: Bataille tactique de haut vol." },
+                { id: 9, league: "UEFA Champions League", home: "Paris Saint-Germain", away: "Girona", time: "21:00", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Le PSG entre en lice."], prob: "PSG: 65% | Nul: 20% | Girona: 15%", score1: "3 - 1", score2: "2 - 1", aiPre: "Analyse Pro: Possession et vitesse parisiennes." }
             ],
             week: [
-                { id: 5, league: "UEFA Champions League", home: "Atalanta", away: "Arsenal", time: "21:00", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Programmée pour cette semaine."], prob: "Atalanta: 30% | Nul: 30% | Arsenal: 40%", score1: "1 - 1", score2: "1 - 2", aiPre: "Analyse Semaine: Pression intense des Gunners à l'extérieur." }
+                { id: 10, league: "UEFA Champions League", home: "Atalanta", away: "Arsenal", time: "21:00", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Programmée pour cette semaine."], prob: "Atalanta: 30% | Nul: 30% | Arsenal: 40%", score1: "1 - 1", score2: "1 - 2", aiPre: "Analyse Semaine: Pression intense des Gunners." }
             ],
             aller: [
-                { id: 6, league: "UEFA Champions League (Match Aller)", home: "Real Madrid", away: "Bayern Munich", time: "21:00", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Phase aller des quarts de finale."], prob: "Real: 45% | Nul: 25% | Bayern: 30%", score1: "2 - 1", score2: "1 - 1", aiPre: "Analyse Aller: Choc des titans, prudence tactique exigée." }
+                { id: 11, league: "UEFA Champions League (Match Aller)", home: "Real Madrid", away: "Bayern Munich", time: "21:00", homeGoals: 0, awayGoals: 0, timeline: ["⏱️ 0' - Phase aller des grands rendez-vous."], prob: "Real: 45% | Nul: 25% | Bayern: 30%", score1: "2 - 1", score2: "1 - 1", aiPre: "Analyse Aller: Choc des titans." }
             ]
         };
 
@@ -187,15 +192,15 @@
 
         function requestNotificationPermission() {
             if (!("Notification" in window)) {
-                alert("Ce navigateur ne supporte pas les notifications desktop/mobile.");
+                alert("Ce navigateur ne supporte pas les notifications.");
                 return;
             }
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
                     document.getElementById('notifBar').style.background = "#dcfce7";
                     document.getElementById('notifBar').style.color = "#166534";
-                    document.getElementById('notifBar').innerHTML = "✅ Notifications activées avec succès ! Vous recevrez les alertes en direct.";
-                    new Notification("KELLA Analytics Pro", { body: "Système d'alertes en direct activé avec succès !" });
+                    document.getElementById('notifBar').innerHTML = "✅ Notifications activées avec succès !";
+                    new Notification("KELLA Analytics Pro", { body: "Système d'alertes en direct activé !" });
                 } else {
                     alert("Permission refusée pour les notifications.");
                 }
@@ -236,7 +241,6 @@
                     match.timeline.unshift(`❌ Annulation d'un but pour ${match.away}`);
                 }
 
-                // إرسال تنبيه فوري للمتصفح إذا تم السماح بذلك
                 if (Notification.permission === "granted") {
                     new Notification(`🚨 ${match.home} vs ${match.away}`, { body: notifText });
                 }
@@ -251,7 +255,7 @@
             let titleText = "Match Center - Aujourd'hui";
             if(activeTab === 'tomorrow') titleText = "Match Center - Demain";
             if(activeTab === 'week') titleText = "Match Center - Semaine";
-            if(activeTab === 'aller') titleText = "Match Center - Matchs Aller (Oct)";
+            if(activeTab === 'aller') titleText = "Match Center - Matchs Aller";
 
             let html = `<div style="padding: 8px 15px; font-size: 11px; color: #166534; text-align: center; font-weight: bold; background: #dcfce7; margin-bottom: 10px; border-radius: 6px;">⚡ ${titleText} (${matches.length} matchs)</div>`;
 
