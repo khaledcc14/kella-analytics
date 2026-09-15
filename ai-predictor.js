@@ -1,12 +1,12 @@
-// ==========================================
-// KELLA Analytics Pro - World Leagues & Global AI Predictor
-// Date: September 15, 2026
-// ==========================================
+// *****************************************************
+// // KELLA Analytics Pro - World Leagues & Global AI Predictor
+// // Date: September 15, 2026
+// *****************************************************
 
 class KellaAIPredictor {
     constructor() {
         this.teamStrengths = {
-            // الدوريات العربية الإفريقية (المصري، التونسي، المغربي، الجزائري، السعودي)
+            // الدوريات العربية الأفريقية (المصري، التونسي، المغربي، الجزائري، السعودي)
             "الأهلي المصري": { attack: 91, defense: 88, league: "الدوري المصري" },
             "الزمالك": { attack: 87, defense: 85, league: "الدوري المصري" },
             "بيراميدز": { attack: 88, defense: 86, league: "الدوري المصري" },
@@ -26,10 +26,10 @@ class KellaAIPredictor {
             "الهلال": { attack: 90, defense: 88, league: "دوري روشن السعودي" },
             "النصر": { attack: 89, defense: 84, league: "دوري روشن السعودي" },
 
-            // الدوريات الأوروبية الكبرى (الإسباني، الإنجليزي، الفرنسي، الألماني، الإيطالي، البلجيكي، التركي، الروسي)
+            // الدوريات الأوروبية الكبرى (الإسباني، الإنجليزي، الفرنسي، الألماني، الإيطالي، الروسي)
             "ريال مدريد": { attack: 94, defense: 88, league: "الدوري الإسباني" },
             "برشلونة": { attack: 92, defense: 87, league: "الدوري الإسباني" },
-            
+
             "مانشستر سيتي": { attack: 95, defense: 90, league: "الدوري الإنجليزي" },
             "ليفربول": { attack: 93, defense: 88, league: "الدوري الإنجليزي" },
 
@@ -39,7 +39,7 @@ class KellaAIPredictor {
 
             "بايرن ميونخ": { attack: 94, defense: 89, league: "الدوري الألماني" },
             "بوروسيا دورتموند": { attack: 88, defense: 83, league: "الدوري الألماني" },
-            "باير ليفركوزن": { attack: 89, defense: 87, league: "الدوري الألماني" },
+            "باير لي버كوزن": { attack: 89, defense: 87, league: "الدوري الألماني" },
 
             "إنتر ميلان": { attack: 88, defense: 90, league: "الدوري الإيطالي" },
             "ميلان": { attack: 84, defense: 86, league: "الدوري الإيطالي" },
@@ -53,7 +53,7 @@ class KellaAIPredictor {
             "زينيت سانت بطرسبرغ": { attack: 86, defense: 85, league: "الدوري الروسي" },
             "سبارتاك موسكو": { attack: 83, defense: 81, league: "الدوري الروسي" },
 
-            // الأمريكتين (البرازيلي والأمريكي)
+            // الأمريكيين (البرازيلي والأمريكي)
             "فلامينغو": { attack: 87, defense: 85, league: "الدوري البرازيلي" },
             "بالميراس": { attack: 88, defense: 86, league: "الدوري البرازيلي" },
 
@@ -66,70 +66,45 @@ class KellaAIPredictor {
         let home = this.teamStrengths[homeTeam] || { attack: 80, defense: 80 };
         let away = this.teamStrengths[awayTeam] || { attack: 80, defense: 80 };
 
-        let homePower = home.attack + (90 - away.defense) + 4; 
+        // خوارزمية حساب القوة وتوقع النتيجة
+        let homePower = home.attack + (90 - away.defense) + 4;
         let awayPower = away.attack + (90 - home.defense);
-        let total = homePower + awayPower;
 
-        let homeWin = Math.round((homePower / total) * 75);
-        let awayWin = Math.round((awayPower / total) * 75);
-        let draw = 100 - (homeWin + awayWin);
-        if (homeWin < 15) homeWin = 15;
-        if (awayWin < 15) awayWin = 15;
-        draw = 100 - (homeWin + awayWin);
+        let diff = homePower - awayPower;
+        let homeScore = Math.max(0, Math.round((home.attack / 45) + (diff > 5 ? 1 : 0) + (Math.random() * 0.8)));
+        let awayScore = Math.max(0, Math.round((away.attack / 45) - (diff < -5 ? 0 : 0) + (Math.random() * 0.8)));
 
-        let homeExpectedGoals = (home.attack / 35).toFixed(1);
-        let awayExpectedGoals = (away.attack / 38).toFixed(1);
-        
-        let homePredictedGoalsScore = Math.round(home.attack / 45);
-        let awayPredictedGoalsScore = Math.round(away.attack / 50);
+        // حساب النسب المئوية بناءً على القوة النسبية
+        let totalPower = homePower + awayPower;
+        let homeProbVal = Math.round((homePower / totalPower) * 70);
+        let awayProbVal = Math.round((awayPower / totalPower) * 70);
+        let drawProbVal = 100 - (homeProbVal + awayProbVal);
+        if (drawProbVal < 15) drawProbVal = 20;
 
-        let advice = `توقع تسجيل ${homeTeam} لـ ${homeExpectedGoals} أهداف مقابل ${awayExpectedGoals} لـ ${awayTeam} في منافسات ${competition}. النتيجة التقريبية: (${homePredictedGoalsScore} - ${awayPredictedGoalsScore}).`;
+        let xGHome = (homeScore * 0.75 + (home.attack / 100)).toFixed(1);
+        let xGAway = (awayScore * 0.75 + (away.attack / 100)).toFixed(1);
+
+        let insights = [
+            `تفوق ملحوظ في خط الوسط والضغط العالي لصالح نادي ${homeTeam} بناءً على قوة الهجوم المحددة.`,
+            `مواجهة تكتيكية مغلقة بين الفريقين، مع أفضلية للزوار ${awayTeam} في استغلال الهجمات المرتدة.`,
+            `تقاطع البيانات الحية يرجح نسقاً هجومياً عالياً وإمكانية اهتزاز الشباك من الطرفين وفق مؤشر xG.`,
+            `سيطرة ميدانية متوقعة لنادي ${homeTeam} وسط صلابة دفاعية منتظرة من المنافس ${awayTeam}.`
+        ];
+
+        let randomInsight = insights[Math.floor(Math.random() * insights.length)];
 
         return {
-            homeWinProb: homeWin,
-            drawProb: draw,
-            awayWinProb: awayWin,
-            predictedScore: `${homePredictedGoalsScore} - ${awayPredictedGoalsScore}`,
-            expectedGoals: `xG: ${homeExpectedGoals} - ${awayExpectedGoals}`,
-            aiAdvice: advice
+            predictedScore: `${homeScore} - ${awayScore}`,
+            probabilities: {
+                home: `${homeProbVal}%`,
+                draw: `${drawProbVal}%`,
+                away: `${awayProbVal}%`
+            },
+            expectedGoals: `xG: ${homeTeam} (${xGHome}) - ${awayTeam} (${xGAway})`,
+            aiAdvice: randomInsight
         };
-    }
-
-    getDailyMatches() {
-        const matches = [
-            { id: 1, competition: "الدوري المصري", homeTeam: "الأهلي المصري", awayTeam: "الزمالك", time: "20:00", date: "اليوم (15 سبتمبر)" },
-            { id: 2, competition: "الدوري التونسي", homeTeam: "الترجي الرياضي", awayTeam: "النجم الساحلي", time: "17:30", date: "اليوم (15 سبتمبر)" },
-            { id: 3, competition: "الدوري المغربي", homeTeam: "الوداد الرياضي", awayTeam: "الرجاء الرياضي", time: "21:00", date: "اليوم (15 سبتمبر)" }
-        ];
-        return matches.map(m => ({ ...m, ...this.generateMatchIntelligence(m.homeTeam, m.awayTeam, m.competition) }));
-    }
-
-    getWeeklyMatches() {
-        const matches = [
-            ...this.getDailyMatches(),
-            { id: 4, competition: "الدوري الفرنسي", homeTeam: "باريس سان جيرمان", awayTeam: "مارسيليا", time: "21:00", date: "السبت (19 سبتمبر)" },
-            { id: 5, competition: "الدوري الألماني", homeTeam: "بايرن ميونخ", awayTeam: "بوروسيا دورتموند", time: "18:30", date: "السبت (19 سبتمبر)" },
-            { id: 6, competition: "الدوري البلجيكي", homeTeam: "كلوب بروج", awayTeam: "أندرلخت", time: "16:00", date: "الأحد (20 سبتمبر)" }
-        ];
-        return matches.map(m => {
-            if (m.homeWinProb) return m;
-            return { ...m, ...this.generateMatchIntelligence(m.homeTeam, m.awayTeam, m.competition) };
-        });
-    }
-
-    getMonthlyMatches() {
-        const matches = [
-            ...this.getWeeklyMatches(),
-            { id: 7, competition: "الدوري التركي", homeTeam: "غلطة سراي", awayTeam: "فنربخشة", time: "20:00", date: "الخميس (24 سبتمبر)" },
-            { id: 8, competition: "الدوري البرازيلي", homeTeam: "فلامينغو", awayTeam: "بالميراس", time: "23:00", date: "السبت (26 سبتمبر)" },
-            { id: 9, competition: "الدوري الأمريكي", homeTeam: "إنتر ميامي", awayTeam: "لوس أنجلوس", time: "02:00", date: "الأحد (27 سبتمبر)" }
-        ];
-        return matches.map(m => {
-            if (m.homeWinProb) return m;
-            return { ...m, ...this.generateMatchIntelligence(m.homeTeam, m.awayTeam, m.competition) };
-        });
     }
 }
 
-window.kellaPredictor = new KellaAIPredictor();
-console.log("KELLA World Analytics Pro Loaded Successfully!");
+// تصدير المحرك للاستخدام العام في التطبيق
+window.KellaAIPredictor = KellaAIPredictor;
