@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLA Analytics Pro</title>
+    <title>KELLA Analytics Pro - AI Engine</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -55,16 +55,29 @@
             font-size: 14px;
             margin: 8px 0;
         }
-        .match-info {
-            font-size: 12px;
-            color: #475569;
-            background: #f1f5f9;
+        /* تصميم صندوق التوقعات الذكية والـ AI */
+        .ai-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            color: #1e3a8a;
+            margin-top: 6px;
+        }
+        .live-prediction {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
             padding: 6px;
             border-radius: 6px;
-        }
-        .odds-badge {
             font-size: 11px;
             color: #166534;
+            margin-top: 6px;
+            font-weight: bold;
+        }
+        .odds-badge {
+            font-size: 10px;
+            color: #64748b;
             margin-top: 5px;
             display: block;
         }
@@ -74,36 +87,34 @@
 
     <header>
         <h1>KELLA Analytics Pro ⚽</h1>
-        <p style="font-size: 12px; color: #64748b;">Analyses et Programme des Matchs</p>
+        <p style="font-size: 12px; color: #64748b;">Moteur d'Intelligence Artificielle & Analyses Live</p>
     </header>
 
-    <!-- أزرار اختيار الأيام (اليوم وغدًا) -->
+    <!-- أزرار التبديل بين الأيام -->
     <div class="date-selector">
         <button class="date-btn active" onclick="switchDay('today', this)">📅 Matchs du Jour (15 Sep)</button>
         <button class="date-btn" onclick="switchDay('tomorrow', this)">📆 Matchs de Demain (16 Sep)</button>
     </div>
 
-    <!-- حاوية عرض المباريات -->
+    <!-- حاوية عرض المباريات والتحليلات -->
     <div id="matchesContainer"></div>
 
     <script>
-        // جدول مباريات اليوم (15 سبتمبر)
         const todayMatches = [
-            { league: "España: La Liga", home: "Rayo Vallecano", away: "Espanyol", time: "18:00", odds: "1: +136 | X: +234 | 2: +203", ai: "Analyse AI: Équilibre relatif avec un léger avantage à domicile." },
-            { league: "España: La Liga", home: "Deportivo Alavés", away: "Valencia", time: "19:00", odds: "1: -144 | X: +256 | 2: +445", ai: "Analyse AI: Alavés cherche à exploiter le facteur terrain." },
-            { league: "España: La Liga", home: "Elche", away: "Real Madrid", time: "20:30", odds: "1: +1100 | X: +640 | 2: -513", ai: "Analyse AI: Large favoritisme pour le Real Madrid à l'extérieur." },
-            { league: "AFC Champions League Elite", home: "Al Ain", away: "Al Nassr", time: "17:00", odds: "1: +286 | X: +300 | 2: -119", ai: "Analyse AI: Choc asiatique intense et offensif." },
-            { league: "AFC Champions League Elite", home: "Al-Hilal Riyad", away: "Al-Gharafa", time: "19:15", odds: "1: -2857 | X: +1350 | 2: +4600", ai: "Analyse AI: Al-Hilal grand favori pour s'imposer nettement." },
-            { league: "Pays-Bas: Eredivisie", home: "Ajax", away: "Willem II", time: "19:00", odds: "1: -1250 | X: +1100 | 2: +1900", ai: "Analyse AI: Ajax possède un avantage net pour la victoire." }
+            { league: "España: La Liga", home: "Rayo Vallecano", away: "Espanyol", time: "18:00", prob: "Victoire Rayo: 48% | Nul: 30% | Espanyol: 22%", aiPre: "Analyse Avant-Match: Domination territoriale attendue de Rayo en première mi-temps.", aiLive: "Tendance Live: Fort risque de but sur coup de pied arrêté entre la 60e et la 75e minute." },
+            { league: "España: La Liga", home: "Deportivo Alavés", away: "Valencia", time: "19:00", prob: "Alavés: 40% | Nul: 33% | Valencia: 27%", aiPre: "Analyse Avant-Match: Match fermé, prudence tactique des deux coachs.", aiLive: "Tendance Live: Moins de 2.5 buts probables, match serré jusqu'au bout." },
+            { league: "España: La Liga", home: "Elche", away: "Real Madrid", time: "20:30", prob: "Elche: 10% | Nul: 15% | Real Madrid: 75%", aiPre: "Analyse Avant-Match: Supériorité technique évidente du Real Madrid.", aiLive: "Tendance Live: Le Real cherchera a faire la différence tôt pour gérer le rythme." },
+            { league: "AFC Champions League Elite", home: "Al Ain", away: "Al Nassr", time: "17:00", prob: "Al Ain: 35% | Nul: 28% | Al Nassr: 37%", aiPre: "Analyse Avant-Match: Duel offensif explosif, les deux équipes marquen (BTTS).", aiLive: "Tendance Live: Jeu ouvert, opportunités des deux côtés en seconde période." },
+            { league: "AFC Champions League Elite", home: "Al-Hilal Riyad", away: "Al-Gharafa", time: "19:15", prob: "Al-Hilal: 85% | Nul: 10% | Al-Gharafa: 5%", aiPre: "Analyse Avant-Match: Al-Hilal ultra-favori sur sa pelouse.", aiLive: "Tendance Live: Pression offensive continue d'Al-Hilal dès l'entame." },
+            { league: "Pays-Bas: Eredivisie", home: "Ajax", away: "Willem II", time: "19:00", prob: "Ajax: 80% | Nul: 14% | Willem II: 6%", aiPre: "Analyse Avant-Match: Ajax archi-favori pour imposer son style.", aiLive: "Tendance Live: Maîtrise totale du milieu de terrain par l'Ajax." }
         ];
 
-        // جدول مباريات الغد (16 سبتمبر - دوري أبطال أوروبا والبطولات الكبرى)
         const tomorrowMatches = [
-            { league: "UEFA Champions League", home: "Manchester City", away: "Inter Milan", time: "20:00", odds: "1: 1.55 | X: 4.20 | 2: 6.00", ai: "Analyse AI: Revanche de la finale, City favori à domicile." },
-            { league: "UEFA Champions League", home: "Paris Saint-Germain", away: "Girona", time: "20:00", odds: "1: 1.45 | X: 4.80 | 2: 6.50", ai: "Analyse AI: Le PSG vise une entame forte devant son public." },
-            { league: "UEFA Champions League", home: "Borussia Dortmund", away: "Club Brugge", time: "20:00", odds: "1: 1.95 | X: 3.60 | 2: 3.80", ai: "Analyse AI: Dortmund supérieur offensivement." },
-            { league: "UEFA Champions League", home: "Bologna", away: "Shakhtar Donetsk", time: "17:45", odds: "1: 1.90 | X: 3.40 | 2: 4.00", ai: "Analyse AI: Match ouvert et équilibré." },
-            { league: "UEFA Champions League", home: "Sparta Prague", away: "RB Salzburg", time: "17:45", odds: "1: 2.50 | X: 3.30 | 2: 2.80", ai: "Analyse AI: Tactique prudente des deux côtés." }
+            { league: "UEFA Champions League", home: "Manchester City", away: "Inter Milan", time: "20:00", prob: "Man City: 58% | Nul: 25% | Inter: 17%", aiPre: "Analyse Avant-Match: Bataille tactique au milieu, City favori tactiquement.", aiLive: "Tendance Live: Possession stérile potentielle de City, attention aux contres de l'Inter." },
+            { league: "UEFA Champions League", home: "Paris Saint-Germain", away: "Girona", time: "20:00", prob: "PSG: 65% | Nul: 22% | Girona: 13%", aiPre: "Analyse Avant-Match: Vitesse sur les ailes attendue pour percer le bloc de Girona.", aiLive: "Tendance Live: Le PSG cherchera à dicter le rythme et asphyxier l'adversaire." },
+            { league: "UEFA Champions League", home: "Borussia Dortmund", away: "Club Brugge", time: "20:00", prob: "Dortmund: 55% | Nul: 26% | Brugge: 19%", aiPre: "Analyse Avant-Match: Dortmund très fort offensivement à Signal Iduna Park.", aiLive: "Tendance Live: Match intense, haut __pressing__ en vue." },
+            { league: "UEFA Champions League", home: "Bologna", away: "Shakhtar Donetsk", time: "17:45", prob: "Bologna: 45% | Nul: 32% | Shakhtar: 23%", aiPre: "Analyse Avant-Match: Équilibre parfait, opportunités de part et d'autre.", aiLive: "Tendance Live: Bataille physique intense au milieu de terrain." },
+            { league: "UEFA Champions League", home: "Sparta Prague", away: "RB Salzburg", time: "17:45", prob: "Sparta: 38% | Nul: 30% | Salzburg: 32%", aiPre: "Analyse Avant-Match: Style direct et rapide des deux équipes.", aiLive: "Tendance Live: Probabilité élevée de buts en fin de match." }
         ];
 
         function switchDay(dayType, btnElement) {
@@ -112,33 +123,31 @@
 
             const container = document.getElementById('matchesContainer');
             const matches = dayType === 'today' ? todayMatches : tomorrowMatches;
-            const titleMsg = dayType === 'today' ? "Matchs du 15 Septembre 2026" : "Matchs de Demain (16 Septembre 2026)";
+            const titleMsg = dayType === 'today' ? "Analyses AI - Matchs du 15 Septembre" : "Analyses AI - Matchs de Demain (16 Septembre)";
 
-            let html = `<div style="padding: 8px 15px; font-size: 11px; color: #166534; text-align: center; font-weight: bold; background: #dcfce7; margin-bottom: 10px; border-radius: 6px;">✅ ${titleMsg} (${matches.length} matchs)</div>`;
+            let html = `<div style="padding: 8px 15px; font-size: 11px; color: #166534; text-align: center; font-weight: bold; background: #dcfce7; margin-bottom: 10px; border-radius: 6px;">🤖 ${titleMsg} (${matches.length} matchs analysés)</div>`;
 
-            if (matches.length === 0) {
-                html += `<div style="text-align:center; padding:20px; color:#64748b; font-size:13px;">Aucun match disponible.</div>`;
-            } else {
-                matches.forEach((m) => {
-                    html += `
-                        <div class="match-card">
-                            <div style="font-size: 10px; color: #0284c7; margin-bottom: 4px; font-weight: bold;">🏆 ${m.league}</div>
-                            <div class="match-teams">
-                                <span>${m.home} vs ${m.away}</span>
-                                <span style="color:#0f172a; font-size:12px;">⏰ ${m.time}</span>
-                            </div>
-                            <div class="match-info">
-                                💡 <strong>${m.ai}</strong>
-                            </div>
-                            <span class="odds-badge">📊 Cotes / Infos: ${m.odds}</span>
+            matches.forEach((m) => {
+                html += `
+                    <div class="match-card">
+                        <div style="font-size: 10px; color: #0284c7; margin-bottom: 4px; font-weight: bold;">🏆 ${m.league}</div>
+                        <div class="match-teams">
+                            <span>${m.home} vs ${m.away}</span>
+                            <span style="color:#0f172a; font-size:12px;">⏰ ${m.time}</span>
                         </div>
-                    `;
-                });
-            }
+                        <div class="ai-box">
+                            🧠 <strong>Prédiction AI Avant-Match:</strong> ${m.aiPre}<br>
+                            📊 <strong>Probabilités:</strong> ${m.prob}
+                        </div>
+                        <div class="live-prediction">
+                            ⚡ <strong>Tendance & Live Insights:</strong> ${m.aiLive}
+                        </div>
+                    </div>
+                `;
+            });
             container.innerHTML = html;
         }
 
-        // عرض مباريات اليوم افتراضياً عند فتح التطبيق
         window.onload = function() {
             switchDay('today', document.querySelector('.date-btn'));
         };
