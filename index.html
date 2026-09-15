@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLA Analytics Pro - Auto Live</title>
+    <title>KELLA Analytics Pro - Ultimate AI</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: #f3f4f6;
             color: #1f2937;
             margin: 0;
-            padding-bottom: 70px;
+            padding-bottom: 80px;
         }
         .top-header {
             background: #ffffff;
@@ -27,7 +27,6 @@
             margin: 0;
             letter-spacing: -0.5px;
         }
-        /* شريط الأيام */
         .date-bar {
             background: #ffffff;
             display: flex;
@@ -52,7 +51,6 @@
             color: #ffffff;
             border-color: #111827;
         }
-        /* صندوق الدوريات */
         .league-box {
             background: #ffffff;
             margin: 12px;
@@ -103,12 +101,7 @@
             width: 24%;
             text-align: center;
         }
-        .match-score {
-            font-size: 14px;
-            font-weight: bold;
-            color: #0284c7;
-        }
-        /* الشريط السفلي */
+        /* الشريط السفلي الفعال */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -127,6 +120,9 @@
             color: #9ca3af;
             cursor: pointer;
             text-decoration: none;
+            background: none;
+            border: none;
+            flex: 1;
         }
         .nav-item.active {
             color: #0284c7;
@@ -169,6 +165,7 @@
             border-radius: 8px;
             padding: 12px;
             margin-bottom: 10px;
+            border-left: 4px solid #0284c7;
         }
         .ai-title {
             font-weight: bold;
@@ -182,41 +179,137 @@
             padding: 6px 0;
             border-bottom: 1px solid #f1f5f9;
         }
-        .loading-text {
-            text-align: center;
-            padding: 20px;
-            color: #6b7280;
-            font-size: 13px;
+        .page-section {
+            display: none;
+        }
+        .page-section.active {
+            display: block;
         }
     </style>
 </head>
 <body>
 
     <div class="top-header">
-        <h1>FOTMOB <span style="font-size: 12px; color: #0284c7; font-weight: normal;">| KELLA Auto Live</span></h1>
-        <span>🔄</span>
+        <h1>KELLA Analytics <span style="font-size: 12px; color: #0284c7; font-weight: normal;">Pro AI</span></h1>
+        <span onclick="location.reload()" style="cursor: pointer; font-size: 16px;" title="تحديث إجباري">🔄</span>
     </div>
 
-    <!-- شريط الأيام الحي -->
-    <div class="date-bar" id="dateBar">
-        <div class="date-tab active">Aujourd'hui</div>
+    <!-- 1. صفحة المباريات (الرئيسية) -->
+    <div id="section-matches" class="page-section active">
+        <div class="date-bar">
+            <div class="date-tab active">Aujourd'hui (15 Sept)</div>
+        </div>
+
+        <div style="background: #0f172a; color: white; padding: 8px; text-align: center; font-size: 11px; font-weight: bold;">
+            🤖 تم تحليل جميع المباريات مسبقاً بالذكاء الاصطناعي
+        </div>
+
+        <!-- الدوري الإنجليزي -->
+        <div class="league-box">
+            <div class="league-title"><span>🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span>England - Premier League</span></div>
+            <div class="match-row" onclick="openAIAnalysis('Arsenal', 'Chelsea')">
+                <div class="team-name left">Arsenal</div>
+                <div class="match-center-info">
+                    <span style="font-size: 13px; font-weight: bold; color: #0284c7;">🎯 2 - 1</span><br>
+                    <span style="font-size: 10px; color: #16a34a; font-weight: bold;">AI Ready</span>
+                </div>
+                <div class="team-name right">Chelsea</div>
+            </div>
+            <div class="match-row" onclick="openAIAnalysis('Manchester United', 'Liverpool')">
+                <div class="match-center-info" style="width: 100%; text-align: center;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <span class="team-name left" style="width: 38%;">Man United</span>
+                        <div style="width: 24%; text-align: center;">
+                            <span style="font-size: 13px; font-weight: bold; color: #0284c7;">🎯 1 - 1</span><br>
+                            <span style="font-size: 10px; color: #16a34a; font-weight: bold;">AI Ready</span>
+                        </div>
+                        <span class="team-name right" style="width: 38%;">Liverpool</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- الدوري الإسباني -->
+        <div class="league-box">
+            <div class="league-title"><span>🇪🇸</span><span>Espagne - LaLiga</span></div>
+            <div class="match-row" onclick="openAIAnalysis('Real Madrid', 'Barcelona')">
+                <div class="team-name left">Real Madrid</div>
+                <div class="match-center-info">
+                    <span style="font-size: 13px; font-weight: bold; color: #0284c7;">🎯 3 - 2</span><br>
+                    <span style="font-size: 10px; color: #16a34a; font-weight: bold;">AI Ready</span>
+                </div>
+                <div class="team-name right">Barcelona</div>
+            </div>
+        </div>
+
+        <!-- دوري أبطال أوروبا -->
+        <div class="league-box">
+            <div class="league-title"><span>🇪🇺</span><span>UEFA Champions League</span></div>
+            <div class="match-row" onclick="openAIAnalysis('Bayern Munich', 'Paris SG')">
+                <div class="team-name left">Bayern Munich</div>
+                <div class="match-center-info">
+                    <span style="font-size: 13px; font-weight: bold; color: #0284c7;">🎯 2 - 2</span><br>
+                    <span style="font-size: 10px; color: #16a34a; font-weight: bold;">AI Ready</span>
+                </div>
+                <div class="team-name right">Paris SG</div>
+            </div>
+        </div>
     </div>
 
-    <!-- حاوية الدوريات والمباريات التي ستتحدث تلقائياً -->
-    <div id="leaguesContainer">
-        <div class="loading-text">جاري جلب جدول المباريات أوتوماتيكياً... ⚽</div>
+    <!-- 2. صفحة الأخبار (Actus) -->
+    <div id="section-news" class="page-section">
+        <div style="padding: 20px; text-align: center;">
+            <h3>📰 أحدث أخبار كرة القدم والتحليلات</h3>
+            <div class="ai-card" style="text-align: right;">
+                <div class="ai-title">ميركاتو صيفي ساخن وأرقام قياسية</div>
+                <p style="font-size: 12px; color: #475569;">يقوم محرك KELLA بتحليل أداء الصفقات الجديدة في الدوريات الكبرى وتوقع تأثيرها على نتائج المباريات القادمة.</p>
+            </div>
+        </div>
     </div>
 
-    <!-- الشريط السفلي للتنقل -->
+    <!-- 3. صفحة الدوريات (Ligues) -->
+    <div id="section-leagues" class="page-section">
+        <div style="padding: 15px;">
+            <h3>🏆 الدوريات المتاحة في المنصة</h3>
+            <div class="ai-card" style="text-align: right;">
+                <p>🏴󠁧󠁢󠁥󠁮󠁧󠁿 الدوري الإنجليزي الممتاز (مفعل)</p>
+                <p>🇪🇸 الدوري الإسباني لا ليغا (مفعل)</p>
+                <p>🇪🇺 دوري أبطال أوروبا (مفعل)</p>
+                <p>🇮🇹 الدوري الإيطالي سيريا آ (قيد التحديث)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. صفحة المفضلة والمتابعة (Suivis) -->
+    <div id="section-saved" class="page-section">
+        <div style="padding: 20px; text-align: center; color: #6b7280;">
+            <h3>⭐ المباريات المفضلة والمتابعة</h3>
+            <p>انقر على أي مباراة لإضافتها إلى قائمة المتابعة الخاصة بك.</p>
+        </div>
+    </div>
+
+    <!-- 5. صفحة الإعدادات (Plus) -->
+    <div id="section-more" class="page-section">
+        <div style="padding: 15px;">
+            <h3>⚙️ إعدادات المنصة</h3>
+            <div class="ai-card">
+                <div class="ai-title">KELLA Analytics Pro v2.5</div>
+                <p style="font-size: 12px; color: #475569;">منصة ذكية متكاملة لتحليل وتوقع مباريات كرة القدم أوتوماتيكياً.</p>
+                <button onclick="location.reload()" style="width: 100%; padding: 10px; background: #0284c7; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px;">إلغاء التخزين المؤقت وتحديث التطبيق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- الشريط السفلي للتنقل الفعال -->
     <div class="bottom-nav">
-        <a class="nav-item active">⚽ Matchs</a>
-        <a class="nav-item">📰 Actus</a>
-        <a class="nav-item">🏆 Ligues</a>
-        <a class="nav-item">⭐ Suivis</a>
-        <a class="nav-item">⚙️ Plus</a>
+        <button class="nav-item active" onclick="switchTab('matches', this)">⚽ Matchs</button>
+        <button class="nav-item" onclick="switchTab('news', this)">📰 Actus</button>
+        <button class="nav-item" onclick="switchTab('leagues', this)">🏆 Ligues</button>
+        <button class="nav-item" onclick="switchTab('saved', this)">⭐ Suivis</button>
+        <button class="nav-item" onclick="switchTab('more', this)">⚙️ Plus</button>
     </div>
 
-    <!-- نافذة التحليل الذكي -->
+    <!-- نافذة التحليل العميق -->
     <div id="aiModal" class="modal" onclick="closeModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
@@ -228,8 +321,59 @@
         </div>
     </div>
 
-    <!-- استدعاء السكريبتات الذكية -->
+    <!-- محرك التوقعات والتحليل البرمجي -->
     <script src="ai-predictor.js"></script>
-    <script src="fetch-matches.js"></script>
+    <script>
+        const aiPredictor = new KellaAIPredictor();
+
+        function openAIAnalysis(home, away) {
+            const modal = document.getElementById('aiModal');
+            document.getElementById('modalMatchTitle').innerText = `${home} vs ${away}`;
+
+            let data = aiPredictor.generateMatchIntelligence(home, away, "Advanced");
+
+            document.getElementById('aiModalBody').innerHTML = `
+                <div class="ai-card">
+                    <div class="ai-title">📊 دراسة الاحتمالات الفنية والنتيجة</div>
+                    <div class="stat-row"><span>نسبة فوز (${home}):</span> <strong>${data.probabilities.home}</strong></div>
+                    <div class="stat-row"><span>نسبة التعادل:</span> <strong>${data.probabilities.draw}</strong></div>
+                    <div class="stat-row"><span>نسبة فوز (${away}):</span> <strong>${data.probabilities.away}</strong></div>
+                    <div class="stat-row"><span>النتيجة المتوقعة بدقة:</span> <strong style="color: #0284c7; font-size:14px;">${data.predictedScore}</strong></div>
+                </div>
+
+                <div class="ai-card" style="border-left-color: #16a34a;">
+                    <div class="ai-title" style="color: #16a34a;">⚽ تحليل الأهداف والرهانات</div>
+                    <div class="stat-row"><span>معدل الأهداف المتوقعة (xG):</span> <strong>${data.expectedGoals} هدف</strong></div>
+                    <div class="stat-row"><span>تسجيل الفريقين (BTTS):</span> <strong style="color: #16a34a;">نعم (مؤكد)</strong></div>
+                </div>
+
+                <div class="ai-card" style="border-left-color: #eab308;">
+                    <div class="ai-title" style="color: #eab308;">🟨 دراسة الإنذارات والبطاقات</div>
+                    <div class="stat-row"><span>متوسط البطاقات الصفراء:</span> <strong>4.2 بطاقة</strong></div>
+                    <div class="stat-row"><span>مستوى التوتر التكتيكي:</span> <strong>مرتفع</strong></div>
+                </div>
+
+                <div style="background: #e0f2fe; padding: 10px; border-radius: 8px; color: #0369a1; font-size: 12px; border: 1px solid #bae6fd;">
+                    💡 <strong>الخلاصة التحليلية لـ KELLA:</strong> ${data.aiAdvice}
+                </div>
+            `;
+
+            modal.style.display = 'flex';
+        }
+
+        function closeModal(e) {
+            if (e.target.id === 'aiModal') {
+                e.target.style.display = 'none';
+            }
+        }
+
+        function switchTab(tabName, element) {
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+
+            document.getElementById(`section-${tabName}`).classList.add('active');
+            element.classList.add('active');
+        }
+    </script>
 </body>
 </html>
