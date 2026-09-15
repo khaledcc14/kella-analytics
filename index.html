@@ -9,171 +9,346 @@
             --primary: #0f172a;
             --accent: #2563eb;
             --success: #16a34a;
+            --warning: #d97706;
             --bg: #f8fafc;
             --card-bg: #ffffff;
             --text: #1e293b;
             --text-light: #64748b;
+            --border: #e2e8f0;
         }
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+        [data-theme="dark"] {
+            --primary: #f8fafc;
+            --accent: #3b82f6;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-light: #94a3b8;
+            --border: #334155;
         }
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            padding-bottom: 70px;
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; transition: background 0.3s, color 0.3s; }
+        body { background-color: var(--bg); color: var(--text); padding-bottom: 75px; }
+        
+        header { 
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); 
+            color: white; 
+            padding: 20px 16px; 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); 
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-        header {
-            background: var(--primary);
-            color: white;
-            padding: 1rem;
-            text-align: center;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-        header h1 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-        header p {
-            font-size: 0.8rem;
-            color: #94a3b8;
-            margin-top: 0.2rem;
-        }
-        .container {
-            padding: 1rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .card {
-            background: var(--card-bg);
+
+        .app-logo {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
             border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            border: 1px solid #e2e8f0;
-        }
-        .card-title {
-            font-size: 0.95rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            color: var(--accent);
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.15);
         }
-        .match-item {
+
+        .app-logo svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .header-text h1 { font-size: 1.1rem; font-weight: 800; text-align: right; }
+        .header-text p { font-size: 0.75rem; color: #94a3b8; text-align: right; }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.1rem;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #f1f5f9;
+            justify-content: center;
         }
-        .match-item:last-child {
-            border-bottom: none;
+
+        .container { padding: 14px; max-width: 600px; margin: 0 auto; }
+        
+        .section-title { 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            margin: 16px 0 10px 0; 
+            color: var(--text); 
+            display: flex; 
+            justify-content: flex-start; 
+            align-items: center; 
+            gap: 12px;
         }
-        .team {
-            font-weight: 500;
-            font-size: 0.9rem;
-            flex: 1;
-            text-align: center;
+        
+        .card { background: var(--card-bg); border-radius: 14px; padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid var(--border); }
+        
+        .match-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .badge { background: #dcfce7; color: var(--success); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
+        .badge-live { background: #fee2e2; color: #dc2626; animation: pulse 1.5s infinite; }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
         }
-        .score {
-            background: #f1f5f9;
-            padding: 0.3rem 0.6rem;
+
+        .teams { display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 1.1rem; margin-bottom: 14px; }
+        .team-name { flex: 1; text-align: center; font-size: 1rem; color: var(--text); }
+        .score-box { background: var(--bg); color: var(--text); padding: 8px 16px; border-radius: 10px; font-size: 1.3rem; font-weight: 800; letter-spacing: 2px; border: 1px solid var(--border); transition: all 0.3s ease; }
+        .score-box.goal-flash { background: #dcfce7; color: #16a34a; transform: scale(1.05); }
+
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; font-size: 0.85rem; color: var(--text-light); }
+        .stat-item { background: var(--bg); padding: 8px; border-radius: 8px; text-align: center; border: 1px solid var(--border); }
+
+        .ai-box { background: rgba(37, 99, 235, 0.1); border-right: 4px solid var(--accent); padding: 12px; border-radius: 8px; font-size: 0.85rem; color: var(--text); line-height: 1.5; }
+
+        .standings-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        .standings-table th, .standings-table td { padding: 10px 8px; text-align: right; border-bottom: 1px solid var(--border); color: var(--text); }
+        .standings-table th { color: var(--text-light); font-weight: 600; font-size: 0.8rem; }
+
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+
+        .refresh-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 4px 10px;
             border-radius: 6px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            margin: 0 0.5rem;
-        }
-        .live-badge {
-            background: #dcfce7;
-            color: var(--success);
-            padding: 0.2rem 0.5rem;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-        .ai-insight {
-            background: #eff6ff;
-            border-right: 4px solid var(--accent);
-            padding: 0.75rem;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            color: #1e3a8a;
-            margin-top: 0.5rem;
-        }
-        nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-around;
-            padding: 0.5rem 0;
-            box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.05);
-        }
-        .nav-item {
-            text-align: center;
             font-size: 0.75rem;
-            color: var(--text-light);
-            text-decoration: none;
-            flex: 1;
-            font-weight: 500;
+            cursor: pointer;
+            font-weight: bold;
         }
-        .nav-item.active {
-            color: var(--accent);
+
+        #toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: #0f172a;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+            transition: transform 0.4s ease;
+            z-index: 9999;
+            border: 1px solid rgba(255,255,255,0.2);
         }
+        #toast.show { transform: translateX(-50%) translateY(0); }
+
+        nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card-bg); display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid var(--border); box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.03); z-index: 1000; }
+        nav button { background: none; border: none; cursor: pointer; text-decoration: none; color: var(--text-light); font-size: 0.75rem; text-align: center; display: flex; flex-direction: column; gap: 4px; font-weight: 500; }
+        nav button.active { color: var(--accent); font-weight: bold; }
+        nav button span.icon { font-size: 1.2rem; }
     </style>
 </head>
-<body>
+<body data-theme="light">
+
+    <div id="toast">⚡ تم تحديث بيانات المباراة مباشرة!</div>
 
     <header>
-        <h1>KELLA Analytics Pro</h1>
-        <p>تحليلات كرة القدم الذكية والنتائج الحية</p>
+        <div class="header-content">
+            <div class="app-logo">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                </svg>
+            </div>
+            <div class="header-text">
+                <h1>KELLA Analytics</h1>
+                <p>المنصة الذكية للإحصائيات</p>
+            </div>
+        </div>
+        <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()">🌙</button>
     </header>
 
     <div class="container">
-        <!-- المباريات الحية -->
-        <div class="card">
-            <div class="card-title">
-                <span>المباريات الحية الآن</span>
-                <span class="live-badge">مباشر 78'</span>
+        <!-- صفحة الرئيسية -->
+        <div id="page-home" class="page-content active">
+            <div class="section-title">
+                <span>⚡ المباريات المباشرة والتحليل</span>
+                <button class="refresh-btn" onclick="simulateLiveUpdate()">🔄 تحديث</button>
             </div>
-            <div class="match-item">
-                <span class="team">ريال مدريد</span>
-                <span class="score">2 - 1</span>
-                <span class="team">برشلونة</span>
+            
+            <div class="card">
+                <div class="match-header">
+                    <span class="badge badge-live" id="matchStatus">🔴 مباشر <span id="matchMinute">82</span>'</span>
+                    <span style="font-size: 0.8rem; color: var(--text-light);">دوري أبطال أوروبا</span>
+                </div>
+                <div class="teams">
+                    <span class="team-name">ريال مدريد</span>
+                    <span class="score-box" id="matchScore">2 - 1</span>
+                    <span class="team-name">بايرن ميونخ</span>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item" id="possessionStat">الاستحواذ: 52% - 48%</div>
+                    <div class="stat-item" id="shotsStat">التسديدات: 14 - 11</div>
+                </div>
+                <div class="ai-box" id="aiAnalysisText">
+                    🤖 <strong>تحليل الذكاء الاصطناعي:</strong> سيطرة ميدانية واضحة لريال مدريد في وسط الملعب خلال الدقائق الأخيرة.
+                </div>
             </div>
-            <div class="ai-insight">
-                🤖 <strong>تحليل الذكاء الاصطناعي:</strong> ضغط هكلي عالي لريال مدريد في الشوط الثاني مع احتمالية تسجيل هدف ثالث بنسبة 68%.
+
+            <div class="section-title">🏆 جدول ترتيب الدوري الإسباني</div>
+            <div class="card" style="padding: 0; overflow: hidden;">
+                <table class="standings-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>الفريق</th>
+                            <th>لعب</th>
+                            <th>نقاط</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td style="font-weight: bold;">ريال مدريد</td>
+                            <td>28</td>
+                            <td style="font-weight: bold; color: var(--accent);">72</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>برشلونة</td>
+                            <td>28</td>
+                            <td>67</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <!-- جدول الترتيب المصغر -->
-        <div class="card">
-            <div class="card-title">ترتيب الدوريات الكبرى</div>
-            <div class="match-item" style="justify-content: space-between;">
-                <span>1. ريال مدريد</span>
-                <span style="color: var(--text-light);">24 نقطة</span>
+        <!-- صفحة المباريات -->
+        <div id="page-matches" class="page-content">
+            <div class="section-title">📅 جميع المباريات اليوم</div>
+            <div class="card">
+                <div class="match-header"><span class="badge" style="background:#e0f2fe; color:#0284c7;">انتهت</span><span style="font-size: 0.8rem; color: var(--text-light);">الدوري الإنجليزي</span></div>
+                <div class="teams"><span class="team-name">مانشستر سيتي</span><span class="score-box">3 - 1</span><span class="team-name">ارسنال</span></div>
             </div>
-            <div class="match-item" style="justify-content: space-between;">
-                <span>2. برشلونة</span>
-                <span style="color: var(--text-light);">22 نقطة</span>
+            <div class="card">
+                <div class="match-header"><span class="badge badge-live">🔴 مباشر</span><span style="font-size: 0.8rem; color: var(--text-light);">الدوري الإيطالي</span></div>
+                <div class="teams"><span class="team-name">يوفنتوس</span><span class="score-box">0 - 0</span><span class="team-name">انتر ميلان</span></div>
+            </div>
+        </div>
+
+        <!-- صفحة الذكاء الاصطناعي -->
+        <div id="page-ai" class="page-content">
+            <div class="section-title">🤖 توقعات وتحليلات الذكاء الاصطناعي</div>
+            <div class="card">
+                <div style="font-weight: bold; margin-bottom: 8px;">📊 نسبة الفوز المتوقعة الكلاسيكو القادم:</div>
+                <div class="ai-box" style="margin-bottom: 10px;">ريال مدريد: <strong>55%</strong></div>
+                <div class="ai-box">برشلونة: <strong>45%</strong></div>
+            </div>
+        </div>
+
+        <!-- صفحة الإعدادات -->
+        <div id="page-settings" class="page-content">
+            <div class="section-title">⚙️ إعدادات التطبيق</div>
+            <div class="card">
+                <p style="margin-bottom: 10px; font-weight: bold;">إصدار التطبيق: Pro 2.2 (Clean Engine)</p>
+                <p style="color: var(--text-light); font-size: 0.9rem;">تم تطوير هذا التطبيق خصيصاً لتحليلات كرة القدم الذكية مع محاكاة حية متطورة.</p>
             </div>
         </div>
     </div>
 
     <nav>
-        <a href="#" class="nav-item active">🏠 الرئيسية</a>
-        <a href="#" class="nav-item">📊 المباريات</a>
-        <a href="#" class="nav-item">🤖 الذكاء الاصطناعي</a>
-        <a href="#" class="nav-item">⚙️ الإعدادات</a>
+        <button onclick="switchPage('home', this)" class="active">
+            <span class="icon">🏠</span>
+            <span>الرئيسية</span>
+        </button>
+        <button onclick="switchPage('matches', this)">
+            <span class="icon">📊</span>
+            <span>المباريات</span>
+        </button>
+        <button onclick="switchPage('ai', this)">
+            <span class="icon">🤖</span>
+            <span>الذكاء الاصطناعي</span>
+        </button>
+        <button onclick="switchPage('settings', this)">
+            <span class="icon">⚙️</span>
+            <span>الإعدادات</span>
+        </button>
     </nav>
 
+    <script>
+        function switchPage(pageId, btn) {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + pageId).classList.add('active');
+            
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeBtn = document.getElementById('themeBtn');
+            if (body.getAttribute('data-theme') === 'light') {
+                body.setAttribute('data-theme', 'dark');
+                themeBtn.textContent = '☀️';
+            } else {
+                body.setAttribute('data-theme', 'light');
+                themeBtn.textContent = '🌙';
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        let currentMinute = 82;
+
+        function simulateLiveUpdate() {
+            currentMinute += Math.floor(Math.random() * 2) + 1;
+            if (currentMinute > 90) currentMinute = 90;
+
+            let rmPoss = 50 + Math.floor(Math.random() * 5);
+            let bayPoss = 100 - rmPoss;
+            let rmShots = 14 + (Math.random() > 0.6 ? 1 : 0);
+            let bayShots = 11 + (Math.random() > 0.7 ? 1 : 0);
+
+            document.getElementById('matchMinute').textContent = currentMinute;
+            document.getElementById('possessionStat').textContent = `الاستحواذ: ${rmPoss}% - ${bayPoss}%`;
+            document.getElementById('shotsStat').textContent = `التسديدات: ${rmShots} - ${bayShots}`;
+
+            const scoreBox = document.getElementById('matchScore');
+            scoreBox.classList.add('goal-flash');
+            setTimeout(() => scoreBox.classList.remove('goal-flash'), 600);
+
+            if (currentMinute >= 90) {
+                document.getElementById('matchStatus').innerHTML = '🏁 انتهت المباراة';
+                document.getElementById('aiAnalysisText').innerHTML = '🤖 <strong>تحليل الذكاء الاصطناعي:</strong> صافرة النهاية تعلن تأهل ريال مدريد رسمياً.';
+                showToast('🏁 انتهت المباراة بفوز ريال مدريد!');
+            } else {
+                showToast(`⚡ تحديث في الدقيقة ${currentMinute}`);
+            }
+        }
+
+        setInterval(() => {
+            if (currentMinute < 90) {
+                simulateLiveUpdate();
+            }
+        }, 12000);
+    </script>
 </body>
 </html>
