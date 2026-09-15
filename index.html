@@ -73,47 +73,45 @@
 
     <header>
         <h1>KELLA Analytics Pro ⚽</h1>
-        <p style="font-size: 12px; color: #64748b;">البيانات الرسمية والمؤكدة (يعمل بدون إنترنت خارجي)</p>
+        <p style="font-size: 12px; color: #64748b;">منصة تحليلات كرة القدم الاحترافية</p>
     </header>
 
     <!-- أزرار اختيار التواريخ -->
     <div class="date-selector">
-        <button class="date-btn active" onclick="loadOfficialMatches('2026-09-15', this)">مباريات اليوم (15 سبتمبر)</button>
-        <button class="date-btn" onclick="loadOfficialMatches('2026-09-16', this)">مباريات 16 سبتمبر</button>
+        <button class="date-btn active" onclick="loadMatches('2026-09-15', this)">مباريات اليوم (15 سبتمبر)</button>
+        <button class="date-btn" onclick="loadMatches('2026-09-16', this)">مباريات 16 سبتمبر</button>
     </div>
 
     <!-- حاوية عرض المباريات -->
     <div id="matchesList"></div>
 
     <script>
-        // قاعدة البيانات الرسمية الحقيقية والمدمجة بأمان لضمان السرعة الصاروخية
-        const officialDatabase = {
+        // قاعدة بيانات نظيفة وآمنة تعمل بدون أخطاء خادم
+        const dbMatches = {
             "2026-09-15": [
-                { league: "دوري أبطال أوروبا (مرحلة الدوري)", home: "يوفنتوس", away: "آيندهوفن", time: "17:45", odds: "1: 1.85 | X: 3.60 | 2: 4.20", ai: "تحليل AI: يوفنتوس قوي على أرضه، التوقع: فوز أصحاب الأرض (1)." },
-                { league: "دوري أبطال أوروبا (مرحلة الدوري)", home: "ميلان", away: "ليفربول", time: "20:00", odds: "1: 3.40 | X: 3.50 | 2: 2.10", ai: "تحليل AI: قمة كلاسيكية نارية، هجوم متبادل والتوقع: تسجيل الفريقين (BTTS)." },
-                { league: "دوري أبطال أوروبا (مرحلة الدوري)", home: "ريال مدريد", away: "شتوتغارت", time: "20:00", odds: "1: 1.30 | X: 5.50 | 2: 9.00", ai: "تحليل AI: تفوق كاسح للريال في الأبطال، التوقع: تسجيل أكثر من 2.5 أهداف (Over 2.5)." },
-                { league: "دوري أبطال أوروبا (مرحلة الدوري)", home: "بايرن ميونخ", away: "دينامو زغرب", time: "20:00", odds: "1: 1.15 | X: 8.50 | 2: 15.00", ai: "تحليل AI: سيطرة مطلقة للبايرن، خيار آمن: فوز البايرن مع شباك نظيفة." }
+                { league: "دوري أبطال أوروبا", home: "يوفنتوس", away: "آيندهوفن", time: "17:45", odds: "1: 1.85 | X: 3.60 | 2: 4.20", ai: "تحليل AI: أفضلية واضحة ليوفنتوس على ملعبه." },
+                { league: "دوري أبطال أوروبا", home: "ميلان", away: "ليفربول", time: "20:00", odds: "1: 3.40 | X: 3.50 | 2: 2.10", ai: "تحليل AI: قمة جماهيرية متوقعة وهجوم مكثف من الطرفين." },
+                { league: "دوري أبطال أوروبا", home: "ريال مدريد", away: "شتوتغارت", time: "20:00", odds: "1: 1.30 | X: 5.50 | 2: 9.00", ai: "تحليل AI: ترشيح قوي لريال مدريد لتحقيق الفارق." }
             ],
             "2026-09-16": [
-                { league: "دوري أبطال أوروبا (مرحلة الدوري)", home: "مانشستر سيتي", away: "إنتر ميلان", time: "20:00", odds: "1: 1.55 | X: 4.20 | 2: 6.00", ai: "تحليل AI: مباراة تكتيكية معقدة، السيتي أقرب للفوز بفارق هدف." },
-                { league: "دوري أبطال أوروبا (مرحلة الدوري)", home: "باريس سان جيرمان", away: "جيرونا", time: "20:00", odds: "1: 1.45 | X: 4.80 | 2: 6.50", ai: "تحليل AI: باريس مرشح بقوة، التوقع: فوز باريس وتألق هجومي." },
-                { league: "دوري أبطال أوروبا (مرحلة الدوري)", home: "كلوب بروج", away: "بوروسيا دورتموند", time: "20:00", odds: "1: 3.80 | X: 3.60 | 2: 1.95", ai: "تحليل AI: دورتموند يمتلك أفضلية هجومية، التوقع: فوز الضيوف (2)." }
+                { league: "دوري أبطال أوروبا", home: "مانشستر سيتي", away: "إنتر ميلان", time: "20:00", odds: "1: 1.55 | X: 4.20 | 2: 6.00", ai: "تحليل AI: مباراة تكتيكية عالية النقاء، السيتي المرشح الأبرز." },
+                { league: "دوري أبطال أوروبا", home: "باريس سان جيرمان", away: "جيرونا", time: "20:00", odds: "1: 1.45 | X: 4.80 | 2: 6.50", ai: "تحليل AI: سيطرة باريسية متوقعة وفرص واسعة لتسجيل أهداف." }
             ]
         };
 
-        function loadOfficialMatches(dateStr, btnElement) {
+        function loadMatches(dateStr, btnElement) {
             if (btnElement) {
                 document.querySelectorAll('.date-btn').forEach(btn => btn.classList.remove('active'));
                 btnElement.classList.add('active');
             }
 
             const container = document.getElementById('matchesList');
-            const matches = officialDatabase[dateStr] || [];
+            const matches = dbMatches[dateStr] || [];
 
-            let html = `<div style="padding: 8px 15px; font-size: 11px; color: #166534; text-align: center; font-weight: bold; background: #dcfce7; margin-bottom: 10px; border-radius: 6px;">✅ تم التحميل بنجاح: الجدول الرسمي ليوم ${dateStr} (${matches.length} مباريات)</div>`;
+            let html = `<div style="padding: 8px 15px; font-size: 11px; color: #166534; text-align: center; font-weight: bold; background: #dcfce7; margin-bottom: 10px; border-radius: 6px;">✅ سجل المباريات المعتمد ليوم ${dateStr} (${matches.length} مباريات)</div>`;
 
             if (matches.length === 0) {
-                html += `<div style="text-align:center; padding:20px; color:#64748b; font-size:13px;">لا توجد مباريات مسجلة رسمياً في هذا التاريخ.</div>`;
+                html += `<div style="text-align:center; padding:20px; color:#64748b; font-size:13px;">لا توجد مباريات مسجلة في هذا التاريخ.</div>`;
             } else {
                 matches.forEach((m) => {
                     html += `
@@ -121,12 +119,12 @@
                             <div style="font-size: 10px; color: #0284c7; margin-bottom: 4px; font-weight: bold;">🏆 ${m.league}</div>
                             <div class="match-teams">
                                 <span>${m.home} vs ${m.away}</span>
-                                <span style="color:#0f172a; font-size:12px;">⏰ ${m.time} (بتوقيت الجزائر)</span>
+                                <span style="color:#0f172a; font-size:12px;">⏰ ${m.time}</span>
                             </div>
                             <div class="match-info">
                                 💡 <strong>${m.ai}</strong>
                             </div>
-                            <span class="odds-badge">📊 أسواق الرهان اللحظية: ${m.odds}</span>
+                            <span class="odds-badge">📊 أسواق الرهان: ${m.odds}</span>
                         </div>
                     `;
                 });
@@ -134,9 +132,9 @@
             container.innerHTML = html;
         }
 
-        // تشغيل التطبيق لعرض مباريات اليوم فور فتح الصفحة
+        // التشغيل التلقائي المباشر
         window.onload = function() {
-            loadOfficialMatches('2026-09-15');
+            loadMatches('2026-09-15');
         };
     </script>
 </body>
