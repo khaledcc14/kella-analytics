@@ -2,360 +2,169 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLA Analytics Pro - AI Predictions Engine</title>
+    <meta name="viewport" content="width5=device-width, initial-scale=1.0">
+    <title>KELLA Analytics Pro - التحليل الذكي للمباريات</title>
     <style>
-        :root {
-            --primary: #0f172a;
-            --accent: #2563eb;
-            --success: #16a34a;
-            --bg: #f1f5f9;
-            --card-bg: #ffffff;
-            --text: #0f172a;
-            --text-light: #64748b;
-            --border: #e2e8f0;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            padding: 20px;
         }
-
-        [data-theme="dark"] {
-            --primary: #f8fafc;
-            --accent: #3b82f6;
-            --success: #22c55e;
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --text: #f8fafc;
-            --text-light: #94a3b8;
-            --border: #334155;
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; transition: background 0.3s, color 0.3s; }
-        body { background-color: var(--bg); color: var(--text); padding-bottom: 75px; }
-
-        header {
-            background: var(--card-bg); color: var(--text); padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between;
-            position: sticky; top: 0; z-index: 1000;
+        h1 {
+            text-align: center;
+            color: #38bdf8;
+            font-size: 24px;
+            margin-bottom: 20px;
         }
-        .header-title { font-size: 1.1rem; font-weight: 800; color: var(--accent); display: flex; align-items: center; gap: 6px; }
-
-        .dates-bar {
-            background: var(--card-bg); display: flex; justify-content: center; padding: 10px 12px;
-            gap: 8px; border-bottom: 1px solid var(--border);
-            position: sticky; top: 57px; z-index: 999;
+        .form-group {
+            margin-bottom: 15px;
         }
-        .date-item {
-            font-size: 0.85rem; color: var(--text-light); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: 600; background: var(--bg); border: 1px solid var(--border);
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #94a3b8;
         }
-        .date-item.active { background: var(--accent); color: white; border-color: var(--accent); }
-
-        .container { padding: 12px; max-width: 600px; margin: 0 auto; }
-        .page-content { display: none; }
-        .page-content.active { display: block; }
-
-        .league-card {
-            background: var(--card-bg); border: 1px solid var(--border);
-            border-radius: 12px; margin-bottom: 12px; overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        select, input {
+            width: 100%;
+            padding: 10px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #fff;
+            border-radius: 8px;
+            font-size: 16px;
         }
-        .league-header {
-            background: rgba(0,0,0,0.03);
-            [data-theme="dark"] & { background: rgba(255,255,255,0.03); }
-            padding: 10px 14px; font-size: 0.9rem; font-weight: 700;
-            display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .match-row {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 12px 14px; border-bottom: 1px solid var(--border);
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #0284c7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
             cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
         }
-        .match-row:last-child { border-bottom: none; }
-        .match-row:hover { background: rgba(0,0,0,0.02); }
-
-        .team { width: 40%; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; }
-        .team.home { justify-content: flex-end; text-align: right; }
-        .team.away { justify-content: flex-start; text-align: left; }
-
-        .match-info {
-            width: 20%; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 2px;
+        button:hover {
+            background: #0369a1;
         }
-        .match-time { font-size: 0.75rem; font-weight: 700; background: var(--bg); padding: 3px 6px; border-radius: 6px; border: 1px solid var(--border); }
-        .match-score { font-size: 0.9rem; font-weight: 800; color: var(--accent); }
-
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; padding: 16px;
+        .result-box {
+            margin-top: 25px;
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #334155;
         }
-        .modal-content {
-            background: var(--card-bg); width: 100%; max-width: 450px; border-radius: 16px; padding: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: slideUp 0.3s ease; max-height: 85vh; overflow-y: auto;
+        .live-badge {
+            background: #ef4444;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
         }
-        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        .stat-bar-container { margin: 8px 0; }
-        .stat-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-light); margin-bottom: 3px; }
-        .stat-bar { height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; display: flex; border: 1px solid var(--border); }
-        .stat-fill-home { background: var(--accent); height: 100%; }
-
-        .probs-container {
-            display: flex; justify-content: space-between; background: var(--bg); padding: 10px; border-radius: 8px; margin: 12px 0; text-align: center; font-size: 0.75rem; font-weight: bold; border: 1px solid var(--border);
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 8px;
+            background: #1e293b;
+            border-radius: 6px;
         }
-        .prob-item { flex: 1; }
-        .prob-val { font-size: 0.9rem; color: var(--accent); margin-top: 2px; }
-
-        nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: var(--card-bg); border-top: 1px solid var(--border);
-            display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000;
-        }
-        nav button {
-            background: none; border: none; color: var(--text-light);
-            font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; flex: 1;
-        }
-        nav button.active { color: var(--accent); font-weight: 700; }
-        nav button .icon { font-size: 1.25rem; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="header-title">
-            <span>⚽ KELLA Analytics Pro</span>
-        </div>
-        <button id="themeBtn" onclick="toggleTheme()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">☀️</button>
-    </header>
-
-    <div class="dates-bar">
-        <div class="date-item" id="btn-yesterday" onclick="filterByDay('yesterday', this)">الأمس</div>
-        <div class="date-item active" id="btn-today" onclick="filterByDay('today', this)">اليوم</div>
-        <div class="date-item" id="btn-tomorrow" onclick="filterByDay('tomorrow', this)">الغد</div>
-    </div>
-
     <div class="container">
-        <div id="page-matches" class="page-content active">
-            <div id="leagues-container"></div>
+        <h1>KELLA Analytics Pro ⚽</h1>
+        
+        <div class="form-group">
+            <label for="homeTeam">الفريق المستضيف:</label>
+            <input type="text" id="homeTeam" placeholder="مثال: ريال مدريد أو الأهلي المصري" value="ريال مدريد">
         </div>
 
-        <div id="page-live" class="page-content">
-            <div style="text-align:center; padding: 40px; color: var(--text-light);">
-                مركز التوقعات الذكية والتحليل الاحتمالي 🌐
-            </div>
+        <div class="form-group">
+            <label for="awayTeam">الفريق الضيف:</label>
+            <input type="text" id="awayTeam" placeholder="مثال: برشلونة" value="برشلونة">
         </div>
 
-        <div id="page-settings" class="page-content">
-            <div style="background: var(--card-bg); padding: 16px; border-radius: 12px; border: 1px solid var(--border);">
-                <h3>⚙️ إعدادات التطبيق</h3>
-                <p style="color: var(--text-light); font-size: 0.85rem; margin-top: 6px;">الإصدار: Pro AI Probability v19.0</p>
-                <p style="color: var(--text-light); font-size: 0.85rem; margin-top: 4px;">المطور: Khaled KELLA 🚀</p>
-            </div>
+        <div class="form-group">
+            <label for="matchMode">وضع التحليل:</label>
+            <select id="matchMode">
+                <option value="pre">ما قبل المباراة (Pre-Match)</option>
+                <option value="live">أثناء المباراة (Live Tracking)</option>
+            </select>
+        </div>
+
+        <button onclick="runAnalysis()">تشغيل تحليل الذكاء الاصطناعي</button>
+
+        <div id="output" class="result-box" style="display: none;">
+            <!-- هنا تظهر النتائج والتحليلات -->
         </div>
     </div>
 
-    <div id="matchModal" class="modal" onclick="closeModal(event)">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div id="modalBody"></div>
-            <button onclick="document.getElementById('matchModal').style.display='none'" style="width: 100%; margin-top: 15px; padding: 10px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">إغلاق التوقعات</button>
-        </div>
-    </div>
-
-    <nav>
-        <button onclick="switchPage('matches', this)" class="active">
-            <span class="icon">⚽</span>
-            <span>المباريات</span>
-        </button>
-        <button onclick="switchPage('live', this)">
-            <span class="icon">📺</span>
-            <span>المباشر</span>
-        </button>
-        <button onclick="switchPage('settings', this)">
-            <span class="icon">⚙️</span>
-            <span>الإعدادات</span>
-        </button>
-    </nav>
-
+    <!-- استدعاء ملف المحرك البرمجي -->
+    <script src="ai-predictor.js"></script>
     <script>
-        function generateProbabilityDatabase() {
-            const todayDate = new Date();
-            const yesterdayDate = new Date(todayDate);
-            yesterdayDate.setDate(todayDate.getDate() - 1);
-            const tomorrowDate = new Date(todayDate);
-            tomorrowDate.setDate(todayDate.getDate() + 1);
+        const predictor = new KellaAIPredictor();
 
-            document.getElementById('btn-yesterday').innerText = "الأمس (" + yesterdayDate.getDate() + "/" + (yesterdayDate.getMonth()+1) + ")";
-            document.getElementById('btn-today').innerText = "اليوم (" + todayDate.getDate() + "/" + (todayDate.getMonth()+1) + ")";
-            document.getElementById('btn-tomorrow').innerText = "الغد (" + tomorrowDate.getDate() + "/" + (tomorrowDate.getMonth()+1) + ")";
+        function runAnalysis() {
+            const home = document.getElementById('homeTeam').value.trim();
+            const away = document.getElementById('awayTeam').value.trim();
+            const mode = document.getElementById('matchMode').value;
+            const outputDiv = document.getElementById('output');
 
-            return {
-                today: [
-                    {
-                        competition: "الدوري الإسباني - LaLiga",
-                        matches: [
-                            { 
-                                homeTeam: "رايو فايكانو", awayTeam: "إسبانيول", time: "18:00", score: "1 - 1", 
-                                homePossession: 52, awayPossession: 48,
-                                probHome: "38%", probDraw: "37%", probAway: "25%",
-                                expectedGoals: "xG: رايو (1.4) - إسبانيول (1.3)",
-                                aiInsight: "الاحتمالات المئوية متقاربة جداً، وتقاطع البيانات يرجح تقاسم النقاط." 
-                            },
-                            { 
-                                homeTeam: "ديبورتيفو ألافيس", awayTeam: "فالنسيا", time: "19:00", score: "2 - 1", 
-                                homePossession: 46, awayPossession: 54,
-                                probHome: "42%", probDraw: "30%", probAway: "28%",
-                                expectedGoals: "xG: ألافيس (1.6) - فالنسيا (1.2)",
-                                aiInsight: "أفضلية طفيفة لأصحاب الأرض في استغلال الكرات الثابتة وفق نموذج التوقع." 
-                            },
-                            { 
-                                homeTeam: "إلتشي", awayTeam: "ريال مدريد", time: "20:30", score: "0 - 3", 
-                                homePossession: 30, awayPossession: 70,
-                                probHome: "10%", probDraw: "15%", probAway: "75%",
-                                expectedGoals: "xG: إلتشي (0.4) - ريال مدريد (3.1)",
-                                aiInsight: "فارق هائل في نسب الفوز لصالح الملكي بناءً على القوة الهجومية." 
-                            }
-                        ]
-                    },
-                    {
-                        competition: "دوري أبطال أوروبا - Champions League",
-                        matches: [
-                            { 
-                                homeTeam: "باريس سان جيرمان", awayTeam: "مانشستر سيتي", time: "21:00", score: "2 - 2", 
-                                homePossession: 49, awayPossession: 51,
-                                probHome: "36%", probDraw: "34%", probAway: "30%",
-                                expectedGoals: "xG: باريس (2.2) - سيتي (2.4)",
-                                aiInsight: "قمة أوروبية مفتوحة على كل الاحتمالات مع نسبة عالية للتعادل الإيجابي." 
-                            }
-                        ]
-                    }
-                ],
-                yesterday: [],
-                tomorrow: []
-            };
-        }
-
-        let database = {};
-
-        function switchPage(pageId, btn) {
-            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
-            document.getElementById('page-' + pageId).classList.add('active');
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-            if(btn) btn.classList.add('active');
-        }
-
-        function toggleTheme() {
-            const body = document.body;
-            const themeBtn = document.getElementById('themeBtn');
-            if (body.getAttribute('data-theme') === 'dark') {
-                body.removeAttribute('data-theme');
-                themeBtn.textContent = '☀️';
-            } else {
-                body.setAttribute('data-theme', 'dark');
-                themeBtn.textContent = '🌙';
-            }
-        }
-
-        function filterByDay(day, el) {
-            document.querySelectorAll('.date-item').forEach(d => d.classList.remove('active'));
-            el.classList.add('active');
-            loadMatches(day);
-        }
-
-        function loadMatches(day) {
-            const container = document.getElementById('leagues-container');
-            container.innerHTML = "";
-            const leagues = database[day] || [];
-
-            if(leagues.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-light);">لا توجد مباريات مسجلة في هذا التاريخ 🕒</div>`;
+            if (!home || !away) {
+                alert('الرجاء إدخال اسم الفريقين!');
                 return;
             }
 
-            leagues.forEach(league => {
-                let card = document.createElement('div');
-                card.className = 'league-card';
-                
-                let matchesHtml = '';
-                league.matches.forEach(m => {
-                    matchesHtml += `
-                        <div class="match-row" onclick='openMatchDetails(${JSON.stringify(m)})'>
-                            <div class="team home"><span>${m.homeTeam}</span></div>
-                            <div class="match-info">
-                                <span class="match-time">${m.time}</span>
-                                <span class="match-score">${m.score}</span>
-                            </div>
-                            <div class="team away"><span>${m.awayTeam}</span></div>
-                        </div>
-                    `;
-                });
+            outputDiv.style.display = 'block';
 
-                card.innerHTML = `
-                    <div class="league-header">
-                        <span>🏆 ${league.competition}</span>
-                        <span style="font-size: 0.70rem; color: var(--success); font-weight: bold;">AI Probabilities Active</span>
-                    </div>
-                    ${matchesHtml}
+            if (mode === 'pre') {
+                // تحليل ما قبل المباراة
+                let result = predictor.generateMatchIntelligence(home, away, "General Competition");
+                outputDiv.innerHTML = `
+                    <h3>📊 قراءة ما قبل اللقاء</h3>
+                    <div class="stats-row"><span>التوقع المتوقع:</span> <strong>${result.predictedScore}</strong></div>
+                    <div class="stats-row"><span>نسب الفوز:</span> <strong>${home}: ${result.probabilities.home} | تعادل: ${result.probabilities.draw} | ${away}: ${result.probabilities.away}</strong></div>
+                    <div class="stats-row"><span>الأهداف المتوقعة:</span> <strong>${result.expectedGoals}</strong></div>
+                    <p style="color: #38bdf8; margin-top: 10px;">💡 <strong>رأي الذكاء الاصطناعي:</strong> ${result.aiAdvice}</p>
                 `;
-                container.appendChild(card);
-            });
-        }
+            } else {
+                // محاكاة تحليل أثناء المباراة (مع بيانات تجريبية حية للبطاقات والدقيقة)
+                let mockMinute = 78;
+                let mockHomeScore = 2;
+                let mockAwayScore = 1;
+                let mockYellows = { home: 2, away: 3 };
+                let mockReds = { home: 0, away: 1 };
 
-        function openMatchDetails(m) {
-            const modal = document.getElementById('matchModal');
-            const body = document.getElementById('modalBody');
-            
-            body.innerHTML = `
-                <h3 style="text-align: center; margin-bottom: 5px; color: var(--accent);">📊 تحليل التوقعات والنسب الدقيقة</h3>
+                let result = predictor.generateLiveIntelligence(home, away, mockMinute, mockHomeScore, mockAwayScore, mockYellows, mockReds);
                 
-                <div style="text-align: center; font-size: 1.1rem; font-weight: bold; margin: 12px 0; background: var(--bg); padding: 10px; border-radius: 8px;">
-                    ${m.homeTeam} (${m.score}) ${m.awayTeam}
-                </div>
-
-                <div class="probs-container">
-                    <div class="prob-item">
-                        <div>فوز ${m.homeTeam}</div>
-                        <div class="prob-val">${m.probHome}</div>
-                    </div>
-                    <div class="prob-item">
-                        <div>تعادل</div>
-                        <div class="prob-val">${m.probDraw}</div>
-                    </div>
-                    <div class="prob-item">
-                        <div>فوز ${m.awayTeam}</div>
-                        <div class="prob-val">${m.probAway}</div>
-                    </div>
-                </div>
-
-                <div class="stat-bar-container">
-                    <div class="stat-labels">
-                        <span>${m.homeTeam} (${m.homePossession}%)</span>
-                        <span>مؤشر الاستحواذ والسيطرة</span>
-                        <span>(${m.awayPossession}%) ${m.awayTeam}</span>
-                    </div>
-                    <div class="stat-bar">
-                        <div class="stat-fill-home" style="width: ${m.homePossession}%"></div>
-                    </div>
-                </div>
-
-                <div style="background: var(--bg); padding: 10px; border-radius: 8px; margin: 12px 0; text-align: center;">
-                    <span style="font-size: 0.85rem; font-weight: bold; color: var(--accent);">${m.expectedGoals}</span>
-                </div>
-
-                <div style="font-size: 0.85rem; line-height: 1.6; color: var(--text); border-right: 3px solid var(--success); padding-right: 10px; margin-top: 10px;">
-                    <b>💡 قراءة النموذج الآلي:</b> ${m.aiInsight}
-                </div>
-            `;
-            modal.style.display = 'flex';
-        }
-
-        function closeModal(e) {
-            if (e.target.id === 'matchModal') {
-                document.getElementById('matchModal').style.display = 'none';
+                outputDiv.innerHTML = `
+                    <span class="live-badge">LIVE 🔴 ${result.minute}</span>
+                    <h3>⚡ التحديث الحي للمباراة</h3>
+                    <div class="stats-row"><span>النتيجة الحية:</span> <strong>${result.liveScore}</strong></div>
+                    <div class="stats-row"><span>الإنذارات:</span> <strong>${result.cards.yellow}</strong></div>
+                    <div class="stats-row"><span>الطرد:</span> <strong>${result.cards.red}</strong></div>
+                    <div class="stats-row"><span>نسب الفوز المحدثة:</span> <strong>${home}: ${result.probabilities.home} | تعادل: ${result.probabilities.draw} | ${away}: ${result.probabilities.away}</strong></div>
+                    <p style="color: #f43f5e; margin-top: 10px;">🔥 <strong>تنبيه ذكي:</strong> ${result.aiAdvice}</p>
+                `;
             }
         }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            database = generateProbabilityDatabase();
-            loadMatches('today');
-        });
     </script>
 </body>
 </html>
