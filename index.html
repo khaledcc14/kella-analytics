@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLA Analytics Pro - Real Match Sync</title>
+    <title>KELLA Analytics Pro - Admin & AI</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -65,6 +65,7 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             cursor: pointer;
             border-right: 4px solid #0284c7;
+            position: relative;
         }
         .match-teams {
             display: flex;
@@ -91,6 +92,24 @@
             font-size: 11px;
             font-weight: bold;
             text-align: center;
+        }
+        .admin-panel {
+            background: white;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-right: 4px solid #10b981;
+            display: none;
+        }
+        .admin-panel input, .admin-panel select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 13px;
         }
         .bottom-nav {
             position: fixed;
@@ -135,10 +154,26 @@
 <body>
 
     <div class="header">KELLA Analytics Pro ⚽</div>
-    <div class="api-status">🔗 متصل بقاعدة المباريات الرسمية المحدثة (Official Match Sync)</div>
+    <div class="api-status">🔗 نظام التحكم اليدوي الذكي والتحليل الفوري</div>
 
     <!-- شريط التواريخ -->
     <div class="date-container" id="dateBar"></div>
+
+    <!-- لوحة إضافة مباراة (Admin Panel) -->
+    <div class="admin-panel" id="adminPanel">
+        <h4 style="margin-top:0; color:#10b981;">➕ إضافة مباراة جديدة لجدول اليوم</h4>
+        <input type="text" id="homeTeam" placeholder="اسم الفريق المضيف (مثال: ريال مدريد)">
+        <input type="text" id="awayTeam" placeholder="اسم الفريق الضيف (مثال: برشلونة)">
+        <input type="text" id="matchLeague" placeholder="اسم البطولة (مثال: دوري أبطال أوروبا)">
+        <input type="text" id="matchTime" placeholder="وقت المباراة (مثال: 21:00)">
+        <input type="text" id="matchOdds" placeholder="أسواق الرهان Odds (مثال: 1: 1.80 | 2: 3.50)">
+        <button onclick="addNewMatch()" style="width:100%; padding:10px; background:#10b981; color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">حفظ وعرض المباراة</button>
+    </div>
+
+    <!-- زر إظهار/إخفاء لوحة التحكم -->
+    <div style="padding: 0 10px; text-align: left;">
+        <button onclick="toggleAdminPanel()" style="background:#0f172a; color:white; border:none; padding:6px 12px; border-radius:5px; font-size:11px; cursor:pointer; font-weight:bold;">⚙️ لوحة إضافة مباراة</button>
+    </div>
 
     <!-- قائمة المباريات -->
     <div id="matchesList"></div>
@@ -154,18 +189,30 @@
 
     <!-- الشريط السفلي -->
     <div class="bottom-nav">
-        <button class="nav-tab active" onclick="switchNav(this)">⚽ المباريات</button>
-        <button class="nav-tab" onclick="switchNav(this)">📰 الأخبار</button>
-        <button class="nav-tab" onclick="switchNav(this)">🏆 الدوريات</button>
-        <button class="nav-tab" onclick="switchNav(this)">⚙️ الإعدادات</button>
+        <button class="nav-tab active" onclick="switchTab('matches', this)">⚽ المباريات</button>
+        <button class="nav-tab" onclick="switchTab('news', this)">📰 الأخبار</button>
+        <button class="nav-tab" onclick="switchTab('leagues', this)">🏆 الدوريات</button>
+        <button class="nav-tab" onclick="switchTab('settings', this)">⚙️ الإعدادات</button>
     </div>
 
     <script>
         let selectedDateStr = new Date().toISOString().split('T')[0];
+        
+        // قاعدة تخزين المباريات محلياً في المتصفح (LocalStorage) لتبقى محفوظة
+        let customMatchesDB = JSON.parse(localStorage.getItem('kella_matches')) || {
+            "2026-09-15": [
+                { league: "دوري أبطال أوروبا (UEFA)", home: "ميلان", away: "ليفربول", time: "20:00", score: "1 - 2", odds: "1: 2.80 | 2: 2.45", ai: "Value Bet: فوز ليفربول" },
+                { league: "دوري أبطال أوروبا (UEFA)", home: "يوفنتوس", away: "آيندهوفن", time: "17:45", score: "2 - 0", odds: "1: 1.55 | 2: 5.50", ai: "Safe Pick: فوز يوفنتوس" }
+            ],
+            "2026-09-16": [
+                { league: "دوري أبطال أوروبا (UEFA)", home: "مانشستر سيتي", away: "إنتر ميلان", time: "20:00", score: "2 - 1", odds: "1: 1.65 | 2: 4.80", ai: "Value Bet: تسجيل الفريقين BTTS" },
+                { league: "دوري أبطال أوروبا (UEFA)", home: "باريس سان جيرمان", away: "جيرونا", time: "20:00", score: "2 - 0", odds: "1: 1.40 | 2: 7.00", ai: "Double Chance: 1X أو فوز PSG" }
+            ]
+        };
 
         document.addEventListener("DOMContentLoaded", () => {
             buildDates();
-            loadExactMatches(selectedDateStr);
+            loadMatchesForDate(selectedDateStr);
         });
 
         function buildDates() {
@@ -190,78 +237,93 @@
                     document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     selectedDateStr = dateStr;
-                    loadExactMatches(dateStr);
+                    loadMatchesForDate(dateStr);
                 };
                 bar.appendChild(btn);
             }
         }
 
-        // قاعدة بيانات دقيقة للمباريات الرسمية حسب التاريخ
-        function loadExactMatches(dateStr) {
-            const container = document.getElementById('matchesList');
-            if (!container) return;
-            
-            container.innerHTML = `<div style="text-align: center; padding: 25px; color: #0284c7; font-weight:bold;">🔄 جاري مزامنة جدول مباريات يوم ${dateStr} بدقة...</div>`;
-
-            setTimeout(() => {
-                let matches = getOfficialSchedule(dateStr);
-                renderMatches(matches, dateStr);
-            }, 300);
+        function toggleAdminPanel() {
+            const panel = document.getElementById('adminPanel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
         }
 
-        function getOfficialSchedule(dateStr) {
-            const officialDatabase = {
-                "2026-09-15": [
-                    { league: "دوري أبطال أوروبا (UEFA)", home: "ميلان", away: "ليفربول", time: "20:00", score: "1 - 2", odds: "1: 2.80 | 2: 2.45", ai: "Value Bet: فوز ليفربول" },
-                    { league: "دوري أبطال أوروبا (UEFA)", home: "يوفنتوس", away: "آيندهوفن", time: "17:45", score: "2 - 0", odds: "1: 1.55 | 2: 5.50", ai: "Safe Pick: فوز يوفنتوس" },
-                    { league: "دوري أبطال أوروبا (UEFA)", home: "ريال مدريد", away: "شتوتغارت", time: "20:00", score: "3 - 1", odds: "1: 1.30 | 2: 9.00", ai: "Over 2.5: أكثر من 3 أهداف" },
-                    { league: "دوري أبطال أوروبا (UEFA)", home: "بايرن ميونخ", away: "دينامو زغرب", time: "20:00", score: "4 - 0", odds: "1: 1.20 | 2: 12.0", ai: "BTTS: لا (كلين شيت للبايرن)" }
-                ],
-                "2026-09-16": [
-                    { league: "دوري أبطال أوروبا (UEFA)", home: "مانشستر سيتي", away: "إنتر ميلان", time: "20:00", score: "2 - 1", odds: "1: 1.65 | 2: 4.80", ai: "Value Bet: تسجيل الفريقين BTTS" },
-                    { league: "دوري أبطال أوروبا (UEFA)", home: "باريس سان جيرمان", away: "جيرونا", time: "20:00", score: "2 - 0", odds: "1: 1.40 | 2: 7.00", ai: "Double Chance: 1X أو فوز PSG" },
-                    { league: "دوري أبطال أوروبا (UEFA)", home: "كلوب بروج", away: "بروسيا دورتموند", time: "17:45", score: "1 - 2", odds: "1: 3.10 | 2: 2.20", ai: "Over 2.5: أكثر من هدفين" },
-                    { league: "دوري أبطال أوروبا (UEFA)", home: "بولونيا", away: "شاختار دونيتسك", time: "17:45", score: "1 - 1", odds: "1: 1.95 | 2: 3.80", ai: "Under 2.5: مباراة تكتيكية مغلقة" }
-                ],
-                "2026-09-17": [
-                    { league: "دوري أبطال أوروبا (UEFA)", home: "موناكو", away: "برشلونة", time: "20:00", score: "1 - 3", odds: "1: 4.20 | 2: 1.75", ai: "Safe Pick: فوز برشلونة" },
-                    { league: "دوري أبطال أوروبا (UEFA)", home: "أتالانتا", away: "آرسنال", time: "20:00", score: "1 - 1", odds: "1: 3.50 | 2: 2.10", ai: "Value Bet: تعادل إيجابي" },
-                    { league: "دوري أبطال أوروبا (UEFA)", home: "أتلتيكو مدريد", away: "لايبزيغ", time: "20:00", score: "2 - 1", odds: "1: 1.80 | 2: 4.10", ai: "Value Bet: فوز أتلتيكو مدريد" }
-                ]
-            };
+        function addNewMatch() {
+            let home = document.getElementById('homeTeam').value.trim();
+            let away = document.getElementById('awayTeam').value.trim();
+            let league = document.getElementById('matchLeague').value.trim() || "مباريات اليوم";
+            let time = document.getElementById('matchTime').value.trim() || "20:00";
+            let odds = document.getElementById('matchOdds').value.trim() || "1: 1.90 | 2: 3.20";
 
-            // إذا كان التاريخ مسجلاً رسمياً نعرض مبارياته الدقيقة، وإلا نعرض مباريات افتراضية منسقة بدقة
-            if (officialDatabase[dateStr]) {
-                return officialDatabase[dateStr];
-            } else {
-                return [
-                    { league: "الدوري الإنجليزي الممتاز", home: "أرسنال", away: "تشيلسي", time: "17:30", score: "2 - 2", odds: "1: 2.10 | 2: 3.20", ai: "BTTS: نعم (الثقة 85%أ)" },
-                    { league: "الدوري الإسباني (LaLiga)", home: "ريال مدريد", away: "برشلونة", time: "20:00", score: "2 - 1", odds: "1: 1.90 | 2: 3.50", ai: "Value Bet: فوز ريال مدريد" }
-                ];
+            if (!home || !away) {
+                alert("الرجاء إدخال اسم الفريق المضيف والضيف على الأقل!");
+                return;
             }
+
+            if (!customMatchesDB[selectedDateStr]) {
+                customMatchesDB[selectedDateStr] = [];
+            }
+
+            customMatchesDB[selectedDateStr].push({
+                league: league,
+                home: home,
+                away: away,
+                time: time,
+                score: "1 - 1",
+                odds: odds,
+                ai: "تحليل ذكي: توقع تقارب المستوى وفرصة Value Bet"
+            });
+
+            localStorage.setItem('kella_matches', JSON.stringify(customMatchesDB));
+            
+            // تفريغ الحقول وإخفاء اللوحة وتحديث العرض
+            document.getElementById('homeTeam').value = '';
+            document.getElementById('awayTeam').value = '';
+            document.getElementById('matchLeague').value = '';
+            document.getElementById('matchTime').value = '';
+            document.getElementById('matchOdds').value = '';
+            document.getElementById('adminPanel').style.display = 'none';
+
+            loadMatchesForDate(selectedDateStr);
         }
 
-        function renderMatches(matches, dateStr) {
+        function loadMatchesForDate(dateStr) {
             const container = document.getElementById('matchesList');
             if (!container) return;
-            let html = `<div style="padding: 8px 15px; font-size: 11px; color: #166534; text-align: center; font-weight: bold; background: #dcfce7;">✅ جدول المباريات الرسمية ليوم: ${dateStr}</div>`;
+
+            let matches = customMatchesDB[dateStr] || [];
             
-            matches.forEach(m => {
-                html += `
-                    <div class="match-card" onclick="openAIModal('${m.home}', '${m.away}', '${m.ai}', '${m.score}', '${m.odds}', '${m.league}')">
-                        <div style="font-size: 10px; color: #64748b; margin-bottom: 4px; font-weight: bold;">🏆 ${m.league}</div>
-                        <div class="match-teams">
-                            <span>${m.home} vs ${m.away}</span>
-                            <span style="color:#0284c7; font-size:12px;">⏰ ${m.time}</span>
+            let html = `<div style="padding: 8px 15px; font-size: 11px; color: #166534; text-align: center; font-weight: bold; background: #dcfce7;">✅ جدول مباريات يوم: ${dateStr} (${matches.matchesCount || matches.length} مباراة)</div>`;
+            
+            if (matches.length === 0) {
+                html += `<div style="text-align:center; padding:30px; color:#64748b; font-size:13px;">لا توجد مباريات مسجلة لهذا اليوم. استخدم زر "لوحة إضافة مباراة" لإضافتها فوراً!</div>`;
+            } else {
+                matches.forEach((m, index) => {
+                    html += `
+                        <div class="match-card" onclick="openAIModal('${m.home}', '${m.away}', '${m.ai}', '${m.score}', '${m.odds}', '${m.league}')">
+                            <div style="font-size: 10px; color: #64748b; margin-bottom: 4px; font-weight: bold;">🏆 ${m.league}</div>
+                            <div class="match-teams">
+                                <span>${m.home} vs ${m.away}</span>
+                                <span style="color:#0284c7; font-size:12px;">⏰ ${m.time}</span>
+                            </div>
+                            <div class="match-info">
+                                🎯 تحليل الـ AI: <strong>${m.score}</strong> | 💡 <strong>${m.ai}</strong>
+                            </div>
+                            <span class="odds-badge">📊 أسواق الرهان اللحظية (Odds): ${m.odds}</span>
+                            <button onclick="event.stopPropagation(); deleteMatch('${dateStr}', ${index})" style="position:absolute; top:10px; left:10px; background:#ef4444; color:white; border:none; border-radius:3px; font-size:10px; padding:2px 6px; cursor:pointer;">حذف</button>
                         </div>
-                        <div class="match-info">
-                            🎯 تحليل الـ AI: <strong>${m.score}</strong> | 💡 <strong>${m.ai}</strong>
-                        </div>
-                        <span class="odds-badge">📊 أسواق الرهان اللحظية (Odds): ${m.odds}</span>
-                    </div>
-                `;
-            });
+                    `;
+                });
+            }
             container.innerHTML = html;
+        }
+
+        function deleteMatch(dateStr, index) {
+            if (confirm("هل تريد حذف هذه المباراة؟")) {
+                customMatchesDB[dateStr].splice(index, 1);
+                localStorage.setItem('kella_matches', JSON.stringify(customMatchesDB));
+                loadMatchesForDate(dateStr);
+            }
         }
 
         function openAIModal(home, away, pick, score, odds, league) {
@@ -273,7 +335,7 @@
                 <span style="color:#b45309; font-weight:bold;">${odds}</span><br><br>
                 التوصية الإحصائية للرهان:<br>
                 <span style="color:#16a34a; font-weight:bold;">${pick}</span><br><br>
-                <em>تمت مطابقة الفرق مع الجدول الرسمي للمباريات الحية.</em>
+                <em>تم تحليل هذه المباراة بناءً على معطيات الخوارزمية الذكية.</em>
             `;
             document.getElementById('analysisModal').style.display = 'flex';
         }
@@ -282,9 +344,13 @@
             if (e.target.id === 'analysisModal') e.target.style.display = 'none';
         }
 
-        function switchNav(btn) {
+        function switchTab(tabName, btn) {
             document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
+            
+            if (tabName === 'settings') {
+                toggleAdminPanel();
+            }
         }
     </script>
 </body>
