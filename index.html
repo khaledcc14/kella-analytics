@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLA Analytics Pro - Multi-Source AI</title>
+    <title>KELLA Analytics Pro - AI Predictions Engine</title>
     <style>
         :root {
             --primary: #0f172a;
@@ -98,6 +98,12 @@
         .stat-bar { height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; display: flex; border: 1px solid var(--border); }
         .stat-fill-home { background: var(--accent); height: 100%; }
 
+        .probs-container {
+            display: flex; justify-content: space-between; background: var(--bg); padding: 10px; border-radius: 8px; margin: 12px 0; text-align: center; font-size: 0.75rem; font-weight: bold; border: 1px solid var(--border);
+        }
+        .prob-item { flex: 1; }
+        .prob-val { font-size: 0.9rem; color: var(--accent); margin-top: 2px; }
+
         nav {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: var(--card-bg); border-top: 1px solid var(--border);
@@ -133,14 +139,14 @@
 
         <div id="page-live" class="page-content">
             <div style="text-align:center; padding: 40px; color: var(--text-light);">
-                قاعة العمليات والتحليل الحي المتعدد 🌐
+                مركز التوقعات الذكية والتحليل الاحتمالي 🌐
             </div>
         </div>
 
         <div id="page-settings" class="page-content">
             <div style="background: var(--card-bg); padding: 16px; border-radius: 12px; border: 1px solid var(--border);">
                 <h3>⚙️ إعدادات التطبيق</h3>
-                <p style="color: var(--text-light); font-size: 0.85rem; margin-top: 6px;">الإصدار: Multi-API Neural Edition v18.0</p>
+                <p style="color: var(--text-light); font-size: 0.85rem; margin-top: 6px;">الإصدار: Pro AI Probability v19.0</p>
                 <p style="color: var(--text-light); font-size: 0.85rem; margin-top: 4px;">المطور: Khaled KELLA 🚀</p>
             </div>
         </div>
@@ -149,7 +155,7 @@
     <div id="matchModal" class="modal" onclick="closeModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div id="modalBody"></div>
-            <button onclick="document.getElementById('matchModal').style.display='none'" style="width: 100%; margin-top: 15px; padding: 10px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">إغلاق التحليل</button>
+            <button onclick="document.getElementById('matchModal').style.display='none'" style="width: 100%; margin-top: 15px; padding: 10px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">إغلاق التوقعات</button>
         </div>
     </div>
 
@@ -169,7 +175,7 @@
     </nav>
 
     <script>
-        function generateMultiSourceDatabase() {
+        function generateProbabilityDatabase() {
             const todayDate = new Date();
             const yesterdayDate = new Date(todayDate);
             yesterdayDate.setDate(todayDate.getDate() - 1);
@@ -187,24 +193,24 @@
                         matches: [
                             { 
                                 homeTeam: "رايو فايكانو", awayTeam: "إسبانيول", time: "18:00", score: "1 - 1", 
-                                sourcesMerged: "تم الدمج من 3 مصادر (Opta + Sofascore + StatsZone)",
                                 homePossession: 52, awayPossession: 48,
+                                probHome: "38%", probDraw: "37%", probAway: "25%",
                                 expectedGoals: "xG: رايو (1.4) - إسبانيول (1.3)",
-                                aiInsight: "بناءً على تقاطع معطيات الاستحواذ والضغط العالي، نموذج الذكاء الاصطناعي يرجح تقارب النتيجة واهتزاز الشباك من الطرفين." 
+                                aiInsight: "الاحتمالات المئوية متقاربة جداً، وتقاطع البيانات يرجح تقاسم النقاط." 
                             },
                             { 
-                                homeTeam: "ديبورتيفو ألافيس", awayTeam: "فالنسيا", time: "19:00", score: "1 - 2", 
-                                sourcesMerged: "تم الدمج من 3 مصادر (Opta + Sofascore + StatsZone)",
-                                homePossession: 44, awayPossession: 56,
-                                expectedGoals: "xG: ألافيس (0.9) - فالنسيا (1.8)",
-                                aiInsight: "مؤشرات الهجمات المرتدة لصالح الخفافيش تمنحهم أفضلية طفيفة في حسم اللقاء وفق التحليل الشبكي." 
+                                homeTeam: "ديبورتيفو ألافيس", awayTeam: "فالنسيا", time: "19:00", score: "2 - 1", 
+                                homePossession: 46, awayPossession: 54,
+                                probHome: "42%", probDraw: "30%", probAway: "28%",
+                                expectedGoals: "xG: ألافيس (1.6) - فالنسيا (1.2)",
+                                aiInsight: "أفضلية طفيفة لأصحاب الأرض في استغلال الكرات الثابتة وفق نموذج التوقع." 
                             },
                             { 
                                 homeTeam: "إلتشي", awayTeam: "ريال مدريد", time: "20:30", score: "0 - 3", 
-                                sourcesMerged: "تم الدمج من 3 مصادر (Opta + Sofascore + StatsZone)",
                                 homePossession: 30, awayPossession: 70,
+                                probHome: "10%", probDraw: "15%", probAway: "75%",
                                 expectedGoals: "xG: إلتشي (0.4) - ريال مدريد (3.1)",
-                                aiInsight: "تفوق ساحق في خريطة الحرارة ومعدل التمريرات الناجحة لصالح الملكي، ترجيح انتصار مريح." 
+                                aiInsight: "فارق هائل في نسب الفوز لصالح الملكي بناءً على القوة الهجومية." 
                             }
                         ]
                     },
@@ -213,10 +219,10 @@
                         matches: [
                             { 
                                 homeTeam: "باريس سان جيرمان", awayTeam: "مانشستر سيتي", time: "21:00", score: "2 - 2", 
-                                sourcesMerged: "تم الدمج من 4 مصادر (Opta + Sofascore + Wyscout + API-Football)",
                                 homePossession: 49, awayPossession: 51,
+                                probHome: "36%", probDraw: "34%", probAway: "30%",
                                 expectedGoals: "xG: باريس (2.2) - سيتي (2.4)",
-                                aiInsight: "قمة نارية! تقاطع البيانات يظهر صراعاً تكتيكياً شرساً في وسط الملعب مع احتمالية عالية لتسجيل أكثر من 3 أهداف." 
+                                aiInsight: "قمة أوروبية مفتوحة على كل الاحتمالات مع نسبة عالية للتعادل الإيجابي." 
                             }
                         ]
                     }
@@ -284,7 +290,7 @@
                 card.innerHTML = `
                     <div class="league-header">
                         <span>🏆 ${league.competition}</span>
-                        <span style="font-size: 0.70rem; color: var(--accent); font-weight: bold;">Multi-API Synced</span>
+                        <span style="font-size: 0.70rem; color: var(--success); font-weight: bold;">AI Probabilities Active</span>
                     </div>
                     ${matchesHtml}
                 `;
@@ -297,17 +303,31 @@
             const body = document.getElementById('modalBody');
             
             body.innerHTML = `
-                <h3 style="text-align: center; margin-bottom: 5px; color: var(--accent);">🧠 تحليل الذكاء الاصطناعي المدمج</h3>
-                <p style="text-align: center; font-size: 0.7rem; color: var(--text-light); margin-bottom: 15px;">${m.sourcesMerged}</p>
+                <h3 style="text-align: center; margin-bottom: 5px; color: var(--accent);">📊 تحليل التوقعات والنسب الدقيقة</h3>
                 
-                <div style="text-align: center; font-size: 1.1rem; font-weight: bold; margin-bottom: 15px; background: var(--bg); padding: 10px; border-radius: 8px;">
+                <div style="text-align: center; font-size: 1.1rem; font-weight: bold; margin: 12px 0; background: var(--bg); padding: 10px; border-radius: 8px;">
                     ${m.homeTeam} (${m.score}) ${m.awayTeam}
+                </div>
+
+                <div class="probs-container">
+                    <div class="prob-item">
+                        <div>فوز ${m.homeTeam}</div>
+                        <div class="prob-val">${m.probHome}</div>
+                    </div>
+                    <div class="prob-item">
+                        <div>تعادل</div>
+                        <div class="prob-val">${m.probDraw}</div>
+                    </div>
+                    <div class="prob-item">
+                        <div>فوز ${m.awayTeam}</div>
+                        <div class="prob-val">${m.probAway}</div>
+                    </div>
                 </div>
 
                 <div class="stat-bar-container">
                     <div class="stat-labels">
                         <span>${m.homeTeam} (${m.homePossession}%)</span>
-                        <span>الاستحواذ</span>
+                        <span>مؤشر الاستحواذ والسيطرة</span>
                         <span>(${m.awayPossession}%) ${m.awayTeam}</span>
                     </div>
                     <div class="stat-bar">
@@ -315,12 +335,12 @@
                     </div>
                 </div>
 
-                <div style="background: var(--bg); padding: 10px; border-radius: 8px; margin: 15px 0; text-align: center;">
+                <div style="background: var(--bg); padding: 10px; border-radius: 8px; margin: 12px 0; text-align: center;">
                     <span style="font-size: 0.85rem; font-weight: bold; color: var(--accent);">${m.expectedGoals}</span>
                 </div>
 
-                <div style="font-size: 0.85rem; line-height: 1.6; color: var(--text); border-right: 3px solid var(--accent); padding-right: 10px; margin-top: 10px;">
-                    <b>💡 قراءة الخبير الآلي:</b> ${m.aiInsight}
+                <div style="font-size: 0.85rem; line-height: 1.6; color: var(--text); border-right: 3px solid var(--success); padding-right: 10px; margin-top: 10px;">
+                    <b>💡 قراءة النموذج الآلي:</b> ${m.aiInsight}
                 </div>
             `;
             modal.style.display = 'flex';
@@ -333,7 +353,7 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            database = generateMultiSourceDatabase();
+            database = generateProbabilityDatabase();
             loadMatches('today');
         });
     </script>
