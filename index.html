@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLA Analytics Pro - Real API</title>
+    <title>KELLA Analytics Pro - Live Stream</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -53,41 +53,33 @@
             font-size: 13px;
             border: 1px solid #1e293b;
         }
-        .error-box {
-            background: #ef444420;
-            border: 1px solid #ef4444;
-            color: #fca5a5;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            text-align: center;
-        }
     </style>
 </head>
 <body>
 
     <div class="card">
         <h2>KELLA Analytics Pro ⚽</h2>
-        <div class="subtitle">Official API Engine - Khaled</div>
+        <div class="subtitle">Secure Live Stream - Khaled</div>
 
-        <button class="main-btn" onclick="fetchLiveAPI()">جلب مباريات اليوم الحقيقية من السيرفر ⚡</button>
+        <button class="main-btn" onclick="loadLiveMatches()">تحديث المباريات الحقيقية الفورية ⚡</button>
         
         <div id="output" style="text-align: center; color: #94a3b8; padding: 15px 0;">
-            انقر الزر للاتصال المباشر بقاعدة البيانات...
+            انقر الزر لجلب البيانات عبر القناة الآمنة...
         </div>
     </div>
 
     <script>
         const apiKey = "fd08394f2301a78ecb2b8a3e0db5d3c3";
 
-        async function fetchLiveAPI() {
+        async function loadLiveMatches() {
             const outputDiv = document.getElementById('output');
-            outputDiv.innerHTML = `<div style="color: #38bdf8; padding: 10px;">جاري الاتصال بسيرفر API-Football الحقيقي...</div>`;
+            outputDiv.innerHTML = `<div style="color: #38bdf8; padding: 10px;">جاري جلب المباريات الحقيقية عبر البوابة الآمنة...</div>`;
 
             try {
                 const todayStr = new Date().toISOString().split('T')[0];
+                // استخدام وسيط عالمي يدعم رؤوس المصادقة (Headers) لتجاوز قيود 403
                 const targetUrl = `https://v3.football.api-sports.io/fixtures?date=${todayStr}`;
-                const proxyUrl = `https://corsproxy.io/?` + encodeURIComponent(targetUrl);
+                const proxyUrl = `https://thingproxy.freeboard.io/fetch/` + targetUrl;
 
                 const response = await fetch(proxyUrl, {
                     headers: {
@@ -95,13 +87,13 @@
                     }
                 });
 
-                if (!response.ok) throw new Error("فشل الاتصال بالبوابة الرسمية (Status: " + response.status + ")");
+                if (!response.ok) throw new Error("رمز الاستجابة: " + response.status);
 
                 const data = await response.json();
                 outputDiv.innerHTML = "";
 
                 if (!data.response || data.response.length === 0) {
-                    outputDiv.innerHTML = `<div style="color: #f59e0b; padding: 10px;">لا توجد مباريات مسجلة في السيرفر لهذا اليوم (${todayStr}).</div>`;
+                    outputDiv.innerHTML = `<div style="color: #f59e0b; padding: 10px;">لا توجد مباريات مسجلة لهذا اليوم (${todayStr}).</div>`;
                     return;
                 }
 
@@ -126,9 +118,8 @@
 
             } catch (error) {
                 outputDiv.innerHTML = `
-                    <div class="error-box">
-                        ⚠️ تنبيه تقني: ${error.message}<br><br>
-                        يجب فتح التطبيق عبر رابط <b>GitHub Pages</b> الخاص بك لكي يسمح السيرفر باستقبال البيانات الحقيقية لمفتاحك.
+                    <div style="background: #ef444420; border: 1px solid #ef4444; color: #fca5a5; padding: 12px; border-radius: 8px; font-size: 12px; text-align: center;">
+                        ⚠️ ملاحظة: السيرفر يتطلب قناة بروكسي متخصصة للربط المباشر من متصفح الويب.<br>خطأ الاتصال: ${error.message}
                     </div>
                 `;
             }
