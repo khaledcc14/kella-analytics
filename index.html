@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLA Analytics Pro - FotMob Style</title>
+    <title>KELLA Analytics Pro - Auto Live</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -12,7 +12,6 @@
             margin: 0;
             padding-bottom: 70px;
         }
-        /* Top Header */
         .top-header {
             background: #ffffff;
             padding: 12px 15px;
@@ -28,59 +27,65 @@
             margin: 0;
             letter-spacing: -0.5px;
         }
-        /* Date Tabs (FotMob Style) */
+        /* شريط الأيام */
         .date-bar {
             background: #ffffff;
             display: flex;
-            justify-content: space-around;
-            padding: 10px 5px;
+            gap: 8px;
+            padding: 10px 12px;
             border-bottom: 1px solid #e5e7eb;
             overflow-x: auto;
+            white-space: nowrap;
         }
         .date-tab {
             font-size: 13px;
             color: #6b7280;
-            padding: 6px 12px;
+            padding: 6px 14px;
             border-radius: 16px;
             cursor: pointer;
-            white-space: nowrap;
             font-weight: 500;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
         }
         .date-tab.active {
             background: #111827;
             color: #ffffff;
+            border-color: #111827;
         }
-        /* League Section */
+        /* صندوق الدوريات */
         .league-box {
             background: #ffffff;
-            margin: 10px 12px;
-            border-radius: 10px;
+            margin: 12px;
+            border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #e5e7eb;
         }
         .league-title {
-            background: #f9fafb;
-            padding: 10px 15px;
-            font-size: 13px;
+            background: #f8fafc;
+            padding: 12px 15px;
+            font-size: 14px;
             font-weight: bold;
-            color: #4b5563;
-            border-bottom: 1px solid #f3f4f6;
+            color: #111827;
+            border-bottom: 1px solid #f1f5f9;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        /* Match Row */
         .match-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 12px 15px;
-            border-bottom: 1px solid #f3f4f6;
+            border-bottom: 1px solid #f9fafb;
             cursor: pointer;
             transition: background 0.2s;
         }
         .match-row:hover {
-            background: #f9fafb;
+            background: #f1f5f9;
+        }
+        .match-row:last-child {
+            border-bottom: none;
         }
         .team-name {
             width: 38%;
@@ -98,20 +103,12 @@
             width: 24%;
             text-align: center;
         }
-        .match-time {
-            font-size: 12px;
-            color: #6b7280;
-            background: #f3f4f6;
-            padding: 2px 6px;
-            border-radius: 4px;
-            display: inline-block;
-        }
         .match-score {
             font-size: 14px;
             font-weight: bold;
             color: #0284c7;
         }
-        /* Bottom Navigation Bar */
+        /* الشريط السفلي */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -135,7 +132,7 @@
             color: #0284c7;
             font-weight: bold;
         }
-        /* 1xBet Style Live Tracker Modal */
+        /* النافذة المنبثقة للتحليل الذكي */
         .modal {
             display: none;
             position: fixed;
@@ -148,116 +145,69 @@
         .modal-content {
             background: #ffffff;
             width: 92%;
-            max-width: 420px;
+            max-width: 440px;
             border-radius: 14px;
             overflow: hidden;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            max-height: 90vh;
+            overflow-y: auto;
         }
-        .live-tracker-header {
+        .modal-header {
             background: #0f172a;
             color: white;
             padding: 15px;
             text-align: center;
         }
-        .tracker-field {
-            background: #166534;
-            height: 140px;
-            position: relative;
-            border-bottom: 3px solid #15803d;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: rgba(255,255,255,0.8);
-            font-size: 12px;
-        }
-        .tracker-ball {
-            width: 14px;
-            height: 14px;
-            background: #facc15;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #facc15;
-            margin: 8px 0;
-            animation: bounce 1s infinite alternate;
-        }
-        @keyframes bounce {
-            from { transform: translateY(0); }
-            to { transform: translateY(-8px); }
-        }
-        .tracker-body {
+        .modal-body {
             padding: 15px;
             background: #f8fafc;
+            font-size: 13px;
+        }
+        .ai-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+        .ai-title {
+            font-weight: bold;
+            color: #0284c7;
+            margin-bottom: 6px;
+            font-size: 14px;
         }
         .stat-row {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #e2e8f0;
+            padding: 6px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .loading-text {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
             font-size: 13px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Header (FotMob Style) -->
     <div class="top-header">
-        <h1>FOTMOB <span style="font-size: 12px; color: #0284c7; font-weight: normal;">| KELLA Pro</span></h1>
-        <span>🔍</span>
+        <h1>FOTMOB <span style="font-size: 12px; color: #0284c7; font-weight: normal;">| KELLA Auto Live</span></h1>
+        <span>🔄</span>
     </div>
 
-    <!-- Date Bar -->
-    <div class="date-bar">
-        <div class="date-tab">dim. 13 sept.</div>
-        <div class="date-tab">Hier</div>
+    <!-- شريط الأيام الحي -->
+    <div class="date-bar" id="dateBar">
         <div class="date-tab active">Aujourd'hui</div>
-        <div class="date-tab">Demain</div>
-        <div class="date-tab">jeu. 17 sept.</div>
     </div>
 
-    <!-- LaLiga Section -->
-    <div class="league-box">
-        <div class="league-title">
-            <span>🇪🇸</span>
-            <span>Espagne - LaLiga</span>
-        </div>
-        
-        <div class="match-row" onclick="openLiveTracker('Rayo Vallecano', 'Espanyol', '1-1', '78\'')">
-            <div class="team-name left">Rayo Vallecano</div>
-            <div class="match-center-info">
-                <span class="match-score">1 - 1</span><br>
-                <span style="font-size: 10px; color: #ef4444; font-weight: bold;">LIVE 78'</span>
-            </div>
-            <div class="team-name right">Espanyol</div>
-        </div>
-
-        <div class="match-row" onclick="openLiveTracker('Elche', 'Real Madrid', '0-3', 'FT')">
-            <div class="team-name left">Elche</div>
-            <div class="match-center-info">
-                <span class="match-score">0 - 3</span><br>
-                <span class="match-time">FT</span>
-            </div>
-            <div class="team-name right">Real Madrid</div>
-        </div>
+    <!-- حاوية الدوريات والمباريات التي ستتحدث تلقائياً -->
+    <div id="leaguesContainer">
+        <div class="loading-text">جاري جلب جدول المباريات أوتوماتيكياً... ⚽</div>
     </div>
 
-    <!-- Champions League Section -->
-    <div class="league-box">
-        <div class="league-title">
-            <span>🇪🇺</span>
-            <span>Champions League</span>
-        </div>
-        
-        <div class="match-row" onclick="openLiveTracker('Paris SG', 'Manchester City', '2-2', 'En direct')">
-            <div class="team-name left">Paris SG</div>
-            <div class="match-center-info">
-                <span class="match-score">2 - 2</span><br>
-                <span style="font-size: 10px; color: #ef4444; font-weight: bold;">LIVE 88'</span>
-            </div>
-            <div class="team-name right">Manchester City</div>
-        </div>
-    </div>
-
-    <!-- Bottom Navigation -->
+    <!-- الشريط السفلي للتنقل -->
     <div class="bottom-nav">
         <a class="nav-item active">⚽ Matchs</a>
         <a class="nav-item">📰 Actus</a>
@@ -266,55 +216,20 @@
         <a class="nav-item">⚙️ Plus</a>
     </div>
 
-    <!-- 1xBet Style Live Tracker Modal -->
-    <div id="liveModal" class="modal" onclick="closeModal(event)">
+    <!-- نافذة التحليل الذكي -->
+    <div id="aiModal" class="modal" onclick="closeModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="live-tracker-header">
-                <h3 id="modalTeams" style="margin:0; font-size:16px;">Real Madrid vs Elche</h3>
-                <span id="modalScore" style="font-size:22px; font-weight:bold; color:#38bdf8;">0 - 3</span>
+            <div class="modal-header">
+                <h3 id="modalMatchTitle" style="margin:0; font-size:16px;">تحليل الذكاء الاصطناعي</h3>
+                <span style="font-size: 11px; color: #38bdf8;">KELLA AI Prediction Engine</span>
             </div>
-            <!-- محاكاة ملعب 1xBet الحية -->
-            <div class="tracker-field">
-                <span>⚡ المركز الحي للهجمات (1xBet Tracker)</span>
-                <div class="tracker-ball"></div>
-                <span id="modalMinute" style="font-size: 11px; background: rgba(0,0,0,0.4); padding: 2px 6px; border-radius: 4px;">الدقيقة 82' - هجمة خطيرة</span>
-            </div>
-            <div class="tracker-body" id="trackerStats">
-                <!-- تعبئة الإحصائيات وتحليل الذكاء الاصطناعي ديناميكياً -->
-            </div>
-            <button onclick="document.getElementById('liveModal').style.display='none'" style="width:100%; padding:10px; background:#111827; color:white; border:none; font-weight:bold; cursor:pointer;">إغلاق التتبع</button>
+            <div class="modal-body" id="aiModalBody"></div>
+            <button onclick="document.getElementById('aiModal').style.display='none'" style="width:100%; padding:12px; background:#0f172a; color:white; border:none; font-weight:bold; cursor:pointer;">إغلاق التحليل</button>
         </div>
     </div>
 
-    <!-- استدعاء المحرك البرمجي الذكي -->
+    <!-- استدعاء السكريبتات الذكية -->
     <script src="ai-predictor.js"></script>
-    <script>
-        const predictor = new KellaAIPredictor();
-
-        function openLiveTracker(home, away, score, time) {
-            const modal = document.getElementById('liveModal');
-            document.getElementById('modalTeams').innerText = `${home} vs ${away}`;
-            document.getElementById('modalScore').innerText = score;
-            document.getElementById('modalMinute').innerText = `الوقت: ${time} | محاكاة حية`;
-
-            // جلب التحليل من محرك الذكاء الاصطناعي
-            let aiData = predictor.generateMatchIntelligence(home, away, "Live");
-
-            document.getElementById('trackerStats').innerHTML = `
-                <div class="stat-row"><span>نسب الفوز:</span> <strong>${aiData.probabilities.home} - ${aiData.probabilities.draw} - ${aiData.probabilities.away}</strong></div>
-                <div class="stat-row"><span>الأهداف المتوقعة (xG):</span> <strong>${aiData.expectedGoals}</strong></div>
-                <p style="color: #0284c7; font-size: 12px; margin-top: 10px; background: #e0f2fe; padding: 8px; border-radius: 6px;">💡 <strong>رأي محرك KELLA:</strong> ${aiData.aiAdvice}</p>
-            `;
-
-            modal.style.display = 'flex';
-        }
-
-        function closeModal(e) {
-            if (e.target.id === 'liveModal') {
-                e.target.id.style.display = 'none';
-                document.getElementById('liveModal').style.display = 'none';
-            }
-        }
-    </script>
+    <script src="fetch-matches.js"></script>
 </body>
 </html>
