@@ -3,225 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLA Analytics Pro - Ultimate Edition</title>
+    <title>KELLA Analytics Pro - Live API</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #0f172a;
             color: #f8fafc;
             margin: 0;
-            padding: 10px;
+            padding: 15px;
         }
-        header {
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        h1 {
-            font-size: 18px;
-            color: #38bdf8;
-            margin-bottom: 3px;
-        }
-        .notif-bar {
+        .card {
             background: #1e293b;
             border: 1px solid #334155;
-            padding: 8px;
-            border-radius: 8px;
-            font-size: 11px;
-            color: #38bdf8;
-            text-align: center;
-            margin-bottom: 10px;
-            font-weight: bold;
+            padding: 15px;
+            border-radius: 12px;
+            max-width: 450px;
+            margin: 0 auto;
         }
-        .date-selector {
-            display: flex;
-            justify-content: center;
-            gap: 4px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-        }
-        .date-btn {
-            padding: 5px 10px;
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 6px;
-            font-size: 10px;
-            font-weight: bold;
-            color: #94a3b8;
-            cursor: pointer;
-        }
-        .date-btn.active {
-            background: #0284c7;
-            color: white;
-            border-color: #0284c7;
-        }
-        .section-box {
-            background: #1e293b;
-            border: 1px solid #334155;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 12px;
-        }
-        .widget-container {
-            border-radius: 8px;
-            overflow: hidden;
-            margin-top: 8px;
-        }
-        .input-group {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 8px;
-        }
-        input {
-            flex: 1;
-            padding: 7px;
-            background: #0f172a;
-            border: 1px solid #334155;
-            color: white;
-            border-radius: 6px;
-            font-size: 11px;
-        }
-        .analyze-btn {
+        button {
             background: #0284c7;
             color: white;
             border: none;
-            padding: 7px 10px;
+            padding: 10px;
             border-radius: 6px;
             font-weight: bold;
             cursor: pointer;
-            font-size: 10px;
+            width: 100%;
+            margin-bottom: 15px;
         }
-        .ai-result-box {
+        .result-item {
             background: #0f172a;
-            border-left: 3px solid #ca8a04;
-            padding: 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            color: #fef08a;
+            padding: 10px;
             margin-top: 8px;
-            display: none;
+            border-radius: 6px;
+            font-size: 12px;
+            border-left: 3px solid #38bdf8;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>KELLA Analytics Pro ⚽</h1>
-        <p style="font-size: 10px; color: #94a3b8;">Ultimate Global Center & AI Engine</p>
-    </header>
-
-    <!-- شريط الإشعارات والتحكم -->
-    <div class="notif-bar" id="notifBar">
-        🔔 Centre d'alertes actif : Prêt pour les notifications de buts !
-        <br><button onclick="requestNotificationPermission()" style="margin-top:4px; padding:4px 8px; background:#0284c7; color:white; border:none; border-radius:4px; font-size:10px; cursor:pointer;">Activer les alertes</button>
-    </div>
-
-    <!-- 1. أزرار التنقل الأربعة -->
-    <div class="date-selector">
-        <button class="date-btn active" onclick="switchTab('live', this)">🌐 Direct Mondial</button>
-        <button class="date-btn" onclick="switchTab('tracker', this)">⚙️ Live Tracker</button>
-        <button class="date-btn" onclick="switchTab('ai', this)">🧠 Prédiction AI</button>
-        <button class="date-btn" onclick="switchTab('aller', this)" style="background: #ca8a04; color: white; border-color: #ca8a04;">🏆 Matchs Aller</button>
-    </div>
-
-    <!-- القسم الأول: النتائج الحية العالمية (بدون قيود) -->
-    <div id="tab-live" class="section-box">
-        <div style="font-size: 11px; font-weight: bold; color: #38bdf8; margin-bottom: 5px;">⚡ Tous les Matchs du Monde (Mise à jour 24/24) :</div>
-        <div class="widget-container">
-            <iframe src="https://www.scorebat.com/embed/livescore/" frameborder="0" width="100%" height="500px" allowfullscreen style="display:block;"></iframe>
-        </div>
-    </div>
-
-    <!-- القسم الثاني: الـ Tracker المخصص وتعديل الأهداف -->
-    <div id="tab-tracker" class="section-box" style="display:none;">
-        <div style="font-size: 11px; font-weight: bold; color: #38bdf8; margin-bottom: 5px;">⚙️ Panneau de Suivi & Timeline Personnalisé :</div>
-        <div style="font-size: 11px; color: #cbd5e1; padding: 10px; background: #0f172a; border-radius: 6px;">
-            • Suivi instantané des buts et modification manuelle active.<br>
-            • Le fil d'actualité (Timeline) réagit à chaque action.<br>
-            *(Sélectionnez un match depuis le direct mondial pour l'injecter ici)*
-        </div>
-    </div>
-
-    <!-- القسم الثالث: محرك الذكاء الاصطناعي والتوقعات -->
-    <div id="tab-ai" class="section-box" style="display:none;">
-        <div style="font-size: 11px; font-weight: bold; color: #38bdf8; margin-bottom: 6px;">🧠 Moteur d'Analyse & Prédiction de Score (AI) :</div>
-        <div class="input-group">
-            <input type="text" id="homeTeam" placeholder="Équipe Domicile (ex: Real Madrid)">
-            <input type="text" id="awayTeam" placeholder="Équipe Extérieur (ex: Barcelona)">
-        </div>
-        <button class="analyze-btn" onclick="generateAIAnalysis()">Lancer l'analyse intelligente ⚡</button>
+    <div class="card">
+        <h2>KELLA Analytics Pro ⚽</h2>
+        <p style="font-size: 12px; color: #94a3b8;">Connexion directe avec RapidAPI</p>
         
-        <div class="ai-result-box" id="aiResultBox">
-            <div id="aiTextContent"></div>
-        </div>
-    </div>
-
-    <!-- القسم الرابع: مواجهات الذهاب الكبرى -->
-    <div id="tab-aller" class="section-box" style="display:none;">
-        <div style="font-size: 11px; font-weight: bold; color: #ca8a04; margin-bottom: 5px;">🏆 Matchs Aller - Chocs Historiques :</div>
-        <div style="font-size: 11px; color: #cbd5e1; padding: 8px; background: #0f172a; border-radius: 6px; margin-bottom: 6px;">
-            <strong>Real Madrid vs Bayern Munich</strong><br>🎯 Prédiction AI: Principal (2 - 1) | Alternatif (1 - 1)
-        </div>
-        <div style="font-size: 11px; color: #cbd5e1; padding: 8px; background: #0f172a; border-radius: 6px;">
-            <strong>FC Barcelona vs Paris Saint-Germain</strong><br>🎯 Prédiction AI: Principal (2 - 2) | Alternatif (3 - 1)
-        </div>
+        <button onclick="fetchLiveMatches()">Charger les données du Live ⚡</button>
+        
+        <div id="output">Appuyez sur le bouton pour afficher les données...</div>
     </div>
 
     <script>
-        function switchTab(tabName, btnElement) {
-            document.querySelectorAll('.date-btn').forEach(btn => btn.classList.remove('active'));
-            btnElement.classList.add('active');
+        function fetchLiveMatches() {
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = "Chargement en cours...";
 
-            document.getElementById('tab-live').style.display = 'none';
-            document.getElementById('tab-tracker').style.display = 'none';
-            document.getElementById('tab-ai').style.display = 'none';
-            document.getElementById('tab-aller').style.display = 'none';
-
-            document.getElementById('tab-' + tabName).style.display = 'block';
-        }
-
-        function generateAIAnalysis() {
-            const home = document.getElementById('homeTeam').value.trim();
-            const away = document.getElementById('awayTeam').value.trim();
-            const resultBox = document.getElementById('aiResultBox');
-            const textContent = document.getElementById('aiTextContent');
-
-            if(!home || !away) {
-                alert("Veuillez saisir les noms des deux équipes !");
-                return;
-            }
-
-            const homeProb = Math.floor(Math.random() * 40) + 30;
-            const drawProb = Math.floor(Math.random() * 20) + 15;
-            const awayProb = 100 - (homeProb + drawProb);
-            
-            const scorePrincipal = `${Math.floor(Math.random() * 3)} - ${Math.floor(Math.random() * 2)}`;
-            const scoreAlternatif = `${Math.floor(Math.random() * 2)} - ${Math.floor(Math.random() * 3)}`;
-
-            textContent.innerHTML = `
-                📊 <strong>Analyse Pro pour ${home} vs ${away} :</strong><br>
-                • <strong>Probabilités :</strong> ${home} : ${homeProb}% | Nul : ${drawProb}% | ${away} : ${awayProb}%<br>
-                • <strong>Tendance Tactique :</strong> Domination du milieu de terrain attendue.<br>
-                🎯 <strong>Prédiction de Score (AI) :</strong><br>
-                • Score Principal : <strong>${scorePrincipal}</strong> | Score Alternatif : <strong>${scoreAlternatif}</strong>
-            `;
-            resultBox.style.display = "block";
-        }
-
-        function requestNotificationPermission() {
-            if (!("Notification" in window)) {
-                alert("Ce navigateur ne supporte pas les notifications.");
-                return;
-            }
-            Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    document.getElementById('notifBar').style.background = "#166534";
-                    document.getElementById('notifBar').style.color = "#dcfce7";
-                    document.getElementById('notifBar').innerHTML = "✅ Notifications mondiales activées !";
-                    new Notification("KELLA Analytics Pro", { body: "Système d'alertes opérationnel !" });
-                } else {
-                    alert("Permission refusée.");
+            const url = 'https://free-api-live-football-data.p.rapidapi.com/football-players-search?search=m';
+            const options = {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-key': 'f555519eb6msh671e2bbb1d6c7d0p19b43djsn0d4c63a197b5',
+                    'x-rapidapi-host': 'free-api-live-football-data.p.rapidapi.com'
                 }
-            });
+            };
+
+            fetch(url, options)
+                .then(response => response.json())
+                .then(data => {
+                    outputDiv.innerHTML = "<h4>Données reçues avec succès :</h4>";
+                    // كمثال، نعرض النتيجة الخام أو جزء منها للتأكد من اتصال الـ API
+                    console.log(data);
+                    outputDiv.innerHTML += `<div class="result-item">Connexion établie ! Regardez la console (F12) pour voir les détails de la réponse.</div>`;
+                })
+                .catch(err => {
+                    console.error(err);
+                    outputDiv.innerHTML = `<span style="color: #ef4444;">Erreur de connexion à l'API.</span>`;
+                });
         }
     </script>
 </body>
