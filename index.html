@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLA Analytics Pro - Live Engine</title>
+    <title>KELLA Analytics Pro - Real Stream</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -54,7 +54,7 @@
             font-size: 13px;
             border: 1px solid #1e293b;
         }
-        .status-live {
+        .status-badge {
             background: #ef4444;
             color: white;
             padding: 2px 6px;
@@ -69,54 +69,71 @@
 
     <div class="card">
         <h2>KELLA Analytics Pro ⚽</h2>
-        <div class="subtitle">Global Engine - Khaled</div>
+        <div class="subtitle">Real API Engine - Khaled</div>
 
-        <button class="main-btn" onclick="loadMatches()">⚡ تحديث مباريات اليوم المباشرة</button>
+        <button class="main-btn" onclick="fetchRealMatches()">⚡ جلب مباريات اليوم الحقيقية من السيرفر</button>
         
-        <div id="output">
-            <div class="match-card">
-                <span class="status-live">LIVE</span>
-                <div style="font-size: 10px; color: #f59e0b; font-weight: bold;">🏆 SPAIN: LA LIGA | ⏰ 21:00</div>
-                <div style="font-weight: bold; font-size: 14px; margin: 6px 0;">🏟️ Real Madrid vs Barcelona</div>
-                <div style="color: #38bdf8; font-size: 12px;">النتيجة الحية: <b>2 - 1</b> | KELLA Global Pro</div>
-            </div>
-
-            <div class="match-card">
-                <span class="status-live">LIVE</span>
-                <div style="font-size: 10px; color: #f59e0b; font-weight: bold;">🏆 ENGLAND: PREMIER LEAGUE | ⏰ 18:30</div>
-                <div style="font-weight: bold; font-size: 14px; margin: 6px 0;">🏟️ Manchester City vs Arsenal</div>
-                <div style="color: #38bdf8; font-size: 12px;">النتيجة الحية: <b>1 - 1</b> | KELLA Global Pro</div>
-            </div>
-
-            <div class="match-card">
-                <div style="font-size: 10px; color: #f59e0b; font-weight: bold;">🏆 ITALY: SERIE A | ⏰ 20:45</div>
-                <div style="font-weight: bold; font-size: 14px; margin: 6px 0;">🏟️ Inter Milan vs Juventus</div>
-                <div style="color: #38bdf8; font-size: 12px;">الحالة: (لم تبدأ بعد) | KELLA Global Pro</div>
-            </div>
+        <div id="output" style="text-align: center; color: #94a3b8; padding: 15px 0;">
+            انقر الزر لجلب البيانات الحية المباشرة...
         </div>
     </div>
 
     <script>
-        function loadMatches() {
-            const output = document.getElementById('output');
-            output.innerHTML = `<div style="text-align: center; color: #38bdf8; padding: 15px;">جاري مزامنة أحدث بيانات الدوريات الكبرى عبر السيرفر...</div>`;
-            
-            setTimeout(() => {
-                output.innerHTML = `
-                    <div class="match-card">
-                        <span class="status-live">LIVE</span>
-                        <div style="font-size: 10px; color: #f59e0b; font-weight: bold;">🏆 SPAIN: LA LIGA | المحدث الآن</div>
-                        <div style="font-weight: bold; font-size: 14px; margin: 6px 0;">🏟️ Real Madrid vs Barcelona</div>
-                        <div style="color: #22c55e; font-size: 12px;">النتيجة المباشرة: <b>2 - 1</b> (محدث بنجاح عبر GitHub Pages)</div>
-                    </div>
-                    <div class="match-card">
-                        <span class="status-live">LIVE</span>
-                        <div style="font-size: 10px; color: #f59e0b; font-weight: bold;">🏆 ENGLAND: PREMIER LEAGUE</div>
-                        <div style="font-weight: bold; font-size: 14px; margin: 6px 0;">🏟️ Manchester City vs Arsenal</div>
-                        <div style="color: #22c55e; font-size: 12px;">النتيجة المباشرة: <b>1 - 1</b> (محدث بنجاح عبر GitHub Pages)</div>
+        const apiKey = "fd08394f2301a78ecb2b8a3e0db5d3c3";
+
+        async function fetchRealMatches() {
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = `<div style="color: #38bdf8; padding: 10px;">جاري جلب المباريات الحقيقية عبر السيرفر الآمن...</div>`;
+
+            try {
+                const today = new Date().toISOString().split('T')[0];
+                const apiUrl = `https://v3.football.api-sports.io/fixtures?date=${today}`;
+                // استخدام بروكسي نظيف يدعم المفتاح رسمياً
+                const proxyUrl = `https://api.allorigins.win/raw?url=` + encodeURIComponent(apiUrl);
+
+                const response = await fetch(proxyUrl, {
+                    headers: {
+                        "x-apisports-key": apiKey
+                    }
+                });
+
+                if (!response.ok) throw new Error("خطأ في الاتصال بالبوابة (Status: " + response.status + ")");
+
+                const data = await response.json();
+                outputDiv.innerHTML = "";
+
+                if (!data.response || data.response.length === 0) {
+                    outputDiv.innerHTML = `<div style="color: #f59e0b; padding: 10px;">لا توجد مباريات مسجلة لهذا اليوم (${today}) في السيرفر الرسمي.</div>`;
+                    return;
+                }
+
+                data.response.forEach(match => {
+                    let home = match.teams.home.name;
+                    let away = match.teams.away.name;
+                    let league = match.league.name;
+                    let country = match.league.country;
+                    let homeScore = match.goals.home !== null ? match.goals.home : "0";
+                    let awayScore = match.goals.away !== null ? match.goals.away : "0";
+                    let status = match.fixture.status.short;
+                    let time = match.fixture.date.slice(11, 16);
+
+                    outputDiv.innerHTML += `
+                        <div class="match-card">
+                            <span class="status-badge">${status}</span>
+                            <div style="font-size: 10px; color: #f59e0b; font-weight: bold;">🏆 ${country}: ${league} | ⏰ ${time}</div>
+                            <div style="font-weight: bold; font-size: 14px; margin: 6px 0;">🏟️ ${home} vs ${away}</div>
+                            <div style="color: #38bdf8; font-size: 12px;">النتيجة الحية: <b>${homeScore} - ${awayScore}</b></div>
+                        </div>
+                    `;
+                });
+
+            } catch (error) {
+                outputDiv.innerHTML = `
+                    <div style="background: #ef444420; border: 1px solid #ef4444; color: #fca5a5; padding: 12px; border-radius: 8px; font-size: 12px; text-align: center;">
+                        ⚠️ تنبيه: ${error.message}<br>يرجى التأكد من أن الاتصال يعمل عبر رابط GitHub Pages الخاص بك.
                     </div>
                 `;
-            }, 800);
+            }
         }
     </script>
 </body>
