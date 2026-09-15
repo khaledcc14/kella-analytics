@@ -1,110 +1,118 @@
-// KELLA Auto-Fetch Matches Engine
+// KELLA Pro - Automated AI & Technical Analysis Engine
 document.addEventListener("DOMContentLoaded", () => {
-    loadLiveMatches();
+    // جلب مباريات اليوم والتاريخ الحالي أوتوماتيكياً
+    const today = new Date().toISOString().split('T')[0];
+    loadAndAnalyzeMatches(today);
 });
 
-function loadLiveMatches() {
+function loadAndAnalyzeMatches(dateString) {
     const container = document.getElementById('leaguesContainer');
-    
-    // محاكاة جلب البيانات الحية من السيرفر الرياضي المنظم حسب الدوريات
+    container.innerHTML = `<div class="loading-text">جاري جلب وتحليل مباريات تاريخ ${dateString} بالذكاء الاصطناعي... 🤖⚽</div>`;
+
+    // محاكاة سحب البيانات من السيرفر الشامل وتمريرها على محرك التحليل الفني
     setTimeout(() => {
-        container.innerHTML = `
-            <!-- 1. الدوري الإسباني -->
-            <div class="league-box">
-                <div class="league-title"><span>🇪🇸</span><span>Espagne - LaLiga</span></div>
-                <div class="match-row" onclick="openAIAnalysis('Real Madrid', 'Barcelona')">
-                    <div class="team-name left">Real Madrid</div>
-                    <div class="match-center-info">
-                        <span style="font-size: 12px; font-weight: bold; color: #4b5563;">21:00</span><br>
-                        <span style="font-size: 10px; color: #0284c7;">Auto-Synced</span>
-                    </div>
-                    <div class="team-name right">Barcelona</div>
-                </div>
-                <div class="match-row" onclick="openAIAnalysis('Villarreal', 'Atletico Madrid')">
-                    <div class="team-name left">Villarreal</div>
-                    <div class="match-center-info">
-                        <span class="match-score">2 - 1</span><br>
-                        <span style="font-size: 10px; color: #ef4444; font-weight: bold;">LIVE 75'</span>
-                    </div>
-                    <div class="team-name right">Atletico Madrid</div>
-                </div>
-            </div>
-
-            <!-- 2. الدوري الإنجليزي الممتاز -->
-            <div class="league-box">
-                <div class="league-title"><span>🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span>England - Premier League</span></div>
-                <div class="match-row" onclick="openAIAnalysis('Arsenal', 'Manchester City')">
-                    <div class="team-name left">Arsenal</div>
-                    <div class="match-center-info">
-                        <span style="font-size: 12px; font-weight: bold; color: #4b5563;">18:30</span><br>
-                        <span style="font-size: 10px; color: #0284c7;">Auto-Synced</span>
-                    </div>
-                    <div class="team-name right">Manchester City</div>
-                </div>
-                <div class="match-row" onclick="openAIAnalysis('Liverpool', 'Chelsea')">
-                    <div class="team-name left">Liverpool</div>
-                    <div class="match-center-info">
-                        <span class="match-score">1 - 1</span><br>
-                        <span style="font-size: 10px; color: #ef4444; font-weight: bold;">FT</span>
-                    </div>
-                    <div class="team-name right">Chelsea</div>
-                </div>
-            </div>
-
-            <!-- 3. دوري أبطال أوروبا -->
-            <div class="league-box">
-                <div class="league-title"><span>🇪🇺</span><span>Champions League</span></div>
-                <div class="match-row" onclick="openAIAnalysis('Paris SG', 'Bayern Munich')">
-                    <div class="team-name left">Paris SG</div>
-                    <div class="match-center-info">
-                        <span style="font-size: 12px; font-weight: bold; color: #4b5563;">20:00</span><br>
-                        <span style="font-size: 10px; color: #0284c7;">Auto-Synced</span>
-                    </div>
-                    <div class="team-name right">Bayern Munich</div>
-                </div>
-            </div>
-        `;
+        renderAnalyzedLeagues(container, dateString);
     }, 600);
 }
 
-const aiPredictor = new KellaAIPredictor();
+function renderAnalyzedLeagues(container, date) {
+    const aiPredictor = new KellaAIPredictor();
+
+    // تحليل المباريات مسبقاً قبل العرض
+    const m1 = aiPredictor.generateMatchIntelligence("Arsenal", "Chelsea", "Advanced");
+    const m2 = aiPredictor.generateMatchIntelligence("Real Madrid", "Barcelona", "Advanced");
+    const m3 = aiPredictor.generateMatchIntelligence("Bayern Munich", "Paris SG", "Advanced");
+
+    container.innerHTML = `
+        <div style="background: #0f172a; color: white; padding: 10px 15px; font-size: 12px; text-align: center; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
+            <span>📅 جدول مباريات ومراجعات الذكاء الاصطناعي (${date})</span>
+            <span style="color: #38bdf8; font-size: 11px;">محلل آلياً بالكامل ⚡</span>
+        </div>
+
+        <!-- 1. الدوري الإنجليزي -->
+        <div class="league-box">
+            <div class="league-title"><span>🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span>England - Premier League</span></div>
+            
+            <div class="match-row" onclick="openAIAnalysis('Arsenal', 'Chelsea')">
+                <div class="team-name left">Arsenal</div>
+                <div class="match-center-info">
+                    <span style="font-size: 13px; font-weight: bold; color: #0284c7;">🎯 ${m1.predictedScore}</span><br>
+                    <span style="font-size: 10px; color: #16a34a; font-weight: bold;">AI: فوز ${m1.probabilities.home > m1.probabilities.away ? 'Arsenal' : 'Chelsea'}</span>
+                </div>
+                <div class="team-name right">Chelsea</div>
+            </div>
+        </div>
+
+        <!-- 2. الدوري الإسباني -->
+        <div class="league-box">
+            <div class="league-title"><span>🇪🇸</span><span>Espagne - LaLiga</span></div>
+            
+            <div class="match-row" onclick="openAIAnalysis('Real Madrid', 'Barcelona')">
+                <div class="team-name left">Real Madrid</div>
+                <div class="match-center-info">
+                    <span style="font-size: 13px; font-weight: bold; color: #0284c7;">🎯 ${m2.predictedScore}</span><br>
+                    <span style="font-size: 10px; color: #16a34a; font-weight: bold;">AI: فوز ${m2.probabilities.home > m2.probabilities.away ? 'Real Madrid' : 'Barcelona'}</span>
+                </div>
+                <div class="team-name right">Barcelona</div>
+            </div>
+        </div>
+
+        <!-- 3. دوري أبطال أوروبا -->
+        <div class="league-box">
+            <div class="league-title"><span>🇪🇺</span><span>UEFA Champions League</span></div>
+            
+            <div class="match-row" onclick="openAIAnalysis('Bayern Munich', 'Paris SG')">
+                <div class="team-name left">Bayern Munich</div>
+                <div class="match-center-info">
+                    <span style="font-size: 13px; font-weight: bold; color: #0284c7;">🎯 ${m3.predictedScore}</span><br>
+                    <span style="font-size: 10px; color: #16a34a; font-weight: bold;">AI: فوز ${m3.probabilities.home > m3.probabilities.away ? 'Bayern' : 'PSG'}</span>
+                </div>
+                <div class="team-name right">Paris SG</div>
+            </div>
+        </div>
+    `;
+}
+
+// محرك عرض نافذة التحليل العميق عند الضغط على أي مباراة
+const globalPredictor = new KellaAIPredictor();
 
 function openAIAnalysis(home, away) {
     const modal = document.getElementById('aiModal');
     document.getElementById('modalMatchTitle').innerText = `${home} vs ${away}`;
 
-    let data = aiPredictor.generateMatchIntelligence(home, away, "Advanced");
+    let data = globalPredictor.generateMatchIntelligence(home, away, "Advanced");
 
     document.getElementById('aiModalBody').innerHTML = `
-        <div class="ai-card">
-            <div class="ai-title">📊 احتمالات الفوز والنتيجة</div>
-            <div class="stat-row"><span>الفوز (${home}):</span> <strong>${data.probabilities.home}</strong></div>
-            <div class="stat-row"><span>التعادل:</span> <strong>${data.probabilities.draw}</strong></div>
-            <div class="stat-row"><span>الفوز (${away}):</span> <strong>${data.probabilities.away}</strong></div>
-            <div class="stat-row"><span>النتيجة المتوقعة:</span> <strong style="color: #0284c7;">${data.predictedScore}</strong></div>
+        <div class="ai-card" style="border-left: 4px solid #0284c7;">
+            <div class="ai-title">📊 دراسة الاحتمالات الفنية والنتيجة</div>
+            <div class="stat-row"><span>نسبة فوز (${home}):</span> <strong>${data.probabilities.home}</strong></div>
+            <div class="stat-row"><span>نسبة التعادل:</span> <strong>${data.probabilities.draw}</strong></div>
+            <div class="stat-row"><span>نسبة فوز (${away}):</span> <strong>${data.probabilities.away}</strong></div>
+            <div class="stat-row"><span>النتيجة المتوقعة بدقة:</span> <strong style="color: #0284c7; font-size:14px;">${data.predictedScore}</strong></div>
         </div>
 
-        <div class="ai-card">
-            <div class="ai-title">⚽ الأهداف وتسجيل الفريقين (BTTS)</div>
-            <div class="stat-row"><span>إجمالي الأهداف المتوقعة:</span> <strong>${data.expectedGoals}</strong></div>
-            <div class="stat-row"><span>تسجيل الفريقين (BTTS):</span> <strong style="color: #16a34a;">نعم (Likely)</strong></div>
+        <div class="ai-card" style="border-left: 4px solid #16a34a;">
+            <div class="ai-title">⚽ تحليل الأهداف والرهانات</div>
+            <div class="stat-row"><span>معدل الأهداف المتوقعة (xG):</span> <strong>${data.expectedGoals} هدف</strong></div>
+            <div class="stat-row"><span>تسجيل الفريقين (BTTS):</span> <strong style="color: #16a34a;">نعم (احتمال قوي)</strong></div>
         </div>
 
-        <div class="ai-card">
-            <div class="ai-title">🟨 توقعات البطاقات الصفراء</div>
-            <div class="stat-row"><span>متوسط البطاقات:</span> <strong>3.8 بطاقة</strong></div>
+        <div class="ai-card" style="border-left: 4px solid #eab308;">
+            <div class="ai-title">🟨 دراسة الإنذارات والبطاقات</div>
+            <div class="stat-row"><span>متوسط البطاقات الصفراء:</span> <strong>4.2 بطاقة</strong></div>
+            <div class="stat-row"><span>مستوى التوتر التكتيكي:</span> <strong>مرتفع</strong></div>
         </div>
 
-        <div class="ai-card">
-            <div class="ai-title">📋 تشكيلة الفريقين والمستجدات</div>
+        <div class="ai-card" style="border-left: 4px solid #8b5cf6;">
+            <div class="ai-title">📋 قراءة الخبراء والتشكيلة</div>
             <p style="margin: 0; color: #475569; line-height: 1.4;">
-                <strong>${home}:</strong> جاهزية تامة وعودة العناصر الأساسية.<br>
-                <strong>${away}:</strong> غياب مؤثر في خط الوسط مع اعتماد تكتيك هجومي.
+                <strong>${home}:</strong> جاهزية عالية وسيطرة متوقعة في وسط الملعب.<br>
+                <strong>${away}:</strong> اعتماد خطة الهتكات المرتدة السريعة لاستغلال المساحات.
             </p>
         </div>
 
-        <div style="background: #e0f2fe; padding: 10px; border-radius: 8px; color: #0369a1; font-size: 12px;">
-            💡 <strong>رأي خبير KELLA:</strong> ${data.aiAdvice}
+        <div style="background: #e0f2fe; padding: 10px; border-radius: 8px; color: #0369a1; font-size: 12px; border: 1px solid #bae6fd;">
+            💡 <strong>الخلاصة التحليلية لـ KELLA:</strong> ${data.aiAdvice}
         </div>
     `;
 
