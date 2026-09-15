@@ -1,0 +1,13 @@
+{
+  "background_color": "rgb(207, 187, 187)",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "KELLA Analytics Pro",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "KELLA Analytics Pro",
+  "start_url": "/",
+  "theme_color": "#ffffff",
+  "id": "./",
+  "description": "Live Football Analytics"
+}
