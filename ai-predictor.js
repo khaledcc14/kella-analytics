@@ -1,10 +1,14 @@
 // *****************************************************
-// KELLA Analytics Pro - Pre-Match & Live AI Predictor Engine
+// KELLA Analytics Pro - Global AI & Live API Predictor Engine
 // Date: September 15, 2026
 // *****************************************************
 
 class KellaAIPredictor {
     constructor() {
+        // مفتاح أو رابط الـ API الخارجي (يمكنك استبداله بمزود مجاني مثل football-data.org أو API-Football)
+        this.apiBaseUrl = "https://api.football-data.org/v4"; 
+        this.apiKey = ""; // ضع مفتاح الـ API الخاص بك هنا إن وجد
+
         this.teamStrengths = {
             // الدوريات العربية الأفريقية
             "الأهلي المصري": { attack: 91, defense: 88, league: "الدوري المصري" },
@@ -48,7 +52,25 @@ class KellaAIPredictor {
         };
     }
 
-    // 1. تحليل ما قبل المباراة (Pre-Match Intelligence)
+    // 1. جلب البيانات حية من الإنترنت مع الاعتماد على المحاكاة كاحتياطي
+    async fetchLiveMatchData(matchId) {
+        if (!this.apiKey) {
+            console.warn("API Key missing. Using Kella AI Simulation Mode.");
+            return null;
+        }
+        try {
+            let response = await fetch(`${this.apiBaseUrl}/matches/${matchId}`, {
+                headers: { 'X-Auth-Token': this.apiKey }
+            });
+            let data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Error fetching live match data:", error);
+            return null;
+        }
+    }
+
+    // 2. تحليل ما قبل المباراة (Pre-Match Intelligence)
     generateMatchIntelligence(homeTeam, awayTeam, competition) {
         let home = this.teamStrengths[homeTeam] || { attack: 80, defense: 80 };
         let away = this.teamStrengths[awayTeam] || { attack: 80, defense: 80 };
@@ -89,42 +111,44 @@ class KellaAIPredictor {
         };
     }
 
-    // 2. تحديث وتحليل أثناء المباراة (Live Match Intelligence)
-    generateLiveIntelligence(homeTeam, awayTeam, currentMinute, currentHomeScore, currentAwayScore) {
-        let home = this.teamStrengths[homeTeam] || { attack: 80, defense: 80 };
-        let away = this.teamStrengths[awayTeam] || { attack: 80, defense: 80 };
-
-        // تعديل الاحتمالات والأهداف المتوقعة بناءً على النتيجة الحية والدقيقة الحالية
+    // 3. تحليل ودعم أثناء المباراة (Live Match Intelligence مع البطاقات والأوقات)
+    generateLiveIntelligence(homeTeam, awayTeam, currentMinute, currentHomeScore, currentAwayScore, yellowCards = {home: 0, away: 0}, redCards = {home: 0, away: 0}) {
         let scoreDiff = currentHomeScore - currentAwayScore;
-        let remainingTimeFactor = (90 - currentMinute) / 90;
+        let remainingTime = 90 - currentMinute;
+        let injuryTimeEst = currentMinute >= 90 ? Math.floor(Math.random() * 5) + 3 : 0; // الوقت الإضافي المتبقي
 
         let liveHomeProb = 33, liveAwayProb = 33, liveDrawProb = 34;
+        let remainingTimeFactor = Math.max(0, remainingTime) / 90;
 
         if (scoreDiff > 0) {
-            liveHomeProb = Math.round(50 + (scoreDiff * 20) + (remainingTimeFactor * 15));
-            liveAwayProb = Math.max(10, 50 - liveHomeProb);
+            liveHomeProb = Math.round(50 + (scoreDiff * 15) + (remainingTimeFactor * 15) - (redCards.home * 10));
+            liveAwayProb = Math.max(5, 50 - liveHomeProb - (redCards.away * 10));
             liveDrawProb = 100 - (liveHomeProb + liveAwayProb);
         } else if (scoreDiff < 0) {
-            liveAwayProb = Math.round(50 + (Math.abs(scoreDiff) * 20) + (remainingTimeFactor * 15));
-            liveHomeProb = Math.max(10, 50 - liveAwayProb);
+            liveAwayProb = Math.round(50 + (Math.abs(scoreDiff) * 15) + (remainingTimeFactor * 15) - (redCards.away * 10));
+            liveHomeProb = Math.max(5, 50 - liveAwayProb - (redCards.home * 10));
             liveDrawProb = 100 - (liveHomeProb + liveAwayProb);
         } else {
-            liveDrawProb = Math.round(40 + (remainingTimeFactor * 20));
+            liveDrawProb = Math.round(40 + (remainingTimeFactor * 25));
             let remaining = (100 - liveDrawProb) / 2;
-            liveHomeProb = Math.round(remaining);
-            liveAwayProb = Math.round(remaining);
+            liveHomeProb = Math.round(remaining - (redCards.home * 8));
+            liveAwayProb = Math.round(remaining - (redCards.away * 8));
         }
 
         let liveInsights = [
-            `الدقيقة ${currentMinute}: نسق اللقاء يرتفع وسط محاولات مكثفة من ${scoreDiff >= 0 ? awayTeam : homeTeam} لتعديل الكفة.`,
-            `مع مرور الدقيقة ${currentMinute}، قراءة الذكاء الاصطناعي تظهر استقراراً نسبياً في استحواذ ${homeTeam} على الكرة.`,
-            `ضغط هجومي متواصل في هذه الفترات الحرجة من اللقاء، ومؤشرات الـ xG ترشح تسجيل هدف آخر قبل صافرة النهاية.`
+            `الدقيقة ${currentMinute} (${injuryTimeEst > intelliTimeCheck() ? '+'+injuryTimeEst : ''}): نسق العنف التكتيكي ترتفع مع ${yellowCards.home + yellowCards.away} بطاقات صفراء.`,
+            `ضغط رهيب في الدقائق الأخيرة، البطاقات الحمراء (${redCards.home} ضد ${homeTeam} / ${redCards.away} ضد ${awayTeam}) تبدل موازين القوى.`,
+            `الوقت الأصلي يلفظ أنفاسه، التوقعات تشير لاحتمالية حسم النتيجة في الأوقات بدل الضائع.`
         ];
 
         return {
             status: "LIVE",
-            minute: `${currentMinute}'`,
+            minute: currentMinute >= 90 ? `90+${injuryTimeEst}'` : `${currentMinute}'`,
             liveScore: `${currentHomeScore} - ${currentAwayScore}`,
+            cards: {
+                yellow: `🟨 ${homeTeam}: ${yellowCards.home} | ${awayTeam}: ${yellowCards.away}`,
+                red: `🟥 ${homeTeam}: ${redCards.home} | ${awayTeam}: ${redCards.red}`
+            },
             probabilities: {
                 home: `${Math.min(95, Math.max(5, liveHomeProb))}%`,
                 draw: `${Math.min(80, Math.max(5, liveDrawProb))}%`,
@@ -134,6 +158,8 @@ class KellaAIPredictor {
         };
     }
 }
+
+function intelliTimeCheck() { return 0; }
 
 // تصدير المحرك للاستخدام العام في التطبيق
 window.KellaAIPredictor = KellaAIPredictor;
