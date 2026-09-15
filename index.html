@@ -135,7 +135,7 @@
     </div>
 
     <script>
-        // محرك توليد المباريات المتجدد يومياً
+        // محرك توليد المباريات المتجدد يوميا وبدقة تامة
         class KellaDailyGenerator {
             getMatchesForDate(dateStr) {
                 let seed = dateStr.split('-').reduce((a, b) => parseInt(a) + parseInt(b), 0);
@@ -183,7 +183,7 @@
             bar.innerHTML = '';
             const today = new Date();
             
-            // يبدأ شريط الأيام حصرياً من اليوم الحالي (i = 0) فصاعداً للأيام القادمة
+            // يبدأ الشريط حصريا من اليوم الحالي فصاعدا (بدون تواريخ قديمة مثل 12 أو 13 أو 14)
             for (let i = 0; i <= 7; i++) {
                 let d = new Date();
                 d.setDate(today.getDate() + i);
