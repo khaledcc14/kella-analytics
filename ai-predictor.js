@@ -1,114 +1,97 @@
 // ==========================================
-// KELLA Analytics Pro - Dynamic AI Engine
-// Automatic Probability & Advice Generator
+// KELLA Analytics Pro - Advanced AI & Goals Predictor
 // Date: September 15, 2026
 // ==========================================
 
 class KellaAIPredictor {
     constructor() {
-        // قائمة الفرق الكبرى وقوتها الأساسية (تقييم داخلي للخوارزمية)
         this.teamStrengths = {
-            "ريال مدريد": 92,
-            "برشلونة": 90,
-            "مانشستر سيتي": 94,
-            "باريس سان جيرمان": 89,
-            "بايرن ميونخ": 93,
-            "أرسنال": 88,
-            "إنتر ميلان": 87,
-            "أتلتيكو مدريد": 86,
-            "ميلان": 85,
-            "تشيلسي": 84,
-            "ليفربول": 91,
-            "يوفنتوس": 85,
-            "مانشستر يونايتد": 83,
-            "توتنهام": 83,
-            "إشبيلية": 82,
-            "فالنسيا": 80
+            "ريال مدريد": { attack: 94, defense: 88 },
+            "برشلونة": { attack: 92, defense: 87 },
+            "مانشستر سيتي": { attack: 95, defense: 90 },
+            "باريس سان جيرمان": { attack: 91, defense: 85 },
+            "بايرن ميونخ": { attack: 94, defense: 89 },
+            "أرسنال": { attack: 89, defense: 91 },
+            "إنتر ميلان": { attack: 88, defense: 90 },
+            "أتلتيكو مدريد": { attack: 85, defense: 92 },
+            "ميلان": { attack: 84, defense: 86 },
+            "تشيلسي": { attack: 83, defense: 83 },
+            "ليفربول": { attack: 93, defense: 88 },
+            "يوفنتوس": { attack: 84, defense: 89 }
         };
     }
 
-    // دالة توليد التحليل والنسب ذكياً لأي مباراة
-    generateAIAnalysis(homeTeam, awayTeam) {
-        let homePower = this.teamStrengths[homeTeam] || 80;
-        let awayPower = this.teamStrengths[awayTeam] || 80;
+    // خوارزمية توليد النسب، الأهداف المتوقعة، والنتيجة التقريبية
+    generateMatchIntelligence(homeTeam, awayTeam) {
+        let home = this.teamStrengths[homeTeam] || { attack: 82, defense: 82 };
+        let away = this.teamStrengths[awayTeam] || { attack: 82, defense: 82 };
 
-        // إضافة عامل الأرض لفريق المضيف
-        homePower += 4;
-
+        // حساب نسب الفوز
+        let homePower = home.attack + (90 - away.defense) + 5; // عامل الأرض
+        let awayPower = away.attack + (90 - home.defense);
         let total = homePower + awayPower;
-        // حساب نسبة الفوز بدقة رياضية
+
         let homeWin = Math.round((homePower / total) * 75);
         let awayWin = Math.round((awayPower / total) * 75);
         let draw = 100 - (homeWin + awayWin);
-
-        // تصحيح القيم لضمان المنطق الرياضي
         if (homeWin < 15) homeWin = 15;
         if (awayWin < 15) awayWin = 15;
         draw = 100 - (homeWin + awayWin);
 
-        // توليد نص النصيحة والتحليل أوتوماتيكياً بناءً على النسب
-        let advice = "";
-        if (homeWin > awayWin + 10) {
-            advice = `الذكاء الاصطناعي يتوقع سيطرة واضحة لـ ${homeTeam} بناءً على تفوق مؤشرات الأداء، مع احتمالية تسجيل أهداف مبكرة.`;
-        } else if (awayWin > homeWin + 10) {
-            advice = `تشير خوارزميات التحليل إلى قوة ملحوظة لـ ${awayTeam} خارج قواعده، وفرص خطيرة في الهجمات المرتدة.`;
-        } else {
-            advice = `مباراة متكافئة للغاية بين الطرفين، التكتيك الدفاعي قد يكون حاسماً مع تقارب حظوظ الحسم.`;
-        }
+        // توقع الأهداف بدقة بناءً على القوة الهجومية والدفاعية
+        let homeExpectedGoals = (home.attack / 35).toFixed(1);
+        let awayExpectedGoals = (away.attack / 38).toFixed(1);
+        
+        // توقع النتيجة التقريبية للأهداف
+        let homePredictedGoalsScore = Math.round(home.attack / 45);
+        let awayPredictedGoalsScore = Math.round(away.attack / 50);
+
+        let advice = `توقع تسجيل ${homeTeam} لـ ${homeExpectedGoals} هدف مقابل ${awayExpectedGoals} هدف لـ ${awayTeam}. النتيجة المتوقعة: (${homePredictedGoalsScore} - ${awayPredictedGoalsScore}).`;
 
         return {
             homeWinProb: homeWin,
             drawProb: draw,
             awayWinProb: awayWin,
+            predictedScore: `${homePredictedGoalsScore} - ${awayPredictedGoalsScore}`,
+            expectedGoals: `xG: ${homeExpectedGoals} - ${awayExpectedGoals}`,
             aiAdvice: advice
         };
     }
 
-    // جلب مباريات اليوم وتوليد تحليلاتها في الحين
     getDailyMatches() {
-        const rawMatches = [
+        const matches = [
             { id: 1, competition: "دوري أبطال أوروبا", homeTeam: "ريال مدريد", awayTeam: "باريس سان جيرمان", time: "20:00", date: "اليوم (15 سبتمبر)" },
             { id: 2, competition: "دوري أبطال أوروبا", homeTeam: "برشلونة", awayTeam: "مانشستر سيتي", time: "20:00", date: "اليوم (15 سبتمبر)" },
             { id: 3, competition: "دوري أبطال أوروبا", homeTeam: "ميلان", awayTeam: "أتلتيكو مدريد", time: "18:00", date: "اليوم (15 سبتمبر)" }
         ];
-
-        return rawMatches.map(m => {
-            const analysis = this.generateAIAnalysis(m.homeTeam, m.awayTeam);
-            return { ...m, ...analysis };
-        });
+        return matches.map(m => ({ ...m, ...this.generateMatchIntelligence(m.homeTeam, m.awayTeam) }));
     }
 
-    // جلب مباريات الأسبوع وتوليد تحليلاتها أوتوماتيكياً
     getWeeklyMatches() {
-        const rawMatches = [
+        const matches = [
             ...this.getDailyMatches(),
             { id: 4, competition: "دوري أبطال أوروبا", homeTeam: "بايرن ميونخ", awayTeam: "إنتر ميلان", time: "20:00", date: "الأربعاء (16 سبتمبر)" },
-            { id: 5, competition: "الدوري الإنجليزي الممتاز", homeTeam: "تشيلسي", awayTeam: "توتنهام", time: "21:00", date: "الخميس (17 سبتمبر)" },
-            { id: 6, competition: "الدوري الإنجليزي الممتاز", homeTeam: "مانشستر يونايتد", awayTeam: "ليفربول", time: "17:30", date: "السبت (19 سبتمبر)" }
+            { id: 5, competition: "الدوري الإنجليزي", homeTeam: "تشيلسي", awayTeam: "توتنهام", time: "21:00", date: "الخميس (17 سبتمبر)" },
+            { id: 6, competition: "الدوري الإنجليزي", homeTeam: "مانشستر يونايتد", awayTeam: "ليفربول", time: "17:30", date: "السبت (19 سبتمبر)" }
         ];
-
-        return rawMatches.map(m => {
-            if (m.homeWinProb) return m; // إذا كانت محسوبة مسبقاً
-            const analysis = this.generateAIAnalysis(m.homeTeam, m.awayTeam);
-            return { ...m, ...analysis };
+        return matches.map(m => {
+            if (m.homeWinProb) return m;
+            return { ...m, ...this.generateMatchIntelligence(m.homeTeam, m.awayTeam) };
         });
     }
 
-    // جلب مباريات الشهر وتوليد تحليلاتها أوتوماتيكياً
     getMonthlyMatches() {
-        const rawMatches = [
+        const matches = [
             ...this.getWeeklyMatches(),
             { id: 7, competition: "الدوري الإسباني", homeTeam: "أتلتيكو مدريد", awayTeam: "ريال مدريد", time: "21:00", date: "السبت (26 سبتمبر)" },
             { id: 8, competition: "دوري أبطال أوروبا", homeTeam: "باريس سان جيرمان", awayTeam: "بايرن ميونخ", time: "20:00", date: "الثلاثاء (29 سبتمبر)" }
         ];
-
-        return rawMatches.map(m => {
+        return matches.map(m => {
             if (m.homeWinProb) return m;
-            const analysis = this.generateAIAnalysis(m.homeTeam, m.awayTeam);
-            return { ...m, ...analysis };
+            return { ...m, ...this.generateMatchIntelligence(m.homeTeam, m.awayTeam) };
         });
     }
 }
 
 window.kellaPredictor = new KellaAIPredictor();
-console.log("KELLA Dynamic AI Predictor Engine Initialized Successfully!");
+console.log("KELLA Goals & AI Predictor Loaded!");
