@@ -34,12 +34,9 @@
 
         header {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: white;
-            padding: 20px 16px;
+            color: white; padding: 20px 16px;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            display: flex; align-items: center; justify-content: space-between;
         }
 
         .header-content { display: flex; align-items: center; gap: 12px; }
@@ -52,62 +49,222 @@
         .page-content.active { display: block; }
 
         .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 12px; padding: 16px; margin-bottom: 16px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
         .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
 
-        /* أزرار التصفح الزمني (يومي، أسبوعي، شهري) */
+        /* أزرار التصفح الزمني */
         .time-tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-            background: var(--border);
-            padding: 4px;
-            border-radius: 8px;
+            display: flex; gap: 8px; margin-bottom: 16px;
+            background: var(--border); padding: 4px; border-radius: 8px;
         }
         .time-tab {
-            flex: 1;
-            background: none;
-            border: none;
-            padding: 8px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-light);
-            border-radius: 6px;
-            cursor: pointer;
-            text-align: center;
+            flex: 1; background: none; border: none; padding: 8px;
+            font-size: 0.85rem; font-weight: 600; color: var(--text-light);
+            border-radius: 6px; cursor: pointer; text-align: center;
         }
-        .time-tab.active {
-            background: var(--card-bg);
-            color: var(--accent);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
+        .time-tab.active { background: var(--card-bg); color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-        /* بطاقة المباراة */
+        /* بطاقة المباراة مع توقع الأهداف */
         .match-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 12px; padding: 16px; margin-bottom: 12px;
         }
         .match-header { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-light); margin-bottom: 8px; }
-        .match-teams { display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 1.05rem; margin-bottom: 12px; }
+        .match-teams { display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 1.05rem; margin-bottom: 10px; }
+        
+        .score-predict-badge {
+            background: var(--warning); color: white; padding: 4px 10px;
+            border-radius: 20px; font-size: 0.8rem; font-weight: bold; text-align: center; margin-bottom: 10px; display: inline-block;
+        }
+
         .prob-bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: var(--border); margin-bottom: 8px; }
         .prob-home { background: var(--accent); height: 100%; }
         .prob-away { background: var(--success); height: 100%; }
         .prob-text { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-light); margin-bottom: 10px; }
-        .ai-advice { background: rgba(59, 130, 246, 0.1); border-right: 3px solid var(--accent); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); }
+        .ai-advice { background: rgba(59, 130, 246, 0.1); border-right: 3px solid var(--accent); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); margin-bottom: 10px; }
+
+        /* مشغل البث المباشر */
+        .live-stream-box {
+            background: #000; border-radius: 8px; overflow: hidden; position: relative;
+            aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; color: white; margin-bottom: 12px;
+        }
+        .live-badge {
+            position: absolute; top: 10px; right: 10px; background: #dc2626; color: white;
+            padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
         nav {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: var(--card-bg); border-top: 1px solid var(--border);
+            display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000;
+        }
+        nav button {
+            background: none; border: none; color: var(--text-light);
+            font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex: 1;
+        }
+        nav button.active { color: var(--accent); font-weight: 700; }
+        nav button .icon { font-size: 1.25rem; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <div class="logo-box">⚽</div>
+            <div>
+                <h1>KELLA Analytics Pro</h1>
+                <div class="subtitle">توقع الأهداف والبث المباشر الذكي</div>
+            </div>
+        </div>
+        <button id="themeBtn" onclick="toggleTheme()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">☀️</button>
+    </header>
+
+    <div class="container">
+        <!-- الرئيسية -->
+        <div id="page-home" class="page-content active">
+            <div class="card">
+                <div class="section-title">🏠 أهلاً بك يا سي خالد</div>
+                <p style="font-size: 0.9rem; color: var(--text-light); line-height: 1.6;">
+                    تطبيقك يضم الآن محركاً متطوراً <b>لتوقع الأهداف وتوقع النتيجة بدقة</b>، بالإضافة إلى قسم <b>البث المباشر</b>. انتقل للتبويبات بالأسفل!
+                </p>
+            </div>
+        </div>
+
+        <!-- البث المباشر (المشاهدة الحية) -->
+        <div id="page-live" class="page-content">
+            <div class="section-title">🔴 البث الحي لمباريات اليوم</div>
+            <div class="card">
+                <div class="live-stream-box">
+                    <div class="live-badge">LIVE 🔴</div>
+                    <div style="text-align: center; padding: 20px;">
+                        <p style="font-size: 1rem; font-weight: bold; margin-bottom: 6px;">البث المباشر يعمل الآن</p>
+                        <p style="font-size: 0.8rem; color: #94a3b8;">جاري بث القمة الكروية بجودة عالية...</p>
+                    </div>
+                </div>
+                <div style="font-weight: 700; font-size: 1rem; margin-bottom: 4px;">ريال مدريد ضد باريس سان جيرمان</div>
+                <div style="font-size: 0.85rem; color: var(--text-light);">دوري أبطال أوروبا | المعلق: حفيظ دراجي</div>
+            </div>
+        </div>
+
+        <!-- الذكاء الاصطناعي (توقع الأهداف والنتائج) -->
+        <div id="page-ai" class="page-content">
+            <div class="section-title">🤖 توقعات الأهداف والنتيجة (AI Goals)</div>
+            
+            <div class="time-tabs">
+                <button class="time-tab active" onclick="loadMatches('daily', this)">اليوم</button>
+                <button class="time-tab" onclick="loadMatches('weekly', this)">الأسبوع</button>
+                <button class="time-tab" onclick="loadMatches('monthly', this)">الشهر</button>
+            </div>
+
+            <div id="ai-matches-container"></div>
+        </div>
+
+        <!-- الإعدادات -->
+        <div id="page-settings" class="page-content">
+            <div class="card">
+                <div class="section-title">⚙️ الإعدادات</div>
+                <p style="font-size: 0.9rem; color: var(--text-light);">إصدار المنصة: Goals & Streaming v4.0.</p>
+            </div>
+        </div>
+    </div>
+
+    <nav>
+        <button onclick="switchPage('home', this)" class="active">
+            <span class="icon">🏠</span>
+            <span>الرئيسية</span>
+        </button>
+        <button onclick="switchPage('page-live', this)" onclick="switchPage('live', this)">
+            <span class="icon">📺</span>
+            <span>المباشر</span>
+        </button>
+        <button onclick="switchPage('ai', this)">
+            <span class="icon">🤖</span>
+            <span>الذكاء الاصطناعي</span>
+        </button>
+        <button onclick="switchPage('settings', this)">
+            <span class="icon">⚙️</span>
+            <span>الإعدادات</span>
+        </button>
+    </nav>
+
+    <script src="ai-predictor.js?v=4.0"></script>
+
+    <script>
+        function switchPage(pageId, btn) {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + pageId).classList.add('active');
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeBtn = document.getElementById('themeBtn');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeBtn.textContent = '☀️';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeBtn.textContent = '🌙';
+            }
+        }
+
+        function loadMatches(type, btn) {
+            document.querySelectorAll('.time-tab').forEach(t => t.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+
+            if (!window.kellaPredictor) return;
+
+            let matches = [];
+            if (type === 'daily') matches = window.kellaPredictor.getDailyMatches();
+            else if (type === 'weekly') matches = window.kellaPredictor.getWeeklyMatches();
+            else if (type === 'monthly') matches = window.kellaPredictor.getMonthlyMatches();
+
+            const container = document.getElementById('ai-matches-container');
+            container.innerHTML = '';
+
+            matches.forEach(m => {
+                let html = `
+                    <div class="match-card">
+                        <div class="match-header">
+                            <span>🏆 ${m.competition}</span>
+                            <span>📅 ${m.date} | ⏰ ${m.time}</span>
+                        </div>
+                        <div class="match-teams">
+                            <span>${m.homeTeam}</span>
+                            <span style="font-size: 0.8rem; color: var(--text-light);">VS</span>
+                            <span>${m.awayTeam}</span>
+                        </div>
+                        <div style="text-align: center;">
+                            <span class="score-predict-badge">⚽ توقع النتيجة الآلية: ${m.predictedScore} (${m.expectedGoals})</span>
+                        </div>
+                        <div class="prob-text">
+                            <span>${m.homeTeam}: ${m.homeWinProb}%</span>
+                            <span>تعادل: ${m.drawProb}%</span>
+                            <span>${m.awayTeam}: ${m.awayWinProb}%</span>
+                        </div>
+                        <div class="prob-bar">
+                            <div class="prob-home" style="width: ${m.homeWinProb}%"></div>
+                            <div class="prob-away" style="width: ${m.awayWinProb}%"></div>
+                        </div>
+                        <div class="ai-advice">💡 <b>تحليل الأهداف:</b> ${m.aiAdvice}</div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadMatches('daily');
+        });
+    </script>
+</body>
+</html>
             display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000;
         }
         nav button {
