@@ -3,339 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLA Analytics Pro - Real Match Feed</title>
+    <title>KELLA Analytics Pro</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: Arial, sans-serif;
             background-color: #f3f4f6;
             color: #1f2937;
             margin: 0;
-            padding-bottom: 80px;
+            padding-bottom: 70px;
         }
-        .top-header {
-            background: #ffffff;
-            padding: 12px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        .top-header h1 {
+        .header {
+            background: #0f172a;
+            color: white;
+            padding: 15px;
+            text-align: center;
             font-size: 18px;
-            font-weight: 800;
-            color: #111827;
-            margin: 0;
-            letter-spacing: -0.5px;
+            font-weight: bold;
         }
-        .date-bar {
-            background: #ffffff;
+        .date-container {
             display: flex;
-            gap: 8px;
-            padding: 10px 12px;
-            border-bottom: 1px solid #e5e7eb;
+            background: white;
+            padding: 10px;
             overflow-x: auto;
-            white-space: nowrap;
-            scrollbar-width: none;
+            gap: 10px;
+            border-bottom: 1px solid #e5e7eb;
         }
-        .date-bar::-webkit-scrollbar { display: none; }
-        .date-tab {
-            font-size: 13px;
-            color: #6b7280;
-            padding: 6px 14px;
-            border-radius: 16px;
+        .date-btn {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 8px 15px;
+            border-radius: 20px;
             cursor: pointer;
-            font-weight: 500;
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            flex-shrink: 0;
+            font-size: 13px;
+            white-space: nowrap;
         }
-        .date-tab.active {
+        .date-btn.active {
             background: #0284c7;
-            color: #ffffff;
+            color: white;
             border-color: #0284c7;
             font-weight: bold;
         }
-        .league-box {
-            background: #ffffff;
-            margin: 12px;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            border: 1px solid #e5e7eb;
-        }
-        .league-title {
-            background: #f8fafc;
-            padding: 12px 15px;
-            font-size: 14px;
-            font-weight: bold;
-            color: #111827;
-            border-bottom: 1px solid #f1f5f9;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .match-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 15px;
-            border-bottom: 1px solid #f9fafb;
+        .match-card {
+            background: white;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             cursor: pointer;
         }
-        .match-row:hover { background: #f1f5f9; }
-        .match-row:last-child { border-bottom: none; }
-        .team-name {
-            width: 38%;
-            font-size: 13px;
-            font-weight: 600;
-            color: #1f2937;
+        .match-teams {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 8px;
         }
-        .team-name.right { text-align: left; }
-        .team-name.left { text-align: right; }
-        .match-center-info {
-            width: 24%;
+        .match-info {
+            font-size: 12px;
+            color: #0284c7;
             text-align: center;
+            background: #e0f2fe;
+            padding: 5px;
+            border-radius: 5px;
         }
         .bottom-nav {
             position: fixed;
             bottom: 0; left: 0; right: 0;
-            background: #ffffff;
+            background: white;
             display: flex;
             justify-content: space-around;
-            padding: 10px 0;
+            padding: 12px 0;
             border-top: 1px solid #e5e7eb;
-            z-index: 100;
         }
-        .nav-item {
-            text-align: center;
-            font-size: 11px;
-            color: #9ca3af;
+        .nav-tab {
+            background: none;
+            border: none;
+            font-size: 12px;
+            color: #64748b;
             cursor: pointer;
-            background: none; border: none; flex: 1;
         }
-        .nav-item.active { color: #0284c7; font-weight: bold; }
+        .nav-tab.active {
+            color: #0284c7;
+            font-weight: bold;
+        }
         .modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            justify-content: center; align-items: center;
-            z-index: 1000;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
         }
         .modal-content {
-            background: #ffffff;
-            width: 92%; max-width: 440px;
-            border-radius: 14px; overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            max-height: 90vh; overflow-y: auto;
+            background: white;
+            padding: 20px;
+            width: 85%;
+            max-width: 350px;
+            border-radius: 10px;
         }
-        .modal-header { background: #0f172a; color: white; padding: 15px; text-align: center; }
-        .modal-body { padding: 15px; background: #f8fafc; font-size: 13px; }
-        .ai-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px; padding: 12px; margin-bottom: 10px;
-            border-left: 4px solid #0284c7;
-        }
-        .ai-title { font-weight: bold; color: #0284c7; margin-bottom: 6px; font-size: 14px; }
-        .stat-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f1f5f9; }
-        .page-section { display: none; }
-        .page-section.active { display: block; }
     </style>
 </head>
 <body>
 
-    <div class="top-header">
-        <h1>KELLA Analytics <span style="font-size: 12px; color: #0284c7; font-weight: normal;">Pro Live</span></h1>
-        <span onclick="location.reload()" style="cursor: pointer; font-size: 16px;" title="تحديث">🔄</span>
-    </div>
+    <div class="header">KELLA Analytics Pro ⚽</div>
 
-    <!-- 1. صفحة المباريات -->
-    <div id="section-matches" class="page-section active">
-        <div class="date-bar" id="dateTabsContainer"></div>
+    <div class="date-container" id="dateBar"></div>
 
-        <div style="background: #0f172a; color: white; padding: 8px; text-align: center; font-size: 11px; font-weight: bold;">
-            ⚽ مباريات حية ومحدثة مطابقة للواقع + تحليل الذكاء الاصطناعي للمراهنات
-        </div>
+    <div id="matchesList"></div>
 
-        <div id="matchesContainer"></div>
-    </div>
-
-    <!-- 2. صفحة الأخبار -->
-    <div id="section-news" class="page-section">
-        <div style="padding: 20px; text-align: center;">
-            <h3>📰 التحليلات اليومية</h3>
-            <div class="ai-card" style="text-align: right;">
-                <div class="ai-title">توصيات الرهان الذكي</div>
-                <p style="font-size: 12px; color: #475569;">متابعة لحظية لأهم الصفقات والفرص في مباريات اليوم.</p>
-            </div>
+    <!-- النافذة المنخفضة للتحليل -->
+    <div class="modal" id="analysisModal" onclick="closeModal(event)">
+        <div class="modal-content">
+            <h3 id="modalTitle" style="margin-top:0; color:#0f172a;">تحليل المباراة</h3>
+            <p id="modalBody" style="font-size: 13px; color: #334155;"></p>
+            <button onclick="document.getElementById('analysisModal').style.display='none'" style="width:100%; padding:10px; background:#0f172a; color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">إغلاق</button>
         </div>
     </div>
 
-    <!-- 3. باقي الصفحات -->
-    <div id="section-leagues" class="page-section">
-        <div style="padding:15px;">
-            <h3>🏆 الدوريات الكبرى النشطة</h3>
-            <p style="font-size: 13px; color: #4b5563;">UEFA Champions League, Premier League, LaLiga, Serie A</p>
-        </div>
-    </div>
-    <div id="section-saved" class="page-section"><div style="padding:20px; text-align:center;"><h3>⭐ المباريات المفضلة</h3></div></div>
-    <div id="section-more" class="page-section">
-        <div style="padding: 15px;">
-            <h3>⚙️ الإعدادات</h3>
-            <div class="ai-card">
-                <div class="ai-title">KELLA Engine v6.0</div>
-                <p style="font-size: 12px; color: #475569;">النظام يعمل بسرعة عالية ومحدث خصيصاً للمباريات الحالية.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- الشريط السفلي -->
     <div class="bottom-nav">
-        <button class="nav-item active" onclick="switchTab('matches', this)">⚽ Matchs</button>
-        <button class="nav-item" onclick="switchTab('news', this)">📰 Actus</button>
-        <button class="nav-item" onclick="switchTab('leagues', this)">🏆 Ligues</button>
-        <button class="nav-item" onclick="switchTab('saved', this)">⭐ Suivis</button>
-        <button class="nav-item" onclick="switchTab('more', this)">⚙️ Plus</button>
-    </div>
-
-    <!-- نافذة التحليل -->
-    <div id="aiModal" class="modal" onclick="closeModal(event)">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <h3 id="modalMatchTitle" style="margin:0; font-size:16px;">تحليل الذكاء الاصطناعي للمراهنات</h3>
-                <span style="font-size: 11px; color: #38bdf8;">KELLA AI Engine</span>
-            </div>
-            <div class="modal-body" id="aiModalBody"></div>
-            <button onclick="document.getElementById('aiModal').style.display='none'" style="width:100%; padding:12px; background:#0f172a; color:white; border:none; font-weight:bold; cursor:pointer;">إغلاق</button>
-        </div>
+        <button class="nav-tab active" onclick="switchNav(this)">⚽ المباريات</button>
+        <button class="nav-tab" onclick="switchNav(this)">📰 الأخبار</button>
+        <button class="nav-tab" onclick="switchNav(this)">🏆 الدوريات</button>
+        <button class="nav-tab" onclick="switchNav(this)">⚙️ الإعدادات</button>
     </div>
 
     <script>
-        class KellaAIPredictor {
-            generateMatchIntelligence(home, away) {
-                return {
-                    predictedScore: "2 - 1",
-                    probabilities: { home: "55%", draw: "25%", away: "20%" },
-                    aiAdvice: `الضغط الهجومي لـ ${home} في هذه الجولة يرجح تسجيله لأهداف مع حذر دفاعي أمام ${away}.`
-                };
-            }
-        }
-
-        const aiPredictor = new KellaAIPredictor();
-        let currentSelectedDate = '';
+        const matchesData = [
+            { home: "Real Madrid", away: "Real Sociedad", time: "21:00", pick: "Value Bet: 1X & Over 1.5", score: "2 - 1" },
+            { home: "Arsenal", away: "Manchester United", time: "20:00", pick: "BTTS: Oui (مؤكد)", score: "2 - 2" },
+            { home: "AC Milan", away: "Liverpool", time: "21:00", pick: "Over 2.5 Goals", score: "1 - 3" },
+            { home: "Bayern Munich", away: "Bayer Leverkusen", time: "18:30", pick: "1X (فوز أو تعادل)", score: "2 - 0" }
+        ];
 
         document.addEventListener("DOMContentLoaded", () => {
-            buildDateCarousel();
+            buildDates();
+            loadMatches();
         });
 
-        function buildDateCarousel() {
-            const container = document.getElementById('dateTabsContainer');
-            container.innerHTML = '';
+        function buildDates() {
+            const bar = document.getElementById('dateBar');
             const today = new Date();
-            
-            for (let i = -2; i <= 5; i++) {
+            for (let i = -2; i <= 3; i++) {
                 let d = new Date();
                 d.setDate(today.getDate() + i);
-                let dateStr = d.toISOString().split('T')[0];
-                let displayLabel = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+                let label = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+                if(i === 0) label = "Aujourd'hui (" + label + ")";
                 
-                if (i === 0) displayLabel = "Aujourd'hui (" + displayLabel + ")";
-                else if (i === 1) displayLabel = "Demain (" + displayLabel + ")";
-                else if (i === -1) displayLabel = "Hier (" + displayLabel + ")";
-
-                const tab = document.createElement('div');
-                tab.className = `date-tab ${i === 0 ? 'active' : ''}`;
-                tab.innerText = displayLabel;
-                tab.onclick = () => {
-                    document.querySelectorAll('.date-tab').forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    currentSelectedDate = dateStr;
-                    renderMatchesForDate(dateStr);
+                const btn = document.createElement('div');
+                btn.className = `date-btn ${i === 0 ? 'active' : ''}`;
+                btn.innerText = label;
+                btn.onclick = (e) => {
+                    document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    loadMatches();
                 };
-                container.appendChild(tab);
-                if (i === 0) {
-                    currentSelectedDate = dateStr;
-                    renderMatchesForDate(dateStr);
-                }
+                bar.appendChild(btn);
             }
         }
 
-        function renderMatchesForDate(dateStr) {
-            const container = document.getElementById('matchesContainer');
-            container.innerHTML = `<div style="text-align:center; padding:20px; color:#0284c7; font-weight:bold;">🔄 تحميل مباريات تاريخ ${dateStr}...</div>`;
-
-            setTimeout(() => {
-                let matchesHtml = `<div style="background: #e0f2fe; padding: 6px 15px; font-size: 11px; color: #0369a1; text-align: center; font-weight: bold;">
-                    📅 مباريات موثوقة ليوم: ${dateStr}
-                </div>`;
-
-                // مباريات حية حقيقية تناسب دوري أبطال أوروبا والدوريات الكبرى
-                const matchesList = [
-                    { league: "🇪🇸 LaLiga EA Sports", home: "Real Madrid", away: "Real Sociedad", time: "21:00", pick: "Value Bet 1X" },
-                    { league: "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League", home: "Arsenal", away: "Manchester United", time: "20:00", pick: "BTTS: Oui" },
-                    { league: "🇪🇺 UEFA Champions League", home: "AC Milan", away: "Liverpool", time: "21:00", pick: "Over 2.5 Goals" },
-                    { league: "🇩🇪 Bundesliga", home: "Bayern Munich", away: "Bayer Leverkusen", time: "18:30", pick: "1X & Over 1.5" }
-                ];
-
-                matchesList.forEach(m => {
-                    const aiData = aiPredictor.generateMatchIntelligence(m.home, m.away);
-                    matchesHtml += `
-                        <div class="league-box">
-                            <div class="league-title">
-                                <span>${m.league}</span>
-                                <span style="font-size:10px; color:#0284c7;">⏰ ${m.time}</span>
-                            </div>
-                            <div class="match-row" onclick="openBettingAnalysis('${m.home}', '${m.away}')">
-                                <div class="team-name left">${m.home}</div>
-                                <div class="match-center-info">
-                                    <span style="font-size: 12px; font-weight: bold; color: #16a34a;">🎯 ${aiData.predictedScore}</span><br>
-                                    <span style="font-size: 9px; color: #0284c7; font-weight: bold;">${m.pick}</span>
-                                </div>
-                                <div class="team-name right">${m.away}</div>
-                            </div>
+        function loadMatches() {
+            const container = document.getElementById('matchesList');
+            let html = "";
+            matchesData.forEach(m => {
+                html += `
+                    <div class="match-card" onclick="openModal('${m.home}', '${m.away}', '${m.pick}', '${m.score}')">
+                        <div class="match-teams">
+                            <span>${m.home}</span>
+                            <span style="color:#64748b; font-size:12px;">${m.time}</span>
+                            <span>${m.away}</span>
                         </div>
-                    `;
-                });
-
-                container.innerHTML = matchesHtml;
-            }, 150);
+                        <div class="match-info">
+                            🎯 النتيجة المتوقعة: <strong>${m.score}</strong> | 💡 التوصية: <strong>${m.pick}</strong>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
         }
 
-        function openBettingAnalysis(home, away) {
-            const modal = document.getElementById('aiModal');
-            document.getElementById('modalMatchTitle').innerText = `${home} vs ${away}`;
-            let data = aiPredictor.generateMatchIntelligence(home, away);
-
-            document.getElementById('aiModalBody').innerHTML = `
-                <div class="ai-card" style="border-left-color: #16a34a;">
-                    <div class="ai-title" style="color: #16a34a;">💰 تحليل وتوصيات المراهنات</div>
-                    <div class="stat-row"><span>النتيجة المتوقعة:</span> <strong style="color: #0284c7;">${data.predictedScore}</strong></div>
-                    <div class="stat-row"><span>تسجيل الفريقين (BTTS):</span> <strong style="color: #16a34a;">موصى به (Oui)</strong></div>
-                    <div class="stat-row"><span>إجمالي الأهداف:</span> <strong>أكثر من 2.5</strong></div>
-                </div>
-                <div class="ai-card">
-                    <div class="ai-title">📊 نسب الفوز الحاسمة</div>
-                    <div class="stat-row"><span>فوز (${home}):</span> <strong>${data.probabilities.home}</strong></div>
-                    <div class="stat-row"><span>التعادل:</span> <strong>${data.probabilities.draw}</strong></div>
-                    <div class="stat-row"><span>فوز (${away}):</span> <strong>${data.probabilities.away}</strong></div>
-                </div>
-                <div style="background: #f0fdf4; padding: 10px; border-radius: 8px; color: #166534; font-size: 12px; border: 1px solid #bbf7d0;">
-                    💡 <strong>رأي خبير KELLA:</strong> ${data.aiAdvice}
-                </div>
+        function openModal(home, away, pick, score) {
+            document.getElementById('modalTitle').innerText = `${home} vs ${away}`;
+            document.getElementById('modalBody').innerHTML = `
+                النتيجة المتوقعة بدقة: <strong>${score}</strong><br><br>
+                توصية الذكاء الاصطناعي للمراهنات:<br>
+                <span style="color:#0284c7; font-weight:bold;">${pick}</span><br><br>
+                تحليل الخبير: الهجوم الضاغظ للفريقين يرفع من نسبة تسجيل الأهداف اليوم.
             `;
-            modal.style.display = 'flex';
+            document.getElementById('analysisModal').style.display = 'flex';
         }
 
         function closeModal(e) {
-            if (e.target.id === 'aiModal') e.target.style.display = 'none';
+            if(e.target.id === 'analysisModal') {
+                e.target.style.display = 'none';
+            }
         }
 
-        function switchTab(tabName, element) {
-            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-            document.getElementById(`section-${tabName}`).classList.add('active');
-            element.classList.add('active');
+        function switchNav(btn) {
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
         }
     </script>
 </body>
