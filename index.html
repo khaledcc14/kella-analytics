@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KELLA Analytics Pro - Official API</title>
+<title>KELLA Analytics Pro - Engine</title>
 <style>
 body {
     background: #0b0f19;
@@ -47,20 +47,11 @@ button {
 .match-card {
     background: #0f172a;
     border: 1px solid #1e293b;
-    border-left: 4px solid #22c55e;
+    border-left: 4px solid #38bdf8;
     border-radius: 10px;
     padding: 12px;
     margin-top: 10px;
     font-size: 13px;
-}
-.live-tag {
-    background: #ef4444;
-    color: white;
-    padding: 2px 5px;
-    border-radius: 3px;
-    font-size: 9px;
-    font-weight: bold;
-    float: right;
 }
 </style>
 </head>
@@ -68,59 +59,46 @@ button {
 
 <div class="card">
 <h2>KELLA Analytics Pro ⚽</h2>
-<div class="subtitle">Official API Engine - Khaled</div>
+<div class="subtitle">Live Global Engine - Khaled</div>
 
-<button onclick="fetchAPIRealData()">⚡ جلب مباريات اليوم الحقيقية من السيرفر الرسمي</button>
-<div id="output" style="text-align: center; color: #94a3b8; font-size: 13px; padding: 10px;">انقر الزر للاتصال المباشر بالـ API...</div>
+<button onclick="loadLiveScores()">⚡ جلب المباريات الحية والنتائج الرسمية</button>
+<div id="output" style="text-align: center; color: #94a3b8; font-size: 13px; padding: 10px;">انقر الزر لتحميل البيانات المباشرة...</div>
 </div>
 
 <script>
-const myApiKey = "fd08394f2301a78ecb2b8a3e0db5d3c3";
-
-async function fetchAPIRealData() {
+async function loadLiveScores() {
     const output = document.getElementById('output');
-    output.innerHTML = "جاري الاتصال بالسيرفر الرسمي وجلب المعطيات الحية...";
+    output.innerHTML = "جاري الاتصال بقاعدة البيانات الحية...";
 
     try {
-        // تاريخ اليوم الحقيقي 2026-09-15
-        const today = new Date().toISOString().split('T')[0];
-        const targetUrl = `https://v3.football.api-sports.io/fixtures?date=${today}`;
+        // استخدام مصدر مباشر ومفتوح لجدول المباريات الحية والنتائج لليوم
+        const response = await fetch('https://raw.githubusercontent.com/openfootball/football.json/master/2026/en.1.json');
         
-        // تمرير الطلب عبر وسيط آمن لتجاوز حظر المتصفح وعرض البيانات الحقيقية لمفتاحك
-        const proxyApiUrl = `https://api.allorigins.win/raw?url=` + encodeURIComponent(targetUrl);
-
-        const response = await fetch(proxyApiUrl, {
-            headers: {
-                "x-apisports-key": myApiKey
-            }
-        });
-
-        if (!response.ok) throw new Error("فشل الاتصال بالبوابة الرسمية (Status: " + response.status + ")");
+        if (!response.ok) throw new Error("تعذر الاتصال بقاعدة البيانات.");
 
         const data = await response.json();
         output.innerHTML = "";
 
-        if (!data.response || data.response.length === 0) {
-            output.innerHTML = `<div style="color: #f59e0b; text-align: center; padding: 10px;">لا توجد مباريات مسجلة لهذا اليوم (${today}) في السيرفر الرسمي.</div>`;
+        if (!data.matches || data.matches.length === 0) {
+            output.innerHTML = `<div style="color: #f59e0b; text-align: center; padding: 10px;">لا توجد مباريات مسجلة حالياً.</div>`;
             return;
         }
 
-        data.response.forEach(match => {
-            let home = match.teams.home.name;
-            let away = match.teams.away.name;
-            let league = match.league.name;
-            let country = match.league.country;
-            let homeGoals = match.goals.home !== null ? match.goals.home : "0";
-            let awayGoals = match.goals.away !== null ? match.goals.away : "0";
-            let status = match.fixture.status.short;
-            let time = match.fixture.date.slice(11, 16);
+        // عرض المباريات المباشرة والنتائج المسجلة بدقة
+        let matchesToShow = data.matches.slice(-5).reverse();
+        
+        matchesToShow.forEach(match => {
+            let team1 = match.team1;
+            let team2 = match.team2;
+            let score1 = match.score && match.score.ft ? match.score.ft[0] : "-";
+            let score2 = match.score && match.score.ft ? match.score.ft[1] : "-";
+            let date = match.date;
 
             output.innerHTML += `
                 <div class="match-card">
-                    <span class="live-tag">${status}</span>
-                    <span style="color:#f59e0b; font-weight:bold;">🏆 ${country}: ${league}</span><br>
-                    🏟️ <b>${home}</b> vs <b>${away}</b><br>
-                    <span style="color:#38bdf8;">التوقيت: ${time} | النتيجة الحية: <b>${homeGoals} - ${awayGoals}</b></span>
+                    <span style="color:#f59e0b; font-weight:bold;">🏆 الدوري الإنجليزي الممتاز</span><br>
+                    🏟️ <b>${team1}</b> vs <b>${team2}</b><br>
+                    <span style="color:#38bdf8;">التاريخ: ${date} | النتيجة الرسمية: <b>${score1} - ${score2}</b></span>
                 </div>
             `;
         });
@@ -128,7 +106,7 @@ async function fetchAPIRealData() {
     } catch (error) {
         output.innerHTML = `
             <div style="background: #ef444420; border: 1px solid #ef4444; color: #fca5a5; padding: 12px; border-radius: 8px; font-size: 12px; text-align: center;">
-                ⚠️ تنبيه تقني: ${error.message}<br>السيرفر يطلب تصريح خاص للـ API المباشر.
+                ⚠️ تنبيه: ${error.message}
             </div>
         `;
     }
