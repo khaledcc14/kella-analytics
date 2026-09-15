@@ -135,10 +135,9 @@
     </div>
 
     <script>
-        // محرك توليد المباريات المتجدد يومياً بناءً على التاريخ المختاره
+        // محرك توليد المباريات المتجدد يومياً
         class KellaDailyGenerator {
             getMatchesForDate(dateStr) {
-                // استخدام قيمة التاريخ لتوليد مباريات متغيرة ودقيقة تلقائياً
                 let seed = dateStr.split('-').reduce((a, b) => parseInt(a) + parseInt(b), 0);
                 
                 const pool = [
@@ -153,7 +152,6 @@
                     let leagueObj = pool[(seed + i) % pool.length];
                     let matchPair = leagueObj.teams[(seed + i * 3) % leagueObj.teams.length];
                     
-                    // حساب نتائج وتوصيات ذكية متجددة
                     let homeScore = (seed + i) % 3;
                     let awayScore = (seed * i) % 3;
                     let picks = ["Value Bet: 1X & Over 1.5", "BTTS: Oui (مؤكد)", "Over 2.5 Goals", "Double Chance: X2"];
@@ -185,7 +183,8 @@
             bar.innerHTML = '';
             const today = new Date();
             
-            for (let i = -3; i <= 6; i++) {
+            // يبدأ شريط الأيام حصرياً من اليوم الحالي (i = 0) فصاعداً للأيام القادمة
+            for (let i = 0; i <= 7; i++) {
                 let d = new Date();
                 d.setDate(today.getDate() + i);
                 let dateStr = d.toISOString().split('T')[0];
@@ -193,7 +192,6 @@
                 
                 if (i === 0) label = "Aujourd'hui (" + label + ")";
                 else if (i === 1) label = "Demain (" + label + ")";
-                else if (i === -1) label = "Hier (" + label + ")";
 
                 const btn = document.createElement('div');
                 btn.className = `date-btn ${i === 0 ? 'active' : ''}`;
