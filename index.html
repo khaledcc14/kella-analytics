@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,28 +21,22 @@
             color: #1e293b;
             margin-bottom: 5px;
         }
-        .leagues-nav {
+        .date-selector {
             display: flex;
-            gap: 6px;
-            overflow-x: auto;
-            padding-bottom: 10px;
+            justify-content: center;
+            gap: 10px;
             margin-bottom: 15px;
-            scrollbar-width: none;
         }
-        .leagues-nav::-webkit-scrollbar {
-            display: none;
-        }
-        .league-btn {
-            padding: 6px 12px;
+        .date-btn {
+            padding: 8px 15px;
             background: #e2e8f0;
             border: none;
-            border-radius: 20px;
-            font-size: 12px;
+            border-radius: 8px;
+            font-size: 13px;
             font-weight: bold;
             cursor: pointer;
-            white-space: nowrap;
         }
-        .league-btn.active {
+        .date-btn.active {
             background: #0284c7;
             color: white;
         }
@@ -52,7 +46,7 @@
             border-radius: 10px;
             margin-bottom: 12px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border-right: 4px solid #0284c7;
+            border-left: 4px solid #0284c7;
         }
         .match-teams {
             display: flex;
@@ -80,46 +74,52 @@
 
     <header>
         <h1>KELLA Analytics Pro ⚽</h1>
-        <p style="font-size: 12px; color: #64748b;">مباريات اليوم الحقيقية والتحليلات الذكية</p>
+        <p style="font-size: 12px; color: #64748b;">Analyses et Programme des Matchs</p>
     </header>
 
-    <!-- شريط التنقل بين الدوريات -->
-    <div class="leagues-nav">
-        <button class="league-btn active" onclick="filterLeague('all', this)">🌍 كل مباريات اليوم</button>
-        <button class="league-btn" onclick="filterLeague('laliga', this)">🇪🇸 الدوري الإسباني</button>
-        <button class="league-btn" onclick="filterLeague('afc', this)"> آسیـا (أبطال آسيا)</button>
-        <button class="league-btn" onclick="filterLeague('eredivisie', this)">🇳🇱 الدوري الهولندي</button>
+    <!-- أزرار اختيار الأيام (اليوم وغدًا) -->
+    <div class="date-selector">
+        <button class="date-btn active" onclick="switchDay('today', this)">📅 Matchs du Jour (15 Sep)</button>
+        <button class="date-btn" onclick="switchDay('tomorrow', this)">📆 Matchs de Demain (16 Sep)</button>
     </div>
 
     <!-- حاوية عرض المباريات -->
     <div id="matchesContainer"></div>
 
     <script>
-        // قاعدة البيانات الدقيقة والمطابقة تماماً لمباريات اليوم 15.09.2026
-        const realTodayDatabase = [
-            { id: 'laliga', league: "España: La Liga", home: "رايو فايكانو", away: "إسبانيول", time: "18:00", odds: "1: +136 | X: +234 | 2: +203", ai: "تحليل AI: تقارب في المستوى مع أفضلية طفيفة لأصحاب الأرض." },
-            { id: 'laliga', league: "España: La Liga", home: "ديبورتيفو ألافيس", away: "فالنسيا", time: "19:00", odds: "1: -144 | X: +256 | 2: +445", ai: "تحليل AI: ألافيس يسعى لاستغلال عاملي الأرض والجمهور." },
-            { id: 'laliga', league: "España: La Liga", home: "إلتشي", away: "ريال مدريد", time: "20:30", odds: "1: +1100 | X: +640 | 2: -513", ai: "تحليل AI: ترشيح قوي لريال مدريد لحصد النقاط الثلاث خارج ملعبه." },
-            { id: 'afc', league: "AFC Champions League Elite", home: "العين", away: "النصر", time: "17:00", odds: "1: +286 | X: +300 | 2: -119", ai: "تحليل AI: قمة آسيوية ملتهبة وصراع هجومي قوي بين الطرفين." },
-            { id: 'afc', league: "AFC Champions League Elite", home: "الهلال", away: "الغرافة", time: "19:15", odds: "1: -2857 | X: +1350 | 2: +4600", ai: "تحليل AI: الهلال مرشح بقوة مطلقة للسيطرة وحسم اللقاء." },
-            { id: 'eredivisie', league: "Pays-Bas: Eredivisie", home: "أياكس أمستردام", away: "فيلم تو", time: "19:00", odds: "1: -1250 | X: +1100 | 2: +1900", ai: "تحليل AI: أياكس يمتلك أفضلية واضحة جداً لتحقيق الفوز." }
+        // جدول مباريات اليوم (15 سبتمبر)
+        const todayMatches = [
+            { league: "España: La Liga", home: "Rayo Vallecano", away: "Espanyol", time: "18:00", odds: "1: +136 | X: +234 | 2: +203", ai: "Analyse AI: Équilibre relatif avec un léger avantage à domicile." },
+            { league: "España: La Liga", home: "Deportivo Alavés", away: "Valencia", time: "19:00", odds: "1: -144 | X: +256 | 2: +445", ai: "Analyse AI: Alavés cherche à exploiter le facteur terrain." },
+            { league: "España: La Liga", home: "Elche", away: "Real Madrid", time: "20:30", odds: "1: +1100 | X: +640 | 2: -513", ai: "Analyse AI: Large favoritisme pour le Real Madrid à l'extérieur." },
+            { league: "AFC Champions League Elite", home: "Al Ain", away: "Al Nassr", time: "17:00", odds: "1: +286 | X: +300 | 2: -119", ai: "Analyse AI: Choc asiatique intense et offensif." },
+            { league: "AFC Champions League Elite", home: "Al-Hilal Riyad", away: "Al-Gharafa", time: "19:15", odds: "1: -2857 | X: +1350 | 2: +4600", ai: "Analyse AI: Al-Hilal grand favori pour s'imposer nettement." },
+            { league: "Pays-Bas: Eredivisie", home: "Ajax", away: "Willem II", time: "19:00", odds: "1: -1250 | X: +1100 | 2: +1900", ai: "Analyse AI: Ajax possède un avantage net pour la victoire." }
         ];
 
-        function filterLeague(leagueId, btnElement) {
-            if (btnElement) {
-                document.querySelectorAll('.league-btn').forEach(btn => btn.classList.remove('active'));
-                btnElement.classList.add('active');
-            }
+        // جدول مباريات الغد (16 سبتمبر - دوري أبطال أوروبا والبطولات الكبرى)
+        const tomorrowMatches = [
+            { league: "UEFA Champions League", home: "Manchester City", away: "Inter Milan", time: "20:00", odds: "1: 1.55 | X: 4.20 | 2: 6.00", ai: "Analyse AI: Revanche de la finale, City favori à domicile." },
+            { league: "UEFA Champions League", home: "Paris Saint-Germain", away: "Girona", time: "20:00", odds: "1: 1.45 | X: 4.80 | 2: 6.50", ai: "Analyse AI: Le PSG vise une entame forte devant son public." },
+            { league: "UEFA Champions League", home: "Borussia Dortmund", away: "Club Brugge", time: "20:00", odds: "1: 1.95 | X: 3.60 | 2: 3.80", ai: "Analyse AI: Dortmund supérieur offensivement." },
+            { league: "UEFA Champions League", home: "Bologna", away: "Shakhtar Donetsk", time: "17:45", odds: "1: 1.90 | X: 3.40 | 2: 4.00", ai: "Analyse AI: Match ouvert et équilibré." },
+            { league: "UEFA Champions League", home: "Sparta Prague", away: "RB Salzburg", time: "17:45", odds: "1: 2.50 | X: 3.30 | 2: 2.80", ai: "Analyse AI: Tactique prudente des deux côtés." }
+        ];
+
+        function switchDay(dayType, btnElement) {
+            document.querySelectorAll('.date-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
 
             const container = document.getElementById('matchesContainer');
-            const filtered = leagueId === 'all' ? realTodayDatabase : realTodayDatabase.filter(m => m.id === leagueId);
+            const matches = dayType === 'today' ? todayMatches : tomorrowMatches;
+            const titleMsg = dayType === 'today' ? "Matchs du 15 Septembre 2026" : "Matchs de Demain (16 Septembre 2026)";
 
-            let html = `<div style="padding: 8px 15px; font-size: 11px; color: #166534; text-align: center; font-weight: bold; background: #dcfce7; margin-bottom: 10px; border-radius: 6px;">✅ جدول مباريات اليوم الحقيقية (15 سبتمبر 2026) - (${filtered.length} مباراة)</div>`;
+            let html = `<div style="padding: 8px 15px; font-size: 11px; color: #166534; text-align: center; font-weight: bold; background: #dcfce7; margin-bottom: 10px; border-radius: 6px;">✅ ${titleMsg} (${matches.length} matchs)</div>`;
 
-            if (filtered.length === 0) {
-                html += `<div style="text-align:center; padding:20px; color:#64748b; font-size:13px;">لا توجد مباريات مسجلة حالياً في هذا القسم.</div>`;
+            if (matches.length === 0) {
+                html += `<div style="text-align:center; padding:20px; color:#64748b; font-size:13px;">Aucun match disponible.</div>`;
             } else {
-                filtered.forEach((m) => {
+                matches.forEach((m) => {
                     html += `
                         <div class="match-card">
                             <div style="font-size: 10px; color: #0284c7; margin-bottom: 4px; font-weight: bold;">🏆 ${m.league}</div>
@@ -130,7 +130,7 @@
                             <div class="match-info">
                                 💡 <strong>${m.ai}</strong>
                             </div>
-                            <span class="odds-badge">📊 أسواق الرهان: ${m.odds}</span>
+                            <span class="odds-badge">📊 Cotes / Infos: ${m.odds}</span>
                         </div>
                     `;
                 });
@@ -138,9 +138,9 @@
             container.innerHTML = html;
         }
 
-        // عرض كل مباريات اليوم فور فتح التطبيق
+        // عرض مباريات اليوم افتراضياً عند فتح التطبيق
         window.onload = function() {
-            filterLeague('all');
+            switchDay('today', document.querySelector('.date-btn'));
         };
     </script>
 </body>
