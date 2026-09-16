@@ -42,7 +42,18 @@ button {
     width: 100%;
     font-weight: bold;
     cursor: pointer;
+    margin-bottom: 10px;
+}
+.search-box {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #1e293b;
+    background: #0f172a;
+    color: #f8fafc;
     margin-bottom: 15px;
+    box-sizing: border-box;
+    font-size: 13px;
 }
 .match-card {
     background: #0f172a;
@@ -52,6 +63,16 @@ button {
     padding: 12px;
     margin-top: 10px;
     font-size: 13px;
+    transition: 0.2s;
+}
+.match-card.live {
+    border-left-color: #ef4444;
+    animation: pulse 2s infinite;
+}
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }
 </style>
 </head>
@@ -61,67 +82,34 @@ button {
 <h2>KELLA Analytics Pro ⚽</h2>
 <div class="subtitle">Live Global Engine - Khaled</div>
 
-<button onclick="loadLiveMatches()">⚡ جلب كل مباريات ودوريات اليوم</button>
-<div id="output" style="text-align: center; color: #94a3b8; font-size: 13px; padding: 10px;">انقر الزر لعرض جدول المباريات الشامل...</div>
+<button onclick="loadLiveMatches()">⚡ تحديث وجلب مباريات اليوم</button>
+<input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث عن فريق أو دوري (مثال: Real Madrid)..." onkeyup="filterMatches()">
+
+<div id="output" style="text-align: center; color: #94a3b8; font-size: 13px; padding: 10px;">انقر الزر أعلاه لعرض الجدول الشامل...</div>
 </div>
 
 <script>
+let allMatches = [];
+
 async function loadLiveMatches() {
     const output = document.getElementById('output');
-    output.innerHTML = "جاري جلب جميع المباريات...";
+    output.innerHTML = "جاري جلب وتحديث جميع المباريات...";
 
     try {
         const response = await fetch('https://raw.githubusercontent.com/khaledcc14/kella-analytics/main/live.json?t=' + new Date().getTime());
         if (!response.ok) throw new Error("تعذر جلب قاعدة البيانات.");
 
         const data = await response.json();
-        output.innerHTML = "";
-
-        // التأكد من أن البيانات عبارة عن مصفوفة صالحة
-        let matches = [];
+        
         if (Array.isArray(data)) {
-            matches = data;
+            allMatches = data;
         } else if (data && Array.isArray(data.response)) {
-            matches = data.response;
-        } else if (data && typeof data === 'object') {
-            matches = [data]; // في حال كان عنصر واحد فقط
+            allMatches = data.response;
+        } else {
+            allMatches = [];
         }
 
-        if (matches.length === 0) {
-            output.innerHTML = `<div style="color: #f59e0b; text-align: center; padding: 10px;">لا توجد مباريات مسجلة لليوم.</div>`;
-            return;
-        }
-
-        // عرض كل المباريات بأمان تامة
-        matches.forEach(item => {
-            let leagueName = (item.league && item.league.name) ? item.league.name : "بطولة رسمية";
-            let country = (item.league && item.league.country) ? item.league.country : "عالمي";
-            
-            let home = "مضيف";
-            let away = "ضيف";
-            if (item.teams) {
-                home = item.teams.home ? item.teams.home.name : "مضيف";
-                away = item.teams.away ? item.teams.away.name : "ضيف";
-            }
-
-            let status = (item.fixture && item.fixture.status) ? item.fixture.status.short : "NS";
-            
-            let goalsHome = "-";
-            let goalsAway = "-";
-            if (item.goals) {
-                goalsHome = item.goals.home !== null ? item.goals.home : "-";
-                goalsAway = item.goals.away !== null ? item.goals.away : "-";
-            }
-
-            output.innerHTML += `
-                <div class="match-card">
-                    <span style="color:#ef4444; font-weight:bold; float:right;">${status}</span>
-                    <span style="color:#38bdf8; font-weight:bold;">🌍 ${country} - ${leagueName}</span><br>
-                    🏟️ <b>${home}</b> vs <b>${away}</b><br>
-                    <span style="color:#22c55e;">النتيجة: <b>${goalsHome} - ${goalsAway}</b></span>
-                </div>
-            `;
-        });
+        displayMatches(allMatches);
 
     } catch (err) {
         output.innerHTML = `
@@ -131,6 +119,57 @@ async function loadLiveMatches() {
         `;
     }
 }
+
+function displayMatches(matches) {
+    const output = document.getElementById('output');
+    output.innerHTML = "";
+
+    if (matches.length === 0) {
+        output.innerHTML = `<div style="color: #f59e0b; text-align: center; padding: 10px;">لا توجد مباريات مطابقة للبحث.</div>`;
+        return;
+    }
+
+    matches.forEach(item => {
+        let leagueName = (item.league && item.league.name) ? item.league.name : "بطولة رسمية";
+        let country = (item.league && item.league.country) ? item.league.country : "عالمي";
+        
+        let home = (item.teams && item.teams.home) ? item.teams.home.name : "مضيف";
+        let away = (item.teams && item.teams.away) ? item.teams.away.name : "ضيف";
+        let status = (item.fixture && item.fixture.status) ? item.fixture.status.short : "NS";
+        
+        let goalsHome = (item.goals && item.goals.home !== null) ? item.goals.home : "-";
+        let goalsAway = (item.goals && item.goals.away !== null) ? item.goals.away : "-";
+
+        let isLive = ["1H", "2H", "ET", "P", "LIVE"].includes(status);
+        let cardClass = isLive ? "match-card live" : "match-card";
+        let statusColor = isLive ? "#ef4444" : "#94a3b8";
+
+        output.innerHTML += `
+            <div class="${cardClass}">
+                <span style="color:${statusColor}; font-weight:bold; float:right;">${status}</span>
+                <span style="color:#38bdf8; font-weight:bold;">🌍 ${country} - ${leagueName}</span><br>
+                🏟️ <b>${home}</b> vs <b>${away}</b><br>
+                <span style="color:#22c55e;">النتيجة: <b>${goalsHome} - ${goalsAway}</b></span>
+            </div>
+        `;
+    });
+}
+
+function filterMatches() {
+    let query = document.getElementById('searchInput').value.toLowerCase();
+    let filtered = allMatches.filter(item => {
+        let league = (item.league && item.league.name) ? item.league.name.toLowerCase() : "";
+        let homeTeam = (item.teams && item.teams.home) ? item.teams.home.name.toLowerCase() : "";
+        let awayTeam = (item.teams && item.teams.away) ? item.teams.away.name.toLowerCase() : "";
+        let country = (item.league && item.league.country) ? item.league.country.toLowerCase() : "";
+
+        return league.includes(query) || homeTeam.includes(query) || awayTeam.includes(query) || country.includes(query);
+    });
+    displayMatches(filtered);
+}
+
+// تحميل تلقائي عند فتح التطبيق
+window.onload = loadLiveMatches;
 </script>
 
 </body>
