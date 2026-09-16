@@ -27,9 +27,9 @@
                     "city": "Maceio"
                 },
                 "status": {
-                    "long": "Halftime",
-                    "short": "HT",
-                    "elapsed": 45,
+                    "long": "Second Half",
+                    "short": "2H",
+                    "elapsed": 50,
                     "extra": null
                 }
             },
@@ -48,18 +48,18 @@
                     "id": 146,
                     "name": "CRB",
                     "logo": "https://media.api-sports.io/football/teams/146.png",
-                    "winner": true
+                    "winner": null
                 },
                 "away": {
                     "id": 123,
                     "name": "Sport Recife",
                     "logo": "https://media.api-sports.io/football/teams/123.png",
-                    "winner": false
+                    "winner": null
                 }
             },
             "goals": {
                 "home": 1,
-                "away": 0
+                "away": 1
             },
             "score": {
                 "halftime": {
@@ -99,7 +99,7 @@
                 "status": {
                     "long": "First Half",
                     "short": "1H",
-                    "elapsed": 24,
+                    "elapsed": 44,
                     "extra": null
                 }
             },
@@ -128,13 +128,13 @@
                 }
             },
             "goals": {
-                "home": 0,
-                "away": 1
+                "home": 1,
+                "away": 2
             },
             "score": {
                 "halftime": {
-                    "home": 0,
-                    "away": 1
+                    "home": 1,
+                    "away": 2
                 },
                 "fulltime": {
                     "home": null,
@@ -169,7 +169,7 @@
                 "status": {
                     "long": "First Half",
                     "short": "1H",
-                    "elapsed": 24,
+                    "elapsed": 45,
                     "extra": null
                 }
             },
@@ -307,9 +307,9 @@
                     "city": "Puebla"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
-                    "elapsed": null,
+                    "long": "First Half",
+                    "short": "1H",
+                    "elapsed": 13,
                     "extra": null
                 }
             },
@@ -338,13 +338,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 0,
+                "away": 0
             },
             "score": {
                 "halftime": {
-                    "home": null,
-                    "away": null
+                    "home": 0,
+                    "away": 0
                 },
                 "fulltime": {
                     "home": null,
@@ -368,7 +368,7 @@
                 "date": "2026-09-16T01:00:00+00:00",
                 "timestamp": 1789520400,
                 "periods": {
-                    "first": null,
+                    "first": 1789520400,
                     "second": null
                 },
                 "venue": {
@@ -377,9 +377,9 @@
                     "city": "Mazatlan"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
-                    "elapsed": null,
+                    "long": "First Half",
+                    "short": "1H",
+                    "elapsed": 14,
                     "extra": null
                 }
             },
@@ -408,13 +408,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 0,
+                "away": 0
             },
             "score": {
                 "halftime": {
-                    "home": null,
-                    "away": null
+                    "home": 0,
+                    "away": 0
                 },
                 "fulltime": {
                     "home": null,
