@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KELLA Analytics Pro - Engine</title>
+<title>KELLA Analytics Pro</title>
 <style>
 body {
     background: #0b0f19;
@@ -47,7 +47,7 @@ button {
 .match-card {
     background: #0f172a;
     border: 1px solid #1e293b;
-    border-left: 4px solid #38bdf8;
+    border-left: 4px solid #22c55e;
     border-radius: 10px;
     padding: 12px;
     margin-top: 10px;
@@ -59,54 +59,52 @@ button {
 
 <div class="card">
 <h2>KELLA Analytics Pro ⚽</h2>
-<div class="subtitle">Live Global Engine - Khaled</div>
+<div class="subtitle">Official Engine - Khaled</div>
 
-<button onclick="loadLiveScores()">⚡ جلب المباريات الحية والنتائج الرسمية</button>
-<div id="output" style="text-align: center; color: #94a3b8; font-size: 13px; padding: 10px;">انقر الزر لتحميل البيانات المباشرة...</div>
+<button onclick="loadLiveMatches()">⚡ عرض المباريات الحية من الخادم</button>
+<div id="output" style="text-align: center; color: #94a3b8; font-size: 13px; padding: 10px;">انقر الزر لتحميل النتائج المباشرة...</div>
 </div>
 
 <script>
-async function loadLiveScores() {
+async function loadLiveMatches() {
     const output = document.getElementById('output');
-    output.innerHTML = "جاري الاتصال بقاعدة البيانات الحية...";
+    output.innerHTML = "جاري قراءة البيانات الحية...";
 
     try {
-        // استخدام مصدر مباشر ومفتوح لجدول المباريات الحية والنتائج لليوم
-        const response = await fetch('https://raw.githubusercontent.com/openfootball/football.json/master/2026/en.1.json');
-        
-        if (!response.ok) throw new Error("تعذر الاتصال بقاعدة البيانات.");
+        // قراءة ملف live.json المحلي بكل أمان بدون أخطاء CORS
+        const response = await fetch('live.json');
+        if (!response.ok) throw new Error("تعذر قراءة ملف البيانات الحية.");
 
         const data = await response.json();
         output.innerHTML = "";
 
-        if (!data.matches || data.matches.length === 0) {
-            output.innerHTML = `<div style="color: #f59e0b; text-align: center; padding: 10px;">لا توجد مباريات مسجلة حالياً.</div>`;
+        if (!data.response || data.response.length === 0) {
+            output.innerHTML = `<div style="color: #f59e0b; text-align: center; padding: 10px;">لا توجد مباريات مسجلة حالياً في السجل.</div>`;
             return;
         }
 
-        // عرض المباريات المباشرة والنتائج المسجلة بدقة
-        let matchesToShow = data.matches.slice(-5).reverse();
-        
-        matchesToShow.forEach(match => {
-            let team1 = match.team1;
-            let team2 = match.team2;
-            let score1 = match.score && match.score.ft ? match.score.ft[0] : "-";
-            let score2 = match.score && match.score.ft ? match.score.ft[1] : "-";
-            let date = match.date;
+        // عرض المباريات القادمة أو الحية من الـ API مباشرة
+        data.response.slice(0, 5).forEach(item => {
+            let home = item.teams.home.name;
+            let away = item.teams.away.name;
+            let status = item.fixture.status.short;
+            let goalsHome = item.goals.home !== null ? item.goals.home : "-";
+            let goalsAway = item.goals.away !== null ? item.goals.away : "-";
 
             output.innerHTML += `
                 <div class="match-card">
-                    <span style="color:#f59e0b; font-weight:bold;">🏆 الدوري الإنجليزي الممتاز</span><br>
-                    🏟️ <b>${team1}</b> vs <b>${team2}</b><br>
-                    <span style="color:#38bdf8;">التاريخ: ${date} | النتيجة الرسمية: <b>${score1} - ${score2}</b></span>
+                    <span style="color:#ef4444; font-weight:bold; float:right;">${status}</span>
+                    <span style="color:#f59e0b; font-weight:bold;">🏆 مباراة رسمية</span><br>
+                    🏟️ <b>${home}</b> vs <b>${away}</b><br>
+                    <span style="color:#38bdf8;">النتيجة: <b>${goalsHome} - ${goalsAway}</b></span>
                 </div>
             `;
         });
 
-    } catch (error) {
+    } catch (err) {
         output.innerHTML = `
-            <div style="background: #ef444420; border: 1px solid #ef4444; color: #fca5a5; padding: 12px; border-radius: 8px; font-size: 12px; text-align: center;">
-                ⚠️ تنبيه: ${error.message}
+            <div style="background: #ef444420; border: 1px solid #ef4444; color: #fca5a5; padding: 10px; border-radius: 8px; text-align: center; font-size: 12px;">
+                ⚠️ تنبيه: ${err.message}
             </div>
         `;
     }
