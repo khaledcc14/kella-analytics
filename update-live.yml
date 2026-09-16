@@ -17,39 +17,30 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Run script to fetch live matches and update live.json
+      - name: Run script to fetch real API and update live.json
         run: |
           python -c '
           import urllib.request
           import json
           import datetime
 
-          # جلب تاريخ اليوم لتحديث المباريات الجارية اليومية
           today_date = datetime.datetime.now().strftime("%Y-%m-%d")
+          api_url = f"https://v3.football.api-sports.io/fixtures?date={today_date}"
           
-          # رابط API عام ومجاني لجلب المباريات الحية والنتائج لليوم الحالي
-          api_url = f"https://raw.githubusercontent.com/openfootball/football.json/master/2026/{today_date}.json"
-          
-          # إذا أردت استخدام API-Football المدفوع أو المجاني الخاص بك، يمكنك وضعه هنا:
-          # api_url = f"https://v3.football.api-sports.io/fixtures?live=all"
-          # headers = {"x-apisports-key": "مفتاحك_هنا"}
+          headers = {
+              "x-apisports-key": "9089a8397ff28245938e358f0c9b5847"
+          }
 
           try:
-              req = urllib.request.Request(api_url, headers={"User-Agent": "Mozilla/5.0"})
+              req = urllib.request.Request(api_url, headers=headers)
               with urllib.request.urlopen(req) as response:
-                  raw_data = response.read().decode()
-                  data = json.loads(raw_data)
-                  
-                  # إعادة هيكلة البيانات لتتوافق تماماً مع واجهة KELLA Analytics Pro
-                  formatted_data = {
-                      "response": data.get("matches", []) if isinstance(data, dict) else data
-                  }
+                  data = json.loads(response.read().decode())
                   
                   with open("live.json", "w", encoding="utf-8") as f:
-                      json.dump(formatted_data, f, ensure_ascii=False, indent=4)
-                  print("Live.json updated successfully with live matches!")
+                      json.dump(data, f, ensure_ascii=False, indent+4 if False else 4)
+                  print("Live.json updated successfully with real API data!")
           except Exception as e:
-              print("Error fetching live data, keeping fallback:", e)
+              print("Error fetching real API data:", e)
           '
 
       - name: Commit and push changes to GitHub
@@ -57,5 +48,5 @@ jobs:
           git config --global user.name "Kella Cron Bot"
           git config --global user.email "bot@kella.com"
           git add live.json
-          git commit -m "Auto-update live matches via Cron [skip ci]" || echo "No changes to commit"
+          git commit -m "Auto-update live matches from API-Football [skip ci]" || echo "No changes to commit"
           git push
