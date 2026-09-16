@@ -94,8 +94,18 @@ button {
     border-left-color: #ef4444;
     animation: pulse 2s infinite;
 }
+.match-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 6px;
+    border-top: 1px solid #1e293b;
+    padding-top: 6px;
+}
 .ai-prediction {
-    margin-top: 10px;
+    margin-top: 8px;
     padding: 8px 12px;
     background: #1e293b80;
     border: 1px dashed #38bdf8;
@@ -129,7 +139,7 @@ button {
     <button class="league-btn" onclick="filterByLeague('Brazil', this)">🇧🇷 البرازيل</button>
     <button class="league-btn" onclick="filterByLeague('Belgium', this)">🇧🇪 بلجيكا</button>
     <button class="league-btn" onclick="filterByLeague('England', this)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 إنجلترا</button>
-    <button class="league-btn" onclick="filterByLeague('Italy', this)">🇮🇹 إيطاليا</button>
+    <button class="league-btn" onclick="filterByLeague('Italy', this) ">🇮🇹 إيطاليا</button>
 </div>
 
 <div id="output" style="text-align: center; color: #94a3b8; font-size: 13px; padding: 10px;">جاري تحميل المحرك الذكي...</div>
@@ -195,13 +205,32 @@ function displayMatches(matches) {
         let home = (item.teams && item.teams.home) ? item.teams.home.name : "مضيف";
         let away = (item.teams && item.teams.away) ? item.teams.away.name : "ضيف";
         let status = (item.fixture && item.fixture.status) ? item.fixture.status.short : "NS";
+        let elapsed = (item.fixture && item.fixture.status && item.fixture.status.elapsed) ? item.fixture.status.elapsed : null;
         
+        // استخراج وقت انطلاق المباراة بتوقيت محلي واضح
+        let matchDateStr = (item.fixture && item.fixture.date) ? item.fixture.date : "";
+        let matchTime = "";
+        if (matchDateStr) {
+            let dateObj = new Date(matchDateStr);
+            matchTime = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
         let goalsHome = (item.goals && item.goals.home !== null) ? item.goals.home : "-";
         let goalsAway = (item.goals && item.goals.away !== null) ? item.goals.away : "-";
 
         let isLive = ["1H", "2H", "ET", "P", "LIVE"].includes(status);
         let cardClass = isLive ? "match-card live" : "match-card";
         let statusColor = isLive ? "#ef4444" : "#94a3b8";
+
+        // صياغة وصف الحالة والوقت بدقة
+        let statusDescription = status;
+        if (status === "NS") statusDescription = "لم تبدأ بعد";
+        else if (status === "HT") statusDescription = "استراحة (HT)";
+        else if (status === "FT") statusDescription = "انتهت (FT)";
+        else if (isLive && elapsed) {
+            let halfName = status === "1H" ? "الشوط الأول" : (status === "2H" ? "الشوط الثاني" : status);
+            statusDescription = `${halfName} (${elapsed}')`;
+        }
 
         let aiText = generateAIPrediction(home, away);
 
@@ -211,6 +240,12 @@ function displayMatches(matches) {
                 <span style="color:#38bdf8; font-weight:bold;">🌍 ${country} - ${leagueName}</span><br>
                 🏟️ <b>${home}</b> vs <b>${away}</b><br>
                 <span style="color:#22c55e;">النتيجة الحية: <b>${goalsHome} - ${goalsAway}</b></span>
+                
+                <div class="match-info-row">
+                    <span>⏰ التوقيت: <b>${matchTime ? matchTime : 'غير محدد'}</b></span>
+                    <span>⏳ الحالة: <b>${statusDescription}</b></span>
+                </div>
+
                 <div class="ai-prediction">
                     ${aiText}
                 </div>
