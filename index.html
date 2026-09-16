@@ -155,14 +155,6 @@ body {
     gap: 5px;
     flex: 1;
 }
-.team-logo {
-    width: 35px;
-    height: 35px;
-    object-fit: contain;
-    background: rgba(255,255,255,0.05);
-    border-radius: 50%;
-    padding: 2px;
-}
 .team-name {
     font-size: 11px;
     font-weight: bold;
@@ -261,77 +253,30 @@ body {
 </div>
 
 <script>
-let allMatches = [
-    {
-        league: { name: "La Liga", country: "Spain" },
-        teams: { home: { name: "Real Madrid", logo: "" }, away: { name: "Barcelona", logo: "" } },
-        goals: { home: null, away: null },
-        fixture: { status: { short: "NS" }, date: new Date().toISOString() }
-    },
-    {
-        league: { name: "La Liga", country: "Spain" },
-        teams: { home: { name: "Atletico Madrid", logo: "" }, away: { name: "Sevilla", logo: "" } },
-        goals: { home: null, away: null },
-        fixture: { status: { short: "NS" }, date: new Date().toISOString() }
-    },
-    {
-        league: { name: "UEFA Champions League", country: "World" },
-        teams: { home: { name: "Manchester City", logo: "" }, away: { name: "Bayern Munich", logo: "" } },
-        goals: { home: null, away: null },
-        fixture: { status: { short: "NS" }, date: new Date().toISOString() }
-    },
-    {
-        league: { name: "Ligue 1", country: "France" },
-        teams: { home: { name: "Paris Saint-Germain", logo: "" }, away: { name: "Marseille", logo: "" } },
-        goals: { home: null, away: null },
-        fixture: { status: { short: "NS" }, date: new Date().toISOString() }
-    },
-    {
-        league: { name: "Bundesliga", country: "Germany" },
-        teams: { home: { name: "Borussia Dortmund", logo: "" }, away: { name: "RB Leipzig", logo: "" } },
-        goals: { home: null, away: null },
-        fixture: { status: { short: "NS" }, date: new Date().toISOString() }
-    },
-    {
-        league: { name: "Serie A", country: "Italy" },
-        teams: { home: { name: "Juventus", logo: "" }, away: { name: "Inter Milan", logo: "" } },
-        goals: { home: null, away: null },
-        fixture: { status: { short: "NS" }, date: new Date().toISOString() }
-    },
-    {
-        league: { name: "Premier League", country: "England" },
-        teams: { home: { name: "Arsenal", logo: "" }, away: { name: "Liverpool", logo: "" } },
-        goals: { home: null, away: null },
-        fixture: { status: { short: "NS" }, date: new Date().toISOString() }
-    },
-    {
-        league: { name: "Saudi Professional League", country: "Saudi Arabia" },
-        teams: { home: { name: "Al Hilal", logo: "" }, away: { name: "Al Nassr", logo: "" } },
-        goals: { home: null, away: null },
-        fixture: { status: { short: "NS" }, date: new Date().toISOString() }
-    },
-    {
-        league: { name: "Süper Lig", country: "Turkey" },
-        teams: { home: { name: "Galatasaray", logo: "" }, away: { name: "Fenerbahce", logo: "" } },
-        goals: { home: null, away: null },
-        fixture: { status: { short: "NS" }, date: new Date().toISOString() }
-    }
+const allMatches = [
+    { league: { name: "La Liga", country: "Spain" }, teams: { home: { name: "Real Madrid" }, away: { name: "Barcelona" } }, goals: { home: null, away: null } },
+    { league: { name: "La Liga", country: "Spain" }, teams: { home: { name: "Atletico Madrid" }, away: { name: "Sevilla" } }, goals: { home: null, away: null } },
+    { league: { name: "UEFA Champions League", country: "World" }, teams: { home: { name: "Manchester City" }, away: { name: "Bayern Munich" } }, goals: { home: null, away: null } },
+    { league: { name: "Ligue 1", country: "France" }, teams: { home: { name: "Paris Saint-Germain" }, away: { name: "Marseille" } }, goals: { home: null, away: null } },
+    { league: { name: "Bundesliga", country: "Germany" }, teams: { home: { name: "Borussia Dortmund" }, away: { name: "RB Leipzig" } }, goals: { home: null, away: null } },
+    { league: { name: "Serie A", country: "Italy" }, teams: { home: { name: "Juventus" }, away: { name: "Inter Milan" } }, goals: { home: null, away: null } },
+    { league: { name: "Premier League", country: "England" }, teams: { home: { name: "Arsenal" }, away: { name: "Liverpool" } }, goals: { home: null, away: null } },
+    { league: { name: "Saudi Professional League", country: "Saudi Arabia" }, teams: { home: { name: "Al Hilal" }, away: { name: "Al Nassr" } }, goals: { home: null, away: null } },
+    { league: { name: "Süper Lig", country: "Turkey" }, teams: { home: { name: "Galatasaray" }, away: { name: "Fenerbahce" } }, goals: { home: null, away: null } }
 ];
 
 let leaguesMapCache = {};
-let defaultFavLeagues = [
-    "La Liga", "UEFA Champions League", "Ligue 1", 
-    "Bundesliga", "Serie A", "Premier League", 
-    "Saudi Professional League", "Primeira Liga", "Süper Lig"
-];
-
-let storedFavs = JSON.parse(localStorage.getItem('kella_fav_leagues'));
-if (!storedFavs) {
-    storedFavs = defaultFavLeagues;
-    localStorage.setItem('kella_fav_leagues', JSON.stringify(storedFavs));
-}
-let favoriteLeagues = storedFavs;
+let favoriteLeagues = ["La Liga", "UEFA Champions League", "Ligue 1", "Bundesliga", "Serie A", "Premier League", "Saudi Professional League", "Süper Lig"];
 let currentViewMode = 'all';
+
+try {
+    let storedFavs = JSON.parse(localStorage.getItem('kella_fav_leagues'));
+    if (storedFavs && Array.isArray(storedFavs)) {
+        favoriteLeagues = storedFavs;
+    } else {
+        localStorage.setItem('kella_fav_leagues', JSON.stringify(favoriteLeagues));
+    }
+} catch (e) {}
 
 function initApp() {
     try {
@@ -349,8 +294,8 @@ function initApp() {
 
         updateFavCount();
         renderLeaguesList();
-    } catch (e) {
-        document.getElementById('output').innerHTML = `<div style="text-align:center; color:#fca5a5; padding:20px;">خطأ في تحميل الواجهة</div>`;
+    } catch (err) {
+        document.getElementById('output').innerHTML = `<div style="text-align:center; color:#fca5a5; padding:20px;">خطأ في تشغيل التطبيق.</div>`;
     }
 }
 
@@ -362,60 +307,68 @@ function switchView(mode) {
 }
 
 function toggleFavorite(leagueName, event) {
-    event.stopPropagation();
+    if (event) event.stopPropagation();
     if (favoriteLeagues.includes(leagueName)) {
         favoriteLeagues = favoriteLeagues.filter(l => l !== leagueName);
     } else {
         favoriteLeagues.push(leagueName);
     }
-    localStorage.setItem('kella_fav_leagues', JSON.stringify(favoriteLeagues));
+    try {
+        localStorage.setItem('kella_fav_leagues', JSON.stringify(favoriteLeagues));
+    } catch (e) {}
     updateFavCount();
     renderLeaguesList();
 }
 
 function updateFavCount() {
-    document.getElementById('favCount').innerText = favoriteLeagues.length;
+    let el = document.getElementById('favCount');
+    if (el) el.innerText = favoriteLeagues.length;
 }
 
 function renderLeaguesList() {
-    const output = document.getElementById('output');
-    let q = document.getElementById('searchInput').value.toLowerCase();
-    
-    let keys = Object.keys(leaguesMapCache);
-    let html = "";
-    let displayedCount = 0;
-
-    keys.forEach(k => {
-        let l = leaguesMapCache[k];
+    try {
+        const output = document.getElementById('output');
+        let searchInput = document.getElementById('searchInput');
+        let q = searchInput ? searchInput.value.toLowerCase() : "";
         
-        if (currentViewMode === 'fav' && !favoriteLeagues.includes(l.name)) return;
-        if (q && !k.toLowerCase().includes(q)) return;
+        let keys = Object.keys(leaguesMapCache);
+        let html = "";
+        let displayedCount = 0;
 
-        displayedCount++;
-        let isFav = favoriteLeagues.includes(l.name);
-        let starClass = isFav ? "fav-star active" : "fav-star";
-        let safeName = l.name.replace(/"/g, '&quot;');
+        keys.forEach(k => {
+            let l = leaguesMapCache[k];
+            
+            if (currentViewMode === 'fav' && !favoriteLeagues.includes(l.name)) return;
+            if (q && !k.toLowerCase().includes(q)) return;
 
-        html += `
-            <div class="league-item">
-                <div class="league-info" onclick='showLeagueMatches("${safeName}")'>
-                    <span>⚽</span>
-                    <span>${l.country} : ${l.name}</span>
+            displayedCount++;
+            let isFav = favoriteLeagues.includes(l.name);
+            let starClass = isFav ? "fav-star active" : "fav-star";
+            let safeName = l.name.replace(/"/g, '&quot;');
+
+            html += `
+                <div class="league-item" onclick='showLeagueMatches("${safeName}")'>
+                    <div class="league-info">
+                        <span>⚽</span>
+                        <span>${l.country} : ${l.name}</span>
+                    </div>
+                    <div class="league-meta" onclick="event.stopPropagation()">
+                        <span class="match-count">${l.count}</span>
+                        <span class="${starClass}" onclick='toggleFavorite("${safeName}", event)'>⭐</span>
+                    </div>
                 </div>
-                <div class="league-meta">
-                    <span class="match-count">${l.count}</span>
-                    <span class="${starClass}" onclick='toggleFavorite("${safeName}", event)'>⭐</span>
-                </div>
-            </div>
-        `;
-    });
+            `;
+        });
 
-    if (displayedCount === 0) {
-        output.innerHTML = `<div style="text-align: center; color: #94a3b8; padding: 30px; font-size:13px;">لا توجد دوريات مطابقة.</div>`;
-        return;
+        if (displayedCount === 0) {
+            output.innerHTML = `<div style="text-align: center; color: #94a3b8; padding: 30px; font-size:13px;">لا توجد دوريات مطابقة.</div>`;
+            return;
+        }
+
+        output.innerHTML = html;
+    } catch (err) {
+        document.getElementById('output').innerHTML = `<div style="text-align:center; color:#fca5a5; padding:20px;">حدث خطأ أثناء العرض.</div>`;
     }
-
-    output.innerHTML = html;
 }
 
 function showLeagueMatches(leagueName) {
@@ -440,7 +393,7 @@ function showLeagueMatches(leagueName) {
                     <div class="division-title">🏆 ${division}</div>
                     <div class="scoreboard">
                         <div class="team-block">
-                            <span style="font-size:24px;">⚽</span>
+                            <span style="font-size:22px;">⚽</span>
                             <span class="team-name">${home}</span>
                         </div>
                         <div class="score-block">
@@ -448,7 +401,7 @@ function showLeagueMatches(leagueName) {
                             <div class="match-time">قريباً</div>
                         </div>
                         <div class="team-block">
-                            <span style="font-size:24px;">⚽</span>
+                            <span style="font-size:22px;">⚽</span>
                             <span class="team-name">${away}</span>
                         </div>
                     </div>
@@ -457,18 +410,18 @@ function showLeagueMatches(leagueName) {
         });
         output.innerHTML = html;
     } catch (err) {
-        document.getElementById('output').innerHTML = `<button class="back-btn" onclick="switchView(currentViewMode)">⬅ العودة للقائمة</button><div style="text-align:center; color:#fca5a5; padding:20px;">عذراً، حدث خطأ بسيط في عرض المباريات.</div>`;
+        document.getElementById('output').innerHTML = `<button class="back-btn" onclick="switchView(currentViewMode)">⬅ العودة للقائمة</button><div style="text-align:center; color:#fca5a5; padding:20px;">خطأ في عرض المباريات.</div>`;
     }
 }
 
 function setMode(m, b) {
-    document.querySelectorAll('.mode-btn.active').forEach(x => x.classList.remove('active'));
-    b.classList.add('active');
+    document.querySelectorAll('.mode-btn').forEach(x => x.classList.remove('active'));
+    if (b) b.classList.add('active');
 }
 
 function switchTab(tab, b) {
     document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
-    b.classList.add('active');
+    if (b) b.classList.add('active');
     if(tab === 'popular') {
         renderLeaguesList();
     } else {
