@@ -587,10 +587,10 @@
                     "city": "Toyota City"
                 },
                 "status": {
-                    "long": "Second Half",
-                    "short": "2H",
-                    "elapsed": 60,
-                    "extra": null
+                    "long": "Match Finished",
+                    "short": "FT",
+                    "elapsed": 90,
+                    "extra": 4
                 }
             },
             "league": {
@@ -608,17 +608,17 @@
                     "id": 10960,
                     "name": "Thailand U23",
                     "logo": "https://media.api-sports.io/football/teams/10960.png",
-                    "winner": false
+                    "winner": true
                 },
                 "away": {
                     "id": 10941,
                     "name": "Kyrgyz Republic U23",
                     "logo": "https://media.api-sports.io/football/teams/10941.png",
-                    "winner": true
+                    "winner": false
                 }
             },
             "goals": {
-                "home": 1,
+                "home": 3,
                 "away": 2
             },
             "score": {
@@ -627,8 +627,8 @@
                     "away": 1
                 },
                 "fulltime": {
-                    "home": null,
-                    "away": null
+                    "home": 3,
+                    "away": 2
                 },
                 "extratime": {
                     "home": null,
@@ -648,8 +648,8 @@
                 "date": "2026-09-16T08:00:00+00:00",
                 "timestamp": 1789545600,
                 "periods": {
-                    "first": null,
-                    "second": null
+                    "first": 1789545600,
+                    "second": 1789549200
                 },
                 "venue": {
                     "id": null,
@@ -657,9 +657,9 @@
                     "city": null
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
-                    "elapsed": null,
+                    "long": "Second Half",
+                    "short": "2H",
+                    "elapsed": 53,
                     "extra": null
                 }
             },
@@ -678,23 +678,23 @@
                     "id": 23078,
                     "name": "Metalist 1925 U19",
                     "logo": "https://media.api-sports.io/football/teams/23078.png",
-                    "winner": null
+                    "winner": false
                 },
                 "away": {
                     "id": 23084,
                     "name": "Zhytomyr U19",
                     "logo": "https://media.api-sports.io/football/teams/23084.png",
-                    "winner": null
+                    "winner": true
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 1,
+                "away": 2
             },
             "score": {
                 "halftime": {
-                    "home": null,
-                    "away": null
+                    "home": 1,
+                    "away": 1
                 },
                 "fulltime": {
                     "home": null,
@@ -718,7 +718,7 @@
                 "date": "2026-09-16T08:30:00+00:00",
                 "timestamp": 1789547400,
                 "periods": {
-                    "first": null,
+                    "first": 1789547400,
                     "second": null
                 },
                 "venue": {
@@ -727,10 +727,10 @@
                     "city": "Balikpapan"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
-                    "elapsed": null,
-                    "extra": null
+                    "long": "First Half",
+                    "short": "1H",
+                    "elapsed": 45,
+                    "extra": 1
                 }
             },
             "league": {
@@ -748,23 +748,23 @@
                     "id": 2442,
                     "name": "Pusamania Borneo",
                     "logo": "https://media.api-sports.io/football/teams/2442.png",
-                    "winner": null
+                    "winner": false
                 },
                 "away": {
                     "id": 17902,
                     "name": "Dewa United",
                     "logo": "https://media.api-sports.io/football/teams/17902.png",
-                    "winner": null
+                    "winner": true
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 0,
+                "away": 1
             },
             "score": {
                 "halftime": {
-                    "home": null,
-                    "away": null
+                    "home": 0,
+                    "away": 1
                 },
                 "fulltime": {
                     "home": null,
@@ -788,7 +788,7 @@
                 "date": "2026-09-16T09:00:00+00:00",
                 "timestamp": 1789549200,
                 "periods": {
-                    "first": null,
+                    "first": 1789549200,
                     "second": null
                 },
                 "venue": {
@@ -797,9 +797,9 @@
                     "city": null
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
-                    "elapsed": null,
+                    "long": "First Half",
+                    "short": "1H",
+                    "elapsed": 13,
                     "extra": null
                 }
             },
@@ -818,23 +818,23 @@
                     "id": 14839,
                     "name": "Zbrojovka Brno U19",
                     "logo": "https://media.api-sports.io/football/teams/14839.png",
-                    "winner": null
+                    "winner": false
                 },
                 "away": {
                     "id": 14831,
                     "name": "Hradec Králové U19",
                     "logo": "https://media.api-sports.io/football/teams/14831.png",
-                    "winner": null
+                    "winner": true
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 0,
+                "away": 1
             },
             "score": {
                 "halftime": {
-                    "home": null,
-                    "away": null
+                    "home": 0,
+                    "away": 1
                 },
                 "fulltime": {
                     "home": null,
@@ -858,7 +858,7 @@
                 "date": "2026-09-16T09:00:00+00:00",
                 "timestamp": 1789549200,
                 "periods": {
-                    "first": null,
+                    "first": 1789549200,
                     "second": null
                 },
                 "venue": {
@@ -867,9 +867,9 @@
                     "city": null
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
-                    "elapsed": null,
+                    "long": "First Half",
+                    "short": "1H",
+                    "elapsed": 15,
                     "extra": null
                 }
             },
@@ -898,13 +898,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 0,
+                "away": 0
             },
             "score": {
                 "halftime": {
-                    "home": null,
-                    "away": null
+                    "home": 0,
+                    "away": 0
                 },
                 "fulltime": {
                     "home": null,
@@ -928,7 +928,7 @@
                 "date": "2026-09-16T09:00:00+00:00",
                 "timestamp": 1789549200,
                 "periods": {
-                    "first": null,
+                    "first": 1789549200,
                     "second": null
                 },
                 "venue": {
@@ -937,9 +937,9 @@
                     "city": null
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
-                    "elapsed": null,
+                    "long": "First Half",
+                    "short": "1H",
+                    "elapsed": 10,
                     "extra": null
                 }
             },
@@ -968,13 +968,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 0,
+                "away": 0
             },
             "score": {
                 "halftime": {
-                    "home": null,
-                    "away": null
+                    "home": 0,
+                    "away": 0
                 },
                 "fulltime": {
                     "home": null,
@@ -998,7 +998,7 @@
                 "date": "2026-09-16T09:00:00+00:00",
                 "timestamp": 1789549200,
                 "periods": {
-                    "first": null,
+                    "first": 1789549200,
                     "second": null
                 },
                 "venue": {
@@ -1007,9 +1007,9 @@
                     "city": null
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
-                    "elapsed": null,
+                    "long": "First Half",
+                    "short": "1H",
+                    "elapsed": 10,
                     "extra": null
                 }
             },
@@ -1028,23 +1028,23 @@
                     "id": 7898,
                     "name": "Dynamo Kyiv U19",
                     "logo": "https://media.api-sports.io/football/teams/7898.png",
-                    "winner": null
+                    "winner": true
                 },
                 "away": {
                     "id": 28083,
                     "name": "Lviv U19",
                     "logo": "https://media.api-sports.io/football/teams/28083.png",
-                    "winner": null
+                    "winner": false
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 1,
+                "away": 0
             },
             "score": {
                 "halftime": {
-                    "home": null,
-                    "away": null
+                    "home": 1,
+                    "away": 0
                 },
                 "fulltime": {
                     "home": null,
@@ -1068,7 +1068,7 @@
                 "date": "2026-09-16T09:00:00+00:00",
                 "timestamp": 1789549200,
                 "periods": {
-                    "first": null,
+                    "first": 1789549200,
                     "second": null
                 },
                 "venue": {
@@ -1077,9 +1077,9 @@
                     "city": "Kovalivka"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
-                    "elapsed": null,
+                    "long": "First Half",
+                    "short": "1H",
+                    "elapsed": 14,
                     "extra": null
                 }
             },
@@ -1098,23 +1098,23 @@
                     "id": 3627,
                     "name": "Kolos Kovalivka",
                     "logo": "https://media.api-sports.io/football/teams/3627.png",
-                    "winner": null
+                    "winner": true
                 },
                 "away": {
                     "id": 3617,
                     "name": "Karpaty",
                     "logo": "https://media.api-sports.io/football/teams/3617.png",
-                    "winner": null
+                    "winner": false
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 1,
+                "away": 0
             },
             "score": {
                 "halftime": {
-                    "home": null,
-                    "away": null
+                    "home": 1,
+                    "away": 0
                 },
                 "fulltime": {
                     "home": null,
@@ -1147,9 +1147,9 @@
                     "city": null
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
-                    "elapsed": null,
+                    "long": "First Half",
+                    "short": "1H",
+                    "elapsed": 14,
                     "extra": null
                 }
             },
@@ -1178,13 +1178,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 0,
+                "away": 0
             },
             "score": {
                 "halftime": {
-                    "home": null,
-                    "away": null
+                    "home": 0,
+                    "away": 0
                 },
                 "fulltime": {
                     "home": null,
@@ -27942,76 +27942,6 @@
         },
         {
             "fixture": {
-                "id": 1635927,
-                "referee": null,
-                "timezone": "UTC",
-                "date": "2026-09-16T21:00:00+00:00",
-                "timestamp": 1789592400,
-                "periods": {
-                    "first": null,
-                    "second": null
-                },
-                "venue": {
-                    "id": 0,
-                    "name": "Estadio Metropolitano de Cabudare",
-                    "city": "Barquisimeto"
-                },
-                "status": {
-                    "long": "Not Started",
-                    "short": "NS",
-                    "elapsed": null,
-                    "extra": null
-                }
-            },
-            "league": {
-                "id": 300,
-                "name": "Segunda División",
-                "country": "Venezuela",
-                "logo": "https://media.api-sports.io/football/leagues/300.png",
-                "flag": "https://media.api-sports.io/flags/ve.svg",
-                "season": 2026,
-                "round": "Regular Season - 29",
-                "standings": true
-            },
-            "teams": {
-                "home": {
-                    "id": 2812,
-                    "name": "Deportivo Lara",
-                    "logo": "https://media.api-sports.io/football/teams/2812.png",
-                    "winner": null
-                },
-                "away": {
-                    "id": 2832,
-                    "name": "Atletico el Vigia FC",
-                    "logo": "https://media.api-sports.io/football/teams/2832.png",
-                    "winner": null
-                }
-            },
-            "goals": {
-                "home": null,
-                "away": null
-            },
-            "score": {
-                "halftime": {
-                    "home": null,
-                    "away": null
-                },
-                "fulltime": {
-                    "home": null,
-                    "away": null
-                },
-                "extratime": {
-                    "home": null,
-                    "away": null
-                },
-                "penalty": {
-                    "home": null,
-                    "away": null
-                }
-            }
-        },
-        {
-            "fixture": {
                 "id": 1638872,
                 "referee": null,
                 "timezone": "UTC",
@@ -29104,6 +29034,76 @@
                     "id": 1603,
                     "name": "Vancouver Whitecaps",
                     "logo": "https://media.api-sports.io/football/teams/1603.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 1635927,
+                "referee": null,
+                "timezone": "UTC",
+                "date": "2026-09-16T23:00:00+00:00",
+                "timestamp": 1789599600,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 0,
+                    "name": "Estadio Metropolitano de Cabudare",
+                    "city": "Barquisimeto"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": null,
+                    "extra": null
+                }
+            },
+            "league": {
+                "id": 300,
+                "name": "Segunda División",
+                "country": "Venezuela",
+                "logo": "https://media.api-sports.io/football/leagues/300.png",
+                "flag": "https://media.api-sports.io/flags/ve.svg",
+                "season": 2026,
+                "round": "Regular Season - 29",
+                "standings": true
+            },
+            "teams": {
+                "home": {
+                    "id": 2812,
+                    "name": "Deportivo Lara",
+                    "logo": "https://media.api-sports.io/football/teams/2812.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 2832,
+                    "name": "Atletico el Vigia FC",
+                    "logo": "https://media.api-sports.io/football/teams/2832.png",
                     "winner": null
                 }
             },
