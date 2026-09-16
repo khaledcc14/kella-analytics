@@ -1,35 +1,112 @@
-name: Update Football Data
+name: Update Football Data Cron
 
 on:
   schedule:
-    - cron: '0 * * * *' # يتم التحديث كل ساعة أوتوماتيكياً
-  workflow_dispatch: # زر لتشغيل الحديث يدوياً من منت منح من GitHub
-
-permissions:
-  contents: write
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
 
 jobs:
   update-data:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Run script to fetch data
-        run: python update_scores.py
-
-      - name: Commit and push changes
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run smart fetch script for live or today matches
         run: |
-          git config --global user.name "KELLA Bot"
-          git config --global user.email "bot@github.com"
+          python -c '
+          import urllib.request
+          import json
+          import datetime
+
+          api_key = "9089a8397ff28245938e358f0c9b5847"
+          headers = {"x-apisports-key": api_key}
+
+          def fetch_api(url):
+              try:
+                  req = urllib.request.Request(url, headers=headers)
+                  with urllib.request.urlopen(req) as response:
+                      return json.loads(response.read().decode())
+              except Exception as e:
+                  print("API Error:", e)
+                  return None
+
+          matches_list = []
+
+          # 1. محاولة جلب المباريات الحية حالياً
+          live_data = fetch_api("https://v3.football.api-sports.io/fixtures?live=all")
+          if live_data and "response" in live_data and len(live_data["response"]) > 0:
+              print("Found live matches!")
+              for item in live_data["response"]:
+                  league = item.get("league", {}).get("name", "General")
+                  home_team = item.get("teams", {}).get("home", {}).get("name", "Home")
+                  away_team = item.get("teams", {}).get("away", {}).get("name", "Away")
+                  goals_home = item.get("goals", {}).get("home", 0)
+                  goals_away = item.get("goals", {}).get("away", 0)
+                  fixture_status = item.get("fixture", {}).get("status", {})
+                  status_short = fixture_status.get("short", "LIVE")
+                  elapsed = fixture_status.get("elapsed", 0)
+                  
+                  matches_list.append({
+                      "league": league,
+                      "homeTeam": home_team,
+                      "awayTeam": away_team,
+                      "homeGoals": goals_home if goals_home is not None else 0,
+                      "awayGoals": goals_away if goals_away is not None else 0,
+                      "status": status_short,
+                      "elapsed": elapsed,
+                      "time": f"{elapsed}\x27"
+                  })
+          else:
+              # 2. إذا ماكانش مباريات حية، يجيب مباريات اليوم الحالي حسب توقيت UTC
+              today_str = datetime.datetime.utcnow().strftime("%Y-%m-%d")
+              print(f"No live matches. Fetching today matches for {today_str}...")
+              today_data = fetch_api(f"https://v3.football.api-sports.io/fixtures?date={today_str}")
+              
+              if today_data and "response" in today_data:
+                  for item in today_data["response"]:
+                      league = item.get("league", {}).get("name", "General")
+                      home_team = item.get("teams", {}).get("home", {}).get("name", "Home")
+                      away_team = item.get("teams", {}).get("away", {}).get("name", "Away")
+                      goals_home = item.get("goals", {}).get("home", 0)
+                      goals_away = item.get("goals", {}).get("away", 0)
+                      fixture_status = item.get("fixture", {}).get("status", {})
+                      status_short = fixture_status.get("short", "NS")
+                      
+                      # استخراج توقيت المباراة بوضوح
+                      fixture_date = item.get("fixture", {}).get("date", "")
+                      match_time = "00:00"
+                      if "T" in fixture_date:
+                          match_time = fixture_date.split("T")[1][:5]
+
+                      matches_list.append({
+                          "league": league,
+                          "homeTeam": home_team,
+                          "awayTeam": away_team,
+                          "homeGoals": goals_home if goals_home is not None else 0,
+                          "awayGoals": goals_away if goals_away is not None else 0,
+                          "status": status_short,
+                          "elapsed": 0,
+                          "time": match_time
+                      })
+
+          final_output = {"matches": matches_list}
+
+          with open("live.json", "w", encoding="utf-8") as f:
+              json.dump(final_output, f, ensure_ascii=False, indent=4)
+          print("live.json updated successfully with", len(matches_list), "matches.")
+          '
+
+      - name: Commit and push changes to GitHub
+        run: |
+          git config --global user.name "Kella Cron Bot"
+          git config --global user.email "bot@kella.com"
           git add live.json
-          git commit -m "Auto-update live football data [skip ci]" || exit 0
+          git commit -m "Smart update: live or today matches [skip ci]" || echo "No changes to commit"
           git push
           
