@@ -95,13 +95,15 @@ button {
     animation: pulse 2s infinite;
 }
 .ai-prediction {
-    margin-top: 8px;
-    padding: 6px 10px;
-    background: #1e293b50;
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #1e293b80;
     border: 1px dashed #38bdf8;
-    border-radius: 6px;
-    font-size: 11px;
+    border-radius: 8px;
+    font-size: 12px;
     color: #38bdf8;
+    line-height: 1.5;
+    word-break: break-word;
 }
 @keyframes pulse {
     0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
@@ -220,7 +222,6 @@ function displayMatches(matches) {
 function filterByLeague(leagueKey, btnElement) {
     currentLeagueFilter = leagueKey;
     
-    // تغيير التحديد البصري للأزرار
     document.querySelectorAll('.league-btn').forEach(b => b.classList.remove('active'));
     btnElement.classList.add('active');
 
@@ -240,13 +241,11 @@ function applyFilters() {
         let homeTeam = (item.teams && item.teams.home) ? item.teams.home.name.toLowerCase() : "";
         let awayTeam = (item.teams && item.teams.away) ? item.teams.away.name.toLowerCase() : "";
 
-        // تصفية حسب زر الدوري السريع
         let matchesLeagueBtn = true;
         if (currentLeagueFilter !== 'all') {
             matchesLeagueBtn = country.includes(currentLeagueFilter.toLowerCase()) || league.includes(currentLeagueFilter.toLowerCase());
         }
 
-        // تصفية حسب خانة البحث اليدوي
         let matchesSearchQuery = league.includes(query) || homeTeam.includes(query) || awayTeam.includes(query) || country.includes(query);
 
         return matchesLeagueBtn && matchesSearchQuery;
