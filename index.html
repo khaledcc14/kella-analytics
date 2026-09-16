@@ -55,11 +55,34 @@ button {
     box-sizing: border-box;
     font-size: 13px;
 }
+.filter-tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+.tab-btn {
+    flex: 1;
+    background: #1e293b;
+    color: #94a3b8;
+    border: 1px solid #38bdf820;
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+    margin: 0;
+}
+.tab-btn.active {
+    background: #0284c7;
+    color: white;
+    border-color: #38bdf8;
+}
 .leagues-container {
     display: flex;
     gap: 5px;
     overflow-x: auto;
-    padding-bottom: 10px;
+    padding-bottom: 5px;
     margin-bottom: 10px;
 }
 .league-btn {
@@ -106,11 +129,11 @@ button {
 }
 .ai-prediction {
     margin-top: 8px;
-    padding: 8px 12px;
+    padding: 8px 10px;
     background: #1e293b80;
     border: 1px dashed #38bdf8;
     border-radius: 8px;
-    font-size: 12px;
+    font-size: 11px;
     color: #38bdf8;
     line-height: 1.5;
     word-break: break-word;
@@ -131,15 +154,22 @@ button {
 <button onclick="loadLiveMatches()">⚡ تحديث وجلب مباريات اليوم</button>
 <input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث عن فريق أو دوري..." onkeyup="filterMatches()">
 
+<!-- أزرار تصفية الحالة (الكل / Live / Next) -->
+<div class="filter-tabs">
+    <button class="tab-btn active" onclick="setStatusFilter('all', this)">الكل 🌍</button>
+    <button class="tab-btn" onclick="setStatusFilter('live', this)">🔴 مباريات مباشرة</button>
+    <button class="tab-btn" onclick="setStatusFilter('upcoming', this)">⏰ لم تبدأ بعد</button>
+</div>
+
 <!-- أزرار تصفية الدوريات السريعة -->
 <div class="leagues-container">
-    <button class="league-btn active" onclick="filterByLeague('all', this)">الكل 🌍</button>
+    <button class="league-btn active" onclick="filterByLeague('all', this)">كل الدوريات</button>
     <button class="league-btn" onclick="filterByLeague('Spain', this)">🇪🇸 إسبانيا</button>
     <button class="league-btn" onclick="filterByLeague('France', this)">🇫🇷 فرنسا</button>
     <button class="league-btn" onclick="filterByLeague('Brazil', this)">🇧🇷 البرازيل</button>
     <button class="league-btn" onclick="filterByLeague('Belgium', this)">🇧🇪 بلجيكا</button>
     <button class="league-btn" onclick="filterByLeague('England', this)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 إنجلترا</button>
-    <button class="league-btn" onclick="filterByLeague('Italy', this) ">🇮🇹 إيطاليا</button>
+    <button class="league-btn" onclick="filterByLeague('Italy', this)">🇮🇹 إيطاليا</button>
 </div>
 
 <div id="output" style="text-align: center; color: #94a3b8; font-size: 13px; padding: 10px;">جاري تحميل المحرك الذكي...</div>
@@ -148,6 +178,7 @@ button {
 <script>
 let allMatches = [];
 let currentLeagueFilter = 'all';
+let currentStatusFilter = 'all';
 
 async function loadLiveMatches() {
     const output = document.getElementById('output');
@@ -180,11 +211,15 @@ async function loadLiveMatches() {
 
 function generateAIPrediction(home, away) {
     let hash = (home + away).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    // اقتراح نتيجة رقمية افتراضية واضحة بناءً على خوارزمية الفريقين
+    let scoreH = hash % 3;
+    let scoreA = (hash + 1) % 3;
+    
     let options = [
-        `🤖 توقع الذكاء الاصطناعي: فوز محتمل لـ ${home} بنسبة 54% مع تسجيل أهداف من الطرفين.`,
-        `🤖 توقع الذكاء الاصطناعي: مباراة متكافئة، الأقرب للتعادل الإيجابي أو فوز صعب لـ ${away}.`,
-        `🤖 توقع الذكاء الاصطناعي: سيطرة مرتقبة لـ ${home} وتوقع تسجيل أكثر من هدفين في اللقاء.`,
-        `🤖 توقع الذكاء الاصطناعي: حذر دفاعي متوقع، وتوقع خروج ${away} بنتيجة إيجابية.`
+        `🤖 <b>التوقعات والنتيجة:</b> فوز محتمل لـ ${home} (${scoreH}-${scoreA}) مع نسبة سيطرة 58% وتسجيل أهداف من الطرفين.`,
+        `🤖 <b>التوقعات والنتيجة:</b> تعادل إيجابي أو فوز صعب لـ ${away} بنتيجة (${scoreH}-${scoreA + 1})، لقاء متكافئ تكتيكياً.`,
+        `🤖 <b>التوقعات والنتيجة:</b> سيطرة مرتقبة لـ ${home} وتوقع تسجيل أكثر من هدفين لتنتهي (${scoreH + 1}-${scoreA}).`,
+        `🤖 <b>التوقعات والنتيجة:</b> حذر دفاعي وانتهائها على وقع تعادل سلبي أو هدف يتيم (${scoreH}-${scoreA}).`
     ];
     return options[hash % options.length];
 }
@@ -194,7 +229,7 @@ function displayMatches(matches) {
     output.innerHTML = "";
 
     if (matches.length === 0) {
-        output.innerHTML = `<div style="color: #f59e0b; text-align: center; padding: 10px;">لا توجد مباريات مطابقة للبحث أو الدوري المحدد.</div>`;
+        output.innerHTML = `<div style="color: #f59e0b; text-align: center; padding: 15px;">لا توجد مباريات مطابقة للخيارات المحددة.</div>`;
         return;
     }
 
@@ -207,7 +242,6 @@ function displayMatches(matches) {
         let status = (item.fixture && item.fixture.status) ? item.fixture.status.short : "NS";
         let elapsed = (item.fixture && item.fixture.status && item.fixture.status.elapsed) ? item.fixture.status.elapsed : null;
         
-        // استخراج وقت انطلاق المباراة بتوقيت محلي واضح
         let matchDateStr = (item.fixture && item.fixture.date) ? item.fixture.date : "";
         let matchTime = "";
         if (matchDateStr) {
@@ -222,7 +256,6 @@ function displayMatches(matches) {
         let cardClass = isLive ? "match-card live" : "match-card";
         let statusColor = isLive ? "#ef4444" : "#94a3b8";
 
-        // صياغة وصف الحالة والوقت بدقة
         let statusDescription = status;
         if (status === "NS") statusDescription = "لم تبدأ بعد";
         else if (status === "HT") statusDescription = "استراحة (HT)";
@@ -254,12 +287,17 @@ function displayMatches(matches) {
     });
 }
 
+function setStatusFilter(statusType, btnElement) {
+    currentStatusFilter = statusType;
+    document.querySelectorAll('.filter-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+    btnElement.classList.add('active');
+    applyFilters();
+}
+
 function filterByLeague(leagueKey, btnElement) {
     currentLeagueFilter = leagueKey;
-    
-    document.querySelectorAll('.league-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.leagues-container .league-btn').forEach(b => b.classList.remove('active'));
     btnElement.classList.add('active');
-
     applyFilters();
 }
 
@@ -275,15 +313,26 @@ function applyFilters() {
         let country = (item.league && item.league.country) ? item.league.country.toLowerCase() : "";
         let homeTeam = (item.teams && item.teams.home) ? item.teams.home.name.toLowerCase() : "";
         let awayTeam = (item.teams && item.teams.away) ? item.teams.away.name.toLowerCase() : "";
+        let status = (item.fixture && item.fixture.status) ? item.fixture.status.short : "NS";
 
+        let isLive = ["1H", "2H", "ET", "P", "LIVE"].includes(status);
+        let isUpcoming = status === "NS";
+
+        // تصفية أزرار الحالة (Live / Upcoming)
+        let matchesStatusTab = true;
+        if (currentStatusFilter === 'live') matchesStatusTab = isLive;
+        else if (currentStatusFilter === 'upcoming') matchesStatusTab = isUpcoming;
+
+        // تصفية زر الدوري السريع
         let matchesLeagueBtn = true;
         if (currentLeagueFilter !== 'all') {
-            matchesLeagueBtn = country.includes(currentLeagueFilter.toLowerCase()) || league.includes(currentLeagueFilter.toLowerCase());
+            matchesLeagueTab = country.includes(currentLeagueFilter.toLowerCase()) || league.includes(currentLeagueFilter.toLowerCase());
         }
 
+        // تصفية خانة البحث اليدوي
         let matchesSearchQuery = league.includes(query) || homeTeam.includes(query) || awayTeam.includes(query) || country.includes(query);
 
-        return matchesLeagueBtn && matchesSearchQuery;
+        return matchesStatusTab && matchesLeagueBtn && matchesSearchQuery;
     });
 
     displayMatches(filtered);
