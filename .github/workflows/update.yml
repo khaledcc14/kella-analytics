@@ -5,6 +5,9 @@ on:
     - cron: '*/15 * * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   update-data:
     runs-on: ubuntu-latest
@@ -38,10 +41,8 @@ jobs:
 
           matches_list = []
 
-          # 1. محاولة جلب المباريات الحية حالياً
           live_data = fetch_api("https://v3.football.api-sports.io/fixtures?live=all")
           if live_data and "response" in live_data and len(live_data["response"]) > 0:
-              print("Found live matches!")
               for item in live_data["response"]:
                   league = item.get("league", {}).get("name", "General")
                   home_team = item.get("teams", {}).get("home", {}).get("name", "Home")
@@ -63,9 +64,7 @@ jobs:
                       "time": f"{elapsed}\x27"
                   })
           else:
-              # 2. إذا ماكانش مباريات حية، يجيب مباريات اليوم الحالي حسب توقيت UTC
               today_str = datetime.datetime.utcnow().strftime("%Y-%m-%d")
-              print(f"No live matches. Fetching today matches for {today_str}...")
               today_data = fetch_api(f"https://v3.football.api-sports.io/fixtures?date={today_str}")
               
               if today_data and "response" in today_data:
@@ -95,17 +94,17 @@ jobs:
                       })
 
           final_output = {"matches": matches_list}
-
           with open("live.json", "w", encoding="utf-8") as f:
               json.dump(final_output, f, ensure_ascii=False, indent=4)
-          print("live.json updated successfully with", len(matches_list), "matches.")
+          print("live.json generated successfully.")
           '
 
-      - name: Commit and push changes
+      - name: Commit and push changes safely
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add live.json
-          git diff --quiet && git diff --staged --quiet || git commit -m "Auto-update live.json [skip ci]"
-          git push
+          git status
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update live.json automatically [skip ci]"
+          git push || echo "Push skipped or no changes"
           
