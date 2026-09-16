@@ -4,435 +4,172 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KELLA Analytics Pro</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0b0f19">
 <style>
 body {
     background: #0b0f19;
     color: #f8fafc;
     font-family: Arial, sans-serif;
+    padding: 15px;
     margin: 0;
-    padding-bottom: 70px;
 }
-.app-container {
+.card {
+    background: #131b2e;
+    border: 1px solid #1e293b;
+    border-radius: 15px;
     max-width: 480px;
     margin: 0 auto;
-    padding: 10px;
+    padding: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
-.top-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px 10px;
-}
-.top-header h2 {
+h2 {
     color: #38bdf8;
-    margin: 0;
-    font-size: 18px;
-}
-.status-star {
+    text-align: center;
     font-size: 20px;
+    margin-top: 0;
 }
-.mode-toggle {
-    display: flex;
-    background: #131b2e;
-    border-radius: 25px;
-    padding: 4px;
-    margin: 10px 0;
-    border: 1px solid #1e293b;
-}
-.mode-btn {
-    flex: 1;
-    background: transparent;
+.subtitle {
+    text-align: center;
+    font-size: 11px;
     color: #94a3b8;
-    border: none;
-    padding: 8px;
-    font-size: 13px;
-    font-weight: bold;
-    border-radius: 20px;
-    cursor: pointer;
+    margin-bottom: 15px;
 }
-.mode-btn.active {
-    background: #22c55e;
-    color: #0b0f19;
+button {
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    width: 100%;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 10px;
 }
 .search-box {
     width: 100%;
     padding: 10px;
-    border-radius: 10px;
+    border-radius: 8px;
     border: 1px solid #1e293b;
-    background: #131b2e;
+    background: #0f172a;
     color: #f8fafc;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     box-sizing: border-box;
     font-size: 13px;
 }
-.league-item {
-    background: #131b2e;
-    border: 1px solid #1e293b;
-    border-radius: 10px;
-    padding: 12px;
-    margin-bottom: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.league-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13px;
-    font-weight: bold;
-    cursor: pointer;
-    flex-grow: 1;
-}
-.league-meta {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.match-count {
-    background: #1e293b;
-    color: #94a3b8;
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 10px;
-}
-.fav-star {
-    font-size: 18px;
-    cursor: pointer;
-    color: #64748b;
-    transition: 0.2s;
-}
-.fav-star.active {
-    color: #eab308;
-}
 .match-card {
-    background: #131b2e;
+    background: #0f172a;
     border: 1px solid #1e293b;
-    border-left: 4px solid #38bdf8;
+    border-left: 4px solid #22c55e;
     border-radius: 10px;
     padding: 12px;
-    margin-bottom: 10px;
+    margin-top: 10px;
     font-size: 13px;
-    cursor: pointer;
     transition: 0.2s;
 }
-.match-card:hover {
-    border-color: #38bdf8;
+.match-card.live {
+    border-left-color: #ef4444;
+    animation: pulse 2s infinite;
 }
-.ai-prediction {
-    margin-top: 8px;
-    padding: 10px;
-    background: #0f172a;
-    border: 1px dashed #38bdf8;
-    border-radius: 8px;
-    font-size: 12px;
-    color: #38bdf8;
-    line-height: 1.5;
-}
-.ai-prediction.gold-tier {
-    background: #1e1b4b;
-    border: 1.5px solid #fbbf24;
-    color: #fde047;
-    box-shadow: 0 0 10px rgba(251, 191, 36, 0.2);
-}
-.back-btn {
-    background: #1e293b;
-    color: #38bdf8;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    font-weight: bold;
-}
-.bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #0f172a;
-    border-top: 1px solid #1e293b;
-    display: flex;
-    justify-content: space-around;
-    padding: 8px 0;
-    z-index: 1000;
-}
-.nav-item {
-    background: transparent;
-    border: none;
-    color: #94a3b8;
-    font-size: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-    gap: 2px;
-}
-.nav-item.active {
-    color: #22c55e;
-    font-weight: bold;
-}
-.nav-item span.icon {
-    font-size: 18px;
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }
 </style>
 </head>
 <body>
 
-<div class="app-container">
-    <div class="top-header">
-        <h2>KELLA Analytics Pro ⚽</h2>
-        <span id="connectionStar" class="status-star">🟢</span>
-    </div>
+<div class="card">
+<h2>KELLA Analytics Pro ⚽</h2>
+<div class="subtitle">Live Global Engine - Khaled</div>
 
-    <div class="mode-toggle">
-        <button class="mode-btn" onclick="setMode('live', this)">EN DIRECT</button>
-        <button class="mode-btn active" onclick="setMode('upcoming', this)">Avant-match</button>
-    </div>
+<button onclick="loadLiveMatches()">⚡ تحديث وجلب مباريات اليوم</button>
+<input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث عن فريق أو دوري (مثال: Real Madrid)..." onkeyup="filterMatches()">
 
-    <input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث عن دوري، بلد أو فريق..." onkeyup="filterData()">
-
-    <div id="output">
-        <div style="text-align: center; color: #94a3b8; padding: 20px;">جاري تحميل البطولات...</div>
-    </div>
-</div>
-
-<div class="bottom-nav">
-    <button class="nav-item active" onclick="switchTab('popular', this)"><span class="icon">🔥</span> Populaire</button>
-    <button class="nav-item" onclick="switchTab('favorites', this)"><span class="icon">⭐</span> Favoris</button>
-    <button class="nav-item" onclick="switchTab('coupon', this)"><span class="icon">🎟️</span> Coupon</button>
-    <button class="nav-item" onclick="switchTab('history', this)"><span class="icon">⏰</span> Historique</button>
-    <button class="nav-item" onclick="switchTab('menu', this)"><span class="icon">📂</span> Menu</button>
+<div id="output" style="text-align: center; color: #94a3b8; font-size: 13px; padding: 10px;">انقر الزر أعلاه لعرض الجدول الشامل...</div>
 </div>
 
 <script>
 let allMatches = [];
-let currentMode = 'upcoming';
-let currentTab = 'popular';
-let favoritesLeagues = JSON.parse(localStorage.getItem('kella_favs') || '[]');
 
-async function loadData() {
+async function loadLiveMatches() {
+    const output = document.getElementById('output');
+    output.innerHTML = "جاري جلب وتحديث جميع المباريات...";
+
     try {
         const response = await fetch('https://raw.githubusercontent.com/khaledcc14/kella-analytics/main/live.json?t=' + new Date().getTime());
-        if (!response.ok) throw new Error("خطأ في جلب البيانات");
+        if (!response.ok) throw new Error("تعذر جلب قاعدة البيانات.");
+
         const data = await response.json();
-        allMatches = Array.isArray(data) ? data : (data.response || []);
-
-        document.getElementById('connectionStar').innerHTML = "🟢";
-        filterAndRender();
-    } catch (err) {
-        document.getElementById('connectionStar').innerHTML = "🔴";
-        document.getElementById('output').innerHTML = `<div style="color: #fca5a5; text-align:center; padding:20px;">⚠️ تعذر الاتصال بالخادم.</div>`;
-    }
-}
-
-function setMode(mode, btn) {
-    document.querySelectorAll('.mode-btn').forEach(x => x.classList.remove('active'));
-    if(btn) btn.classList.add('active');
-    currentMode = mode;
-    filterAndRender();
-}
-
-function filterAndRender() {
-    let filteredByMode = allMatches.filter(item => {
-        let status = item.fixture && item.fixture.status && item.fixture.status.short ? item.fixture.status.short : "";
-        let isLive = ["1H", "2H", "HT", "ET", "P", "LIVE"].includes(status);
-        return currentMode === 'live' ? isLive : !isLive;
-    });
-
-    if (currentTab === 'favorites') {
-        filteredByMode = filteredByMode.filter(item => {
-            let country = item.league && item.league.country ? item.league.country : "عالمي";
-            let name = item.league && item.league.name ? item.league.name : "بطولة أخرى";
-            let key = `${country} - ${name}`;
-            return favoritesLeagues.includes(key);
-        });
-    }
-
-    renderLeaguesList(filteredByMode);
-}
-
-function renderLeaguesList(matches) {
-    const output = document.getElementById('output');
-    let leaguesMap = {};
-    
-    matches.forEach(item => {
-        let leagueName = item.league && item.league.name ? item.league.name : "بطولة أخرى";
-        let country = item.league && item.league.country ? item.league.country : "عالمي";
-        let key = `${country} - ${leagueName}`;
         
-        if (!leaguesMap[key]) {
-            leaguesMap[key] = { country: country, name: leagueName, fullName: key, count: 0 };
+        if (Array.isArray(data)) {
+            allMatches = data;
+        } else if (data && Array.isArray(data.response)) {
+            allMatches = data.response;
+        } else {
+            allMatches = [];
         }
-        leaguesMap[key].count++;
-    });
 
-    let keys = Object.keys(leaguesMap);
-    if (keys.length === 0) {
-        let msg = currentTab === 'favorites' ? "⭐ لم تقم بإضافة أي دوري إلى المفضلة بعد. اضغط على النجمة بجانب الدوري لإضافته!" : "لا توجد مباريات متاحة حالياً.";
-        output.innerHTML = `<div style="text-align: center; color: #94a3b8; padding: 30px; font-size:13px; line-height:1.6;">${msg}</div>`;
+        displayMatches(allMatches);
+
+    } catch (err) {
+        output.innerHTML = `
+            <div style="background: #ef444420; border: 1px solid #ef4444; color: #fca5a5; padding: 10px; border-radius: 8px; text-align: center; font-size: 12px;">
+                ⚠️ تنبيه: ${err.message}
+            </div>
+        `;
+    }
+}
+
+function displayMatches(matches) {
+    const output = document.getElementById('output');
+    output.innerHTML = "";
+
+    if (matches.length === 0) {
+        output.innerHTML = `<div style="color: #f59e0b; text-align: center; padding: 10px;">لا توجد مباريات مطابقة للبحث.</div>`;
         return;
     }
 
-    let html = "";
-    keys.forEach(k => {
-        let l = leaguesMap[k];
-        let safeKey = l.fullName.replace(/"/g, '&quot;');
-        let isFav = favoritesLeagues.includes(l.fullName);
-        let starClass = isFav ? "fav-star active" : "fav-star";
+    matches.forEach(item => {
+        let leagueName = (item.league && item.league.name) ? item.league.name : "بطولة رسمية";
+        let country = (item.league && item.league.country) ? item.league.country : "عالمي";
+        
+        let home = (item.teams && item.teams.home) ? item.teams.home.name : "مضيف";
+        let away = (item.teams && item.teams.away) ? item.teams.away.name : "ضيف";
+        let status = (item.fixture && item.fixture.status) ? item.fixture.status.short : "NS";
+        
+        let goalsHome = (item.goals && item.goals.home !== null) ? item.goals.home : "-";
+        let goalsAway = (item.goals && item.goals.away !== null) ? item.goals.away : "-";
 
-        html += `
-            <div class="league-item">
-                <div class="league-info" onclick='showLeagueMatches("${safeKey}")'>
-                    <span>⚽</span>
-                    <span>${l.country} : ${l.name}</span>
-                </div>
-                <div class="league-meta">
-                    <span class="match-count">${l.count}</span>
-                    <span class="${starClass}" onclick='toggleFavorite("${safeKey}")'>⭐</span>
-                </div>
+        let isLive = ["1H", "2H", "ET", "P", "LIVE"].includes(status);
+        let cardClass = isLive ? "match-card live" : "match-card";
+        let statusColor = isLive ? "#ef4444" : "#94a3b8";
+
+        output.innerHTML += `
+            <div class="${cardClass}">
+                <span style="color:${statusColor}; font-weight:bold; float:right;">${status}</span>
+                <span style="color:#38bdf8; font-weight:bold;">🌍 ${country} - ${leagueName}</span><br>
+                🏟️ <b>${home}</b> vs <b>${away}</b><br>
+                <span style="color:#22c55e;">النتيجة: <b>${goalsHome} - ${goalsAway}</b></span>
             </div>
         `;
     });
-    output.innerHTML = html;
 }
 
-function toggleFavorite(leagueKey) {
-    if (favoritesLeagues.includes(leagueKey)) {
-        favoritesLeagues = favoritesLeagues.filter(item => item !== leagueKey);
-    } else {
-        favoritesLeagues.push(leagueKey);
-    }
-    localStorage.setItem('kella_favs', JSON.stringify(favoritesLeagues));
-    filterAndRender();
-}
+function filterMatches() {
+    let query = document.getElementById('searchInput').value.toLowerCase();
+    let filtered = allMatches.filter(item => {
+        let league = (item.league && item.league.name) ? item.league.name.toLowerCase() : "";
+        let homeTeam = (item.teams && item.teams.home) ? item.teams.home.name.toLowerCase() : "";
+        let awayTeam = (item.teams && item.teams.away) ? item.teams.away.name.toLowerCase() : "";
+        let country = (item.league && item.league.country) ? item.league.country.toLowerCase() : "";
 
-function showLeagueMatches(leagueKey) {
-    let currentFilteredMode = allMatches.filter(item => {
-        let status = item.fixture && item.fixture.status && item.fixture.status.short ? item.fixture.status.short : "";
-        let isLive = ["1H", "2H", "HT", "ET", "P", "LIVE"].includes(status);
-        return currentMode === 'live' ? isLive : !isLive;
+        return league.includes(query) || homeTeam.includes(query) || awayTeam.includes(query) || country.includes(query);
     });
-
-    let filtered = currentFilteredMode.filter(i => {
-        let country = i.league && i.league.country ? i.league.country : "عالمي";
-        let name = i.league && i.league.name ? i.league.name : "بطولة أخرى";
-        return `${country} - ${name}` === leagueKey;
-    });
-
-    const output = document.getElementById('output');
-    let html = `<button class="back-btn" onclick="filterAndRender()">⬅ العودة لقائمة الدوريات</button>`;
-    
-    filtered.forEach((item) => {
-        let home = item.teams && item.teams.home ? item.teams.home.name : "مضيف";
-        let away = item.teams && item.teams.away ? item.teams.away.name : "ضيف";
-        let timeStr = item.fixture && item.fixture.date ? new Date(item.fixture.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : "قريباً";
-        
-        let hash = (home + away).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-        let homeProb = 30 + (hash % 45);
-        let awayProb = 95 - homeProb;
-        let isGold = homeProb >= 68 || awayProb >= 68;
-        
-        let predScore1 = `${hash % 3}-${(hash + 1) % 3}`;
-        let predScore2 = `${(hash + 2) % 3}-${hash % 2}`;
-        let selectedBestTeam = homeProb >= awayProb ? home : away;
-        let bestProbVal = Math.max(homeProb, awayProb);
-
-        let aiClass = isGold ? "ai-prediction gold-tier" : "ai-prediction";
-        let goldBadge = isGold ? "🔥 <b>فرصة ذهبية ومضمونة بنسبة عالية!</b><br>" : "";
-
-        html += `
-            <div class="match-card" onclick="openMatchDetail('${home}', '${away}', '${timeStr}', ${homeProb}, ${awayProb}, '${predScore1}', '${predScore2}', '${leagueKey}')">
-                <span style="color:#38bdf8; font-weight:bold;">🏟️ ${home} vs ${away}</span><br>
-                <span style="color:#94a3b8; font-size:11px;">⏰ التوقيت: ${timeStr}</span>
-                
-                <div class="${aiClass}">
-                    ${goldBadge}
-                    🤖 <b>التحليل العميق:</b> نسبة فوز <b>${selectedBestTeam}</b> تقدر بـ <b>${bestProbVal}%</b><br>
-                    🎯 <b>النتيجة المتوقعة:</b> ${predScore1} أو ${predScore2} | الأهداف: +1.5 في اللقاء.
-                </div>
-            </div>
-        `;
-    });
-    output.innerHTML = html;
+    displayMatches(filtered);
 }
 
-function openMatchDetail(home, away, time, hProb, aProb, s1, s2, leagueKey) {
-    const output = document.getElementById('output');
-    let isGold = hProb >= 68 || aProb >= 68;
-    let cardStyle = isGold ? "background: #1e1b4b; border: 2px solid #fbbf24;" : "background: #131b2e; border: 1px solid #1e293b;";
-    let textGoldColor = isGold ? "color: #fde047;" : "color: #38bdf8;";
-
-    output.innerHTML = `
-        <button class="back-btn" onclick="showLeagueMatches('${leagueKey}')">⬅ العودة للمباريات</button>
-        <div style="${cardStyle} border-radius: 12px; padding: 15px; margin-top: 10px;">
-            <h3 style="${textGoldColor} margin-top: 0; text-align: center;">📊 التحليل الشامل والذكي للقاء</h3>
-            <div style="text-align: center; font-size: 15px; font-weight: bold; margin-bottom: 12px; color: #f8fafc;">
-                ${home} 🆚 ${away}
-            </div>
-            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 10px; text-align: center;">⏰ موعد اللقاء: ${time}</div>
-            
-            <hr style="border: 0; border-top: 1px solid #1e293b; margin: 10px 0;">
-
-            <div style="font-size: 13px; line-height: 1.6;">
-                <p>📈 <b>حسب إحصائيات الجوانب الفنية:</b></p>
-                <ul>
-                    <li>نسبة فوز <b>${home}</b>: <span style="color:#38bdf8; font-weight:bold;">${hProb}%</span></li>
-                    <li>نسبة فوز <b>${away}</b>: <span style="color:#38bdf8; font-weight:bold;">${aProb}%</span></li>
-                    <li>نسبة التعادل والتكافؤ: <span style="color:#f59e0b;">${100 - (hProb + (aProb > 50 ? 20 : 15))}%</span></li>
-                </ul>
-                
-                <p>🎯 <b>النتائج المتوقعة بدقة:</b><br>
-                النتيجة الأرجح: <b style="color:#22c55e; font-size:14px;">${s1}</b> أو بديلها الأقرب: <b style="color:#38bdf8;">${s2}</b></p>
-                
-                <p>💡 <b>خلاصة الذكاء الاصطناعي:</b> اللقاء يتميز بقوة هجومية، والتوقع يرجح استقرار الأداء لصالح الفريق الأقوى دفاعياً في الشوط الثاني.</p>
-            </div>
-        </div>
-    `;
-}
-
-function switchTab(tab, b) {
-    document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
-    b.classList.add('active');
-    currentTab = tab;
-
-    if (tab === 'popular' || tab === 'favorites') {
-        filterAndRender();
-    } else {
-        document.getElementById('output').innerHTML = `<div style="text-align:center; color:#38bdf8; padding:30px;">قسم (${tab}) قيد التفعيل.</div>`;
-    }
-}
-
-function filterData() {
-    let q = document.getElementById('searchInput').value.toLowerCase();
-    let currentFilteredMode = allMatches.filter(item => {
-        let status = item.fixture && item.fixture.status && item.fixture.status.short ? item.fixture.status.short : "";
-        let isLive = ["1H", "2H", "HT", "ET", "P", "LIVE"].includes(status);
-        return currentMode === 'live' ? isLive : !isLive;
-    });
-
-    if (currentTab === 'favorites') {
-        currentFilteredMode = currentFilteredMode.filter(item => {
-            let country = item.league && item.league.country ? item.league.country : "عالمي";
-            let name = item.league && item.league.name ? item.league.name : "بطولة أخرى";
-            let key = `${country} - ${name}`;
-            return favoritesLeagues.includes(key);
-        });
-    }
-
-    let filtered = currentFilteredMode.filter(i => {
-        let l = i.league?.name?.toLowerCase() || '';
-        let c = i.league?.country?.toLowerCase() || '';
-        let h = i.teams?.home?.name?.toLowerCase() || '';
-        let a = i.teams?.away?.name?.toLowerCase() || '';
-        return l.includes(q) || c.includes(q) || h.includes(q) || a.includes(q);
-    });
-    renderLeaguesList(filtered);
-}
-
-window.onload = loadData;
+// تحميل تلقائي عند فتح التطبيق
+window.onload = loadLiveMatches;
 </script>
 
 </body>
