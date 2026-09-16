@@ -1,12 +1,15 @@
 {
-  "background_color": "#ffffff",
-  "dir": "ltr",
-  "display": "standalone",
   "name": "KELLA Analytics Pro",
-  "orientation": "any",
-  "scope": "/",
-  "short_name": "KELLA Analytics",
-  "start_url": "/",
-  "theme_color": "#ffffff",
-  "id": "./"
+  "short_name": "KELLA Pro",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b0f19",
+  "theme_color": "#0b0f19",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
