@@ -131,7 +131,6 @@ body {
     border-radius: 12px;
     padding: 12px;
     margin-bottom: 12px;
-    cursor: pointer;
 }
 .division-title {
     text-align: center;
@@ -185,21 +184,6 @@ body {
     font-size: 10px;
     color: #22c55e;
     margin-top: 4px;
-}
-.ai-prediction {
-    margin-top: 8px;
-    padding: 10px;
-    background: #0f172a;
-    border: 1px dashed #38bdf8;
-    border-radius: 8px;
-    font-size: 12px;
-    color: #38bdf8;
-    line-height: 1.5;
-}
-.ai-prediction.gold-tier {
-    background: #1e1b4b;
-    border: 1.5px solid #fbbf24;
-    color: #fde047;
 }
 .back-btn {
     background: #1e293b;
@@ -264,7 +248,7 @@ body {
     </div>
 
     <div id="output">
-        <div style="text-align: center; color: #94a3b8; padding: 20px;">جاري التحميل الفوري...</div>
+        <div style="text-align: center; color: #94a3b8; padding: 20px;">جاري التحميل...</div>
     </div>
 </div>
 
@@ -277,67 +261,64 @@ body {
 </div>
 
 <script>
-// بيانات جاهزة وخفيفة وصاروخية لا تحتاج لملفات خارجية ثقيلة
 let allMatches = [
     {
         league: { name: "La Liga", country: "Spain" },
-        teams: { home: { name: "Real Madrid" }, away: { name: "Barcelona" } },
+        teams: { home: { name: "Real Madrid", logo: "" }, away: { name: "Barcelona", logo: "" } },
         goals: { home: null, away: null },
         fixture: { status: { short: "NS" }, date: new Date().toISOString() }
     },
     {
         league: { name: "La Liga", country: "Spain" },
-        teams: { home: { name: "Atletico Madrid" }, away: { name: "Sevilla" } },
+        teams: { home: { name: "Atletico Madrid", logo: "" }, away: { name: "Sevilla", logo: "" } },
         goals: { home: null, away: null },
         fixture: { status: { short: "NS" }, date: new Date().toISOString() }
     },
     {
         league: { name: "UEFA Champions League", country: "World" },
-        teams: { home: { name: "Manchester City" }, away: { name: "Bayern Munich" } },
+        teams: { home: { name: "Manchester City", logo: "" }, away: { name: "Bayern Munich", logo: "" } },
         goals: { home: null, away: null },
         fixture: { status: { short: "NS" }, date: new Date().toISOString() }
     },
     {
         league: { name: "Ligue 1", country: "France" },
-        teams: { home: { name: "Paris Saint-Germain" }, away: { name: "Marseille" } },
+        teams: { home: { name: "Paris Saint-Germain", logo: "" }, away: { name: "Marseille", logo: "" } },
         goals: { home: null, away: null },
         fixture: { status: { short: "NS" }, date: new Date().toISOString() }
     },
     {
         league: { name: "Bundesliga", country: "Germany" },
-        teams: { home: { name: "Borussia Dortmund" }, away: { name: "RB Leipzig" } },
+        teams: { home: { name: "Borussia Dortmund", logo: "" }, away: { name: "RB Leipzig", logo: "" } },
         goals: { home: null, away: null },
         fixture: { status: { short: "NS" }, date: new Date().toISOString() }
     },
     {
         league: { name: "Serie A", country: "Italy" },
-        teams: { home: { name: "Juventus" }, away: { name: "Inter Milan" } },
+        teams: { home: { name: "Juventus", logo: "" }, away: { name: "Inter Milan", logo: "" } },
         goals: { home: null, away: null },
         fixture: { status: { short: "NS" }, date: new Date().toISOString() }
     },
     {
         league: { name: "Premier League", country: "England" },
-        teams: { home: { name: "Arsenal" }, away: { name: "Liverpool" } },
+        teams: { home: { name: "Arsenal", logo: "" }, away: { name: "Liverpool", logo: "" } },
         goals: { home: null, away: null },
         fixture: { status: { short: "NS" }, date: new Date().toISOString() }
     },
     {
         league: { name: "Saudi Professional League", country: "Saudi Arabia" },
-        teams: { home: { name: "Al Hilal" }, away: { name: "Al Nassr" } },
+        teams: { home: { name: "Al Hilal", logo: "" }, away: { name: "Al Nassr", logo: "" } },
         goals: { home: null, away: null },
         fixture: { status: { short: "NS" }, date: new Date().toISOString() }
     },
     {
         league: { name: "Süper Lig", country: "Turkey" },
-        teams: { home: { name: "Galatasaray" }, away: { name: "Fenerbahce" } },
+        teams: { home: { name: "Galatasaray", logo: "" }, away: { name: "Fenerbahce", logo: "" } },
         goals: { home: null, away: null },
         fixture: { status: { short: "NS" }, date: new Date().toISOString() }
     }
 ];
 
 let leaguesMapCache = {};
-
-// الدوريات الكبرى المضافة افتراضياً للمفضلة
 let defaultFavLeagues = [
     "La Liga", "UEFA Champions League", "Ligue 1", 
     "Bundesliga", "Serie A", "Premier League", 
@@ -353,20 +334,24 @@ let favoriteLeagues = storedFavs;
 let currentViewMode = 'all';
 
 function initApp() {
-    leaguesMapCache = {};
-    allMatches.forEach(item => {
-        let leagueName = item.league?.name || "بطولة أخرى";
-        let country = item.league?.country || "عالمي";
-        let key = `${country} - ${leagueName}`;
-        
-        if (!leaguesMapCache[key]) {
-            leaguesMapCache[key] = { country: country, name: leagueName, count: 0 };
-        }
-        leaguesMapCache[key].count++;
-    });
+    try {
+        leaguesMapCache = {};
+        allMatches.forEach(item => {
+            let leagueName = item.league?.name || "بطولة أخرى";
+            let country = item.league?.country || "عالمي";
+            let key = `${country} - ${leagueName}`;
+            
+            if (!leaguesMapCache[key]) {
+                leaguesMapCache[key] = { country: country, name: leagueName, count: 0 };
+            }
+            leaguesMapCache[key].count++;
+        });
 
-    updateFavCount();
-    renderLeaguesList();
+        updateFavCount();
+        renderLeaguesList();
+    } catch (e) {
+        document.getElementById('output').innerHTML = `<div style="text-align:center; color:#fca5a5; padding:20px;">خطأ في تحميل الواجهة</div>`;
+    }
 }
 
 function switchView(mode) {
@@ -434,44 +419,46 @@ function renderLeaguesList() {
 }
 
 function showLeagueMatches(leagueName) {
-    let filtered = allMatches.filter(i => (i.league?.name === leagueName));
-    const output = document.getElementById('output');
-    
-    let html = `<button class="back-btn" onclick="switchView(currentViewMode)">⬅ العودة للقائمة</button>`;
-    
-    filtered.forEach((item) => {
-        let home = item.teams?.home?.name || "مضيف";
-        let away = item.teams?.away?.name || "ضيف";
-        let homeLogo = item.teams?.home?.logo || "https://via.placeholder.com/40?text=H";
-        let awayLogo = item.teams?.away?.logo || "https://via.placeholder.com/40?text=A";
+    try {
+        let filtered = allMatches.filter(i => (i.league?.name === leagueName));
+        const output = document.getElementById('output');
         
-        let hGoals = item.goals?.home ?? "-";
-        let aGoals = item.goals?.away ?? "-";
-        let scoreDisplay = (hGoals === "-" && aGoals === "-") ? "VS" : `${hGoals} : ${aGoals}`;
+        let html = `<button class="back-btn" onclick="switchView(currentViewMode)">⬅ العودة للقائمة</button>`;
         
-        let division = `Football . ${item.league?.country || 'World'} . ${item.league?.name || 'League'}`;
-        
-        html += `
-            <div class="match-card">
-                <div class="division-title">🏆 ${division}</div>
-                <div class="scoreboard">
-                    <div class="team-block">
-                        <img src="${homeLogo}" class="team-logo">
-                        <span class="team-name">${home}</span>
-                    </div>
-                    <div class="score-block">
-                        <div class="score-text">${scoreDisplay}</div>
-                        <div class="match-time">قريباً</div>
-                    </div>
-                    <div class="team-block">
-                        <img src="${awayLogo}" class="team-logo">
-                        <span class="team-name">${away}</span>
+        filtered.forEach((item) => {
+            let home = item.teams?.home?.name || "مضيف";
+            let away = item.teams?.away?.name || "ضيف";
+            
+            let hGoals = item.goals?.home ?? "-";
+            let aGoals = item.goals?.away ?? "-";
+            let scoreDisplay = (hGoals === "-" && aGoals === "-") ? "VS" : `${hGoals} : ${aGoals}`;
+            
+            let division = `Football . ${item.league?.country || 'World'} . ${item.league?.name || 'League'}`;
+            
+            html += `
+                <div class="match-card">
+                    <div class="division-title">🏆 ${division}</div>
+                    <div class="scoreboard">
+                        <div class="team-block">
+                            <span style="font-size:24px;">⚽</span>
+                            <span class="team-name">${home}</span>
+                        </div>
+                        <div class="score-block">
+                            <div class="score-text">${scoreDisplay}</div>
+                            <div class="match-time">قريباً</div>
+                        </div>
+                        <div class="team-block">
+                            <span style="font-size:24px;">⚽</span>
+                            <span class="team-name">${away}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
-    });
-    output.innerHTML = html;
+            `;
+        });
+        output.innerHTML = html;
+    } catch (err) {
+        document.getElementById('output').innerHTML = `<button class="back-btn" onclick="switchView(currentViewMode)">⬅ العودة للقائمة</button><div style="text-align:center; color:#fca5a5; padding:20px;">عذراً، حدث خطأ بسيط في عرض المباريات.</div>`;
+    }
 }
 
 function setMode(m, b) {
