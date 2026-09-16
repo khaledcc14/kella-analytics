@@ -153,22 +153,6 @@ body {
     background: #22c55e;
     height: 100%;
 }
-.action-buttons {
-    display: flex;
-    gap: 8px;
-    margin-top: 10px;
-}
-.action-btn {
-    flex: 1;
-    background: #22c55e;
-    color: #0b0f19;
-    border: none;
-    padding: 8px;
-    border-radius: 6px;
-    font-weight: bold;
-    font-size: 11px;
-    cursor: pointer;
-}
 .back-btn {
     background: #1e293b;
     color: #38bdf8;
@@ -234,7 +218,6 @@ body {
 <div class="bottom-nav">
     <button class="nav-item active" onclick="switchTab('popular', this)"><span class="icon">🔥</span> Populaire</button>
     <button class="nav-item" onclick="switchTab('favorites', this)"><span class="icon">⭐</span> Favoris</button>
-    <button class="nav-item" onclick="switchTab('coupon', this)"><span class="icon">🎟️</span> Coupon</button>
     <button class="nav-item" onclick="switchTab('history', this)"><span class="icon">⏰</span> Historique</button>
     <button class="nav-item" onclick="switchTab('menu', this)"><span class="icon">📂</span> Menu</button>
 </div>
@@ -244,7 +227,6 @@ let allMatches = [];
 let currentMode = 'upcoming';
 let currentTab = 'popular';
 let favorites = JSON.parse(localStorage.getItem('kella_favs') || '[]');
-let coupon = JSON.parse(localStorage.getItem('kella_coupon') || '[]');
 
 async function initApp() {
     try {
@@ -286,10 +268,6 @@ function switchTab(tab, b) {
         modeToggle.style.display = 'none';
         searchContainer.style.display = 'none';
         renderFavorites();
-    } else if(tab === 'coupon') {
-        modeToggle.style.display = 'none';
-        searchContainer.style.display = 'none';
-        renderCoupon();
     } else if(tab === 'history') {
         modeToggle.style.display = 'none';
         searchContainer.style.display = 'none';
@@ -310,19 +288,8 @@ function toggleFavorite(matchId, event) {
         favorites.push(matchId);
     }
     localStorage.setItem('kella_favs', JSON.stringify(favorites));
-    renderContent();
-    if(currentTab === 'favorites') renderFavorites();
-}
-
-function addToCoupon(matchStr, event) {
-    event.stopPropagation();
-    if(!coupon.includes(matchStr)) {
-        coupon.push(matchStr);
-        localStorage.setItem('kella_coupon', JSON.stringify(coupon));
-        alert("تمت إضافة التوقع إلى القسيمة بنجاح! 🎟️");
-    } else {
-        alert("التوقع موجود مسبقاً في القسيمة.");
-    }
+    if(currentTab === 'popular') renderContent();
+    else if(currentTab === 'favorites') renderFavorites();
 }
 
 function generateAdvancedAIAnalysis(home, away) {
@@ -349,8 +316,7 @@ function generateAdvancedAIAnalysis(home, away) {
             • <b>قراءة الأداء الفني:</b> خط هجوم ${home} يعتمد على الاستحواذ وخلق الفرص، بينما يعتمد ${away} على المرتدات.<br><br>
             • <b>توقع الأهداف (Over/Under):</b> المواجهة مرشحة لأكثر من 2.5 هدف (BTTS: نعم).
         `,
-        stats: { possHome, possAway, shotsHome, shotsAway },
-        predictionStr: `${home} vs ${away} (${homeScore}-${awayScore})`
+        stats: { possHome, possAway, shotsHome, shotsAway }
     };
 }
 
@@ -432,10 +398,6 @@ function showMatchDetails(index) {
                 </div>
                 <div class="stat-row"><span>${aiData.stats.shotsHome}</span><span>التسديدات على المرمى</span><span>${aiData.stats.shotsAway}</span></div>
             </div>
-
-            <div class="action-buttons">
-                <button class="action-btn" onclick="addToCoupon('${aiData.predictionStr}', event)">🎟️ إضافة إلى القسيمة</button>
-            </div>
         </div>
     `;
 }
@@ -448,22 +410,9 @@ function renderFavorites() {
     }
     let html = `<div style="color:#38bdf8; font-weight:bold; margin-bottom:10px;">⭐ المباريات المفضلة</div>`;
     favorites.forEach(fav => {
-        html += `<div class="match-card"><div class="match-teams">${fav.replace('_', ' vs ')}</div></div>`;
+        let teams = fav.replace('_', ' vs ');
+        html += `<div class="match-card"><div class="match-teams">${teams}</div></div>`;
     });
-    output.innerHTML = html;
-}
-
-function renderCoupon() {
-    const output = document.getElementById('output');
-    if(coupon.length === 0) {
-        output.innerHTML = `<div style="text-align: center; color: #94a3b8; padding: 30px;">قسيمة التوقعات فارغة 🎟️</div>`;
-        return;
-    }
-    let html = `<div style="color:#22c55e; font-weight:bold; margin-bottom:10px;">🎟️ قسيمة التوقعات الخاصة بك</div>`;
-    coupon.forEach((item, idx) => {
-        html += `<div class="match-card"><div style="font-size:13px;">${idx+1}. ${item}</div></div>`;
-    });
-    html += `<button class="action-btn" style="margin-top:10px;" onclick="coupon=[];localStorage.removeItem('kella_coupon');renderCoupon();">مسح القسيمة</button>`;
     output.innerHTML = html;
 }
 
@@ -477,7 +426,7 @@ function renderMenu() {
     output.innerHTML = `
         <div style="background:#131b2e; padding:15px; border-radius:10px; border:1px solid #1e293b;">
             <div style="color:#38bdf8; font-weight:bold; margin-bottom:10px;">📂 إعدادات التطبيق</div>
-            <div style="font-size:13px; margin-bottom:8px;">• الإصدار: KELLA Analytics Pro v2.5</div>
+            <div style="font-size:13px; margin-bottom:8px;">• الإصدار: KELLA Analytics Pro v2.7</div>
             <div style="font-size:13px; margin-bottom:8px;">• مصدر البيانات: GitHub API & Live JSON</div>
             <div style="font-size:13px;">• الحالة: متصل بنجاح 🟢</div>
         </div>
