@@ -125,7 +125,6 @@ body {
 .fav-star.active {
     color: #eab308;
 }
-/* تصميم البطاقات ولوحة النتيجة الجديدة */
 .match-card {
     background: #131b2e;
     border: 1px solid #1e293b;
@@ -191,7 +190,6 @@ body {
     color: #22c55e;
     margin-top: 4px;
 }
-/* التحليل */
 .ai-prediction {
     margin-top: 8px;
     padding: 10px;
@@ -383,7 +381,6 @@ function showLeagueMatches(leagueName) {
     let html = `<button class="back-btn" onclick="switchView(currentViewMode)">⬅ العودة للقائمة</button>`;
     
     filtered.forEach((item) => {
-        // استخراج البيانات بدقة (الأسماء، الشعارات، الأهداف، الوقت، الـ Division)
         let matchIndex = allMatches.indexOf(item);
         let home = item.teams?.home?.name || "مضيف";
         let away = item.teams?.away?.name || "ضيف";
@@ -400,7 +397,6 @@ function showLeagueMatches(leagueName) {
         
         let division = `Football . ${item.league?.country || 'World'} . ${item.league?.name || 'League'}`;
         
-        // خوارزمية النسب
         let hash = (home + away).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
         let homeProb = 30 + (hash % 45);
         let awayProb = 95 - homeProb;
@@ -448,7 +444,6 @@ function openMatchDetail(matchIndex) {
 
     const output = document.getElementById('output');
     
-    // استخراج بيانات المباراة للتحليل
     let home = item.teams?.home?.name || "مضيف";
     let away = item.teams?.away?.name || "ضيف";
     let homeLogo = item.teams?.home?.logo || "https://via.placeholder.com/40?text=H";
@@ -462,7 +457,6 @@ function openMatchDetail(matchIndex) {
     let division = `Football . ${item.league?.country || 'World'} . ${item.league?.name || 'League'}`;
     let leagueName = item.league?.name || "";
 
-    // حسابات الذكاء الاصطناعي
     let hash = (home + away).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     let hProb = 30 + (hash % 45);
     let aProb = 95 - hProb;
@@ -564,3 +558,4 @@ window.onload = loadData;
 
 </body>
 </html>
+
