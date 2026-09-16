@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KELLA Analytics Pro</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0b0f19">
 <style>
 body {
     background: #0b0f19;
@@ -211,15 +213,14 @@ async function loadLiveMatches() {
 
 function generateAIPrediction(home, away) {
     let hash = (home + away).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    // اقتراح نتيجة رقمية افتراضية واضحة بناءً على خوارزمية الفريقين
     let scoreH = hash % 3;
     let scoreA = (hash + 1) % 3;
     
     let options = [
-        `🤖 <b>التوقعات والنتيجة:</b> فوز محتمل لـ ${home} (${scoreH}-${scoreA}) مع نسبة سيطرة 58% وتسجيل أهداف من الطرفين.`,
-        `🤖 <b>التوقعات والنتيجة:</b> تعادل إيجابي أو فوز صعب لـ ${away} بنتيجة (${scoreH}-${scoreA + 1})، لقاء متكافئ تكتيكياً.`,
-        `🤖 <b>التوقعات والنتيجة:</b> سيطرة مرتقبة لـ ${home} وتوقع تسجيل أكثر من هدفين لتنتهي (${scoreH + 1}-${scoreA}).`,
-        `🤖 <b>التوقعات والنتيجة:</b> حذر دفاعي وانتهائها على وقع تعادل سلبي أو هدف يتيم (${scoreH}-${scoreA}).`
+        `🤖 <b>التوقعات والنتيجة:</b> فوز محتمل لـ ${away} (${scoreH}-${scoreA + 1})، لقاء متكافئ تكتيكياً.`,
+        `🤖 <b>التوقعات والنتيجة:</b> تعادل إيجابي أو فوز صعب لـ ${home} بنتيجة (${scoreH + 1}-${scoreA}).`,
+        `🤖 <b>التوقعات والنتيجة:</b> سيطرة مرتقبة لـ ${home} وتوقع تسجيل أهداف لتنتهي (${scoreH}-${scoreA}).`,
+        `🤖 <b>التوقعات والنتيجة:</b> حذر دفاعي وانتهائها على وقع تعادل أو هدف يتيم (${scoreH}-${scoreA}).`
     ];
     return options[hash % options.length];
 }
@@ -318,18 +319,15 @@ function applyFilters() {
         let isLive = ["1H", "2H", "ET", "P", "LIVE"].includes(status);
         let isUpcoming = status === "NS";
 
-        // تصفية أزرار الحالة (Live / Upcoming)
         let matchesStatusTab = true;
         if (currentStatusFilter === 'live') matchesStatusTab = isLive;
         else if (currentStatusFilter === 'upcoming') matchesStatusTab = isUpcoming;
 
-        // تصفية زر الدوري السريع
         let matchesLeagueBtn = true;
         if (currentLeagueFilter !== 'all') {
-            matchesLeagueTab = country.includes(currentLeagueFilter.toLowerCase()) || league.includes(currentLeagueFilter.toLowerCase());
+            matchesLeagueBtn = country.includes(currentLeagueFilter.toLowerCase()) || league.includes(currentLeagueFilter.toLowerCase());
         }
 
-        // تصفية خانة البحث اليدوي
         let matchesSearchQuery = league.includes(query) || homeTeam.includes(query) || awayTeam.includes(query) || country.includes(query);
 
         return matchesStatusTab && matchesLeagueBtn && matchesSearchQuery;
