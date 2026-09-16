@@ -68,10 +68,9 @@ button {
 <script>
 async function loadLiveMatches() {
     const output = document.getElementById('output');
-    output.innerHTML = "جاري جلب جميع مباريات العالم الحية...";
+    output.innerHTML = "جاري جلب جميع المباريات...";
 
     try {
-        // قراءة الملف الشامل مع تجاوز الكاش لتجنب النتائج القديمة
         const response = await fetch('https://raw.githubusercontent.com/khaledcc14/kella-analytics/main/live.json?t=' + new Date().getTime());
         if (!response.ok) throw new Error("تعذر جلب قاعدة البيانات.");
 
@@ -83,15 +82,15 @@ async function loadLiveMatches() {
             return;
         }
 
-        // عرض كل المباريات بدون أي تقييد للعدد
+        // عرض كل المباريات مع حماية البيانات الفارغة
         data.response.forEach(item => {
-            let leagueName = item.league.name;
-            let country = item.league.country;
-            let home = item.teams.home.name;
-            let away = item.teams.away.name;
-            let status = item.fixture.status.short;
-            let goalsHome = item.goals.home !== null ? item.goals.home : "-";
-            let goalsAway = item.goals.away !== null ? item.goals.away : "-";
+            let leagueName = (item.league && item.league.name) ? item.league.name : "بطولة رسمية";
+            let country = (item.league && item.league.country) ? item.league.country : "عالمي";
+            let home = (item.teams && item.teams.home) ? item.teams.home.name : "مضيف";
+            let away = (item.teams && item.teams.away) ? item.teams.away.name : "ضيف";
+            let status = (item.fixture && item.fixture.status) ? item.fixture.status.short : "NS";
+            let goalsHome = (item.goals && item.goals.home !== null) ? item.goals.home : "-";
+            let goalsAway = (item.goals && item.goals.away !== null) ? item.goals.away : "-";
 
             output.innerHTML += `
                 <div class="match-card">
