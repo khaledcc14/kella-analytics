@@ -4,179 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KELLA Analytics Pro</title>
-<meta name="theme-color" content="#0b0f19">
 <style>
-body {
-    background: #0b0f19;
-    color: #f8fafc;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding-bottom: 70px;
-}
-.app-container {
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 10px;
-}
-.top-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px 10px;
-}
-.top-header h2 {
-    color: #38bdf8;
-    margin: 0;
-    font-size: 18px;
-}
-.status-star {
-    font-size: 20px;
-}
-.mode-toggle {
-    display: flex;
-    background: #131b2e;
-    border-radius: 25px;
-    padding: 4px;
-    margin: 10px 0;
-    border: 1px solid #1e293b;
-}
-.mode-btn {
-    flex: 1;
-    background: transparent;
-    color: #94a3b8;
-    border: none;
-    padding: 8px;
-    font-size: 13px;
-    font-weight: bold;
-    border-radius: 20px;
-    cursor: pointer;
-}
-.mode-btn.active {
-    background: #22c55e;
-    color: #0b0f19;
-}
-.search-box {
-    width: 100%;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #1e293b;
-    background: #131b2e;
-    color: #f8fafc;
-    margin-bottom: 10px;
-    box-sizing: border-box;
-    font-size: 13px;
-}
-.league-item {
-    background: #131b2e;
-    border: 1px solid #1e293b;
-    border-radius: 10px;
-    padding: 12px;
-    margin-bottom: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-}
-.league-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13px;
-    font-weight: bold;
-}
-.league-meta {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.match-count {
-    background: #1e293b;
-    color: #94a3b8;
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 10px;
-}
-.match-card {
-    background: #131b2e;
-    border: 1px solid #1e293b;
-    border-left: 4px solid #38bdf8;
-    border-radius: 10px;
-    padding: 12px;
-    margin-bottom: 10px;
-    font-size: 13px;
-    position: relative;
-}
-.match-header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.match-star {
-    font-size: 18px;
-    cursor: pointer;
-    color: #64748b;
-    padding: 5px;
-    transition: 0.2s;
-}
-.match-star.active {
-    color: #eab308;
-}
-.ai-prediction {
-    margin-top: 8px;
-    padding: 10px;
-    background: #0f172a;
-    border: 1px dashed #38bdf8;
-    border-radius: 8px;
-    font-size: 12px;
-    color: #38bdf8;
-    line-height: 1.5;
-    cursor: pointer;
-}
-.ai-prediction.gold-tier {
-    background: #1e1b4b;
-    border: 1.5px solid #fbbf24;
-    color: #fde047;
-}
-.back-btn {
-    background: #1e293b;
-    color: #38bdf8;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    font-weight: bold;
-}
-.bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #0f172a;
-    border-top: 1px solid #1e293b;
-    display: flex;
-    justify-content: space-around;
-    padding: 8px 0;
-    z-index: 1000;
-}
-.nav-item {
-    background: transparent;
-    border: none;
-    color: #94a3b8;
-    font-size: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-    gap: 2px;
-}
-.nav-item.active {
-    color: #22c55e;
-    font-weight: bold;
-}
-.nav-item span.icon {
-    font-size: 18px;
-}
+body { background: #0b0f19; color: #f8fafc; font-family: Arial, sans-serif; margin: 0; padding-bottom: 70px; }
+.app-container { max-width: 480px; margin: 0 auto; padding: 10px; }
+.top-header { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; }
+.top-header h2 { color: #38bdf8; margin: 0; font-size: 18px; }
+.match-card { background: #131b2e; border: 1px solid #1e293b; border-left: 4px solid #38bdf8; border-radius: 10px; padding: 12px; margin-bottom: 10px; font-size: 13px; }
 </style>
 </head>
 <body>
@@ -184,288 +17,38 @@ body {
 <div class="app-container">
     <div class="top-header">
         <h2>KELLA Analytics Pro ⚽</h2>
-        <span id="connectionStar" class="status-star">🟢</span>
+        <span id="status">⏳ جاري التحميل...</span>
     </div>
-
-    <div class="mode-toggle">
-        <button class="mode-btn" onclick="setMode('live', this)">EN DIRECT</button>
-        <button class="mode-btn active" onclick="setMode('upcoming', this)">Avant-match</button>
-    </div>
-
-    <input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث عن دوري، بلد أو فريق..." onkeyup="filterData()">
-
-    <div id="output">
-        <div style="text-align: center; color: #94a3b8; padding: 20px;">جاري التحميل...</div>
-    </div>
-</div>
-
-<div class="bottom-nav">
-    <button class="nav-item active" onclick="switchTab('popular', this)"><span class="icon">🔥</span> Populaire</button>
-    <button class="nav-item" onclick="switchTab('favorites', this)"><span class="icon">⭐</span> Favoris</button>
-    <button class="nav-item" onclick="switchTab('coupon', this)"><span class="icon">🎟️</span> Coupon</button>
-    <button class="nav-item" onclick="switchTab('history', this)"><span class="icon">⏰</span> Historique</button>
-    <button class="nav-item" onclick="switchTab('menu', this)"><span class="icon">📂</span> Menu</button>
+    <div id="output"></div>
 </div>
 
 <script>
-// البيانات الأساسية المضمنة مباشرة لتفادي مشاكل الاتصال والتعطيل نهائياً
-let allMatches = [
-    {
-        "league": { "country": "Espagne", "name": "La Liga" },
-        "teams": { "home": { "name": "Barcelone" }, "away": { "name": "Real Madrid" } },
-        "fixture": { "date": "2026-09-16T21:00:00", "status": { "short": "NS" } }
-    },
-    {
-        "league": { "country": "Espagne", "name": "La Liga" },
-        "teams": { "home": { "name": "Atlético de Madrid" }, "away": { "name": "Osasuna" } },
-        "fixture": { "date": "2026-09-16T18:30:00", "status": { "short": "NS" } }
-    },
-    {
-        "league": { "country": "Angleterre", "name": "Premier League" },
-        "teams": { "home": { "name": "Manchester City" }, "away": { "name": "Arsenal" } },
-        "fixture": { "date": "2026-09-16T20:00:00", "status": { "short": "NS" } }
-    },
-    {
-        "league": { "country": "Italie", "name": "Serie A" },
-        "teams": { "home": { "name": "AC Milan" }, "away": { "name": "Inter" } },
-        "fixture": { "date": "2026-09-16T19:45:00", "status": { "short": "NS" } }
-    },
-    {
-        "league": { "country": "France", "name": "Ligue 1" },
-        "teams": { "home": { "name": "Paris Saint-Germain" }, "away": { "name": "Marseille" } },
-        "fixture": { "date": "2026-09-16T20:45:00", "status": { "short": "NS" } }
-    }
-];
-
-let currentMode = 'upcoming';
-let currentTab = 'popular';
-let favoriteMatches = JSON.parse(localStorage.getItem('kella_fav_matches') || '[]');
-
-function loadData() {
-    document.getElementById('connectionStar').innerHTML = "🟢";
-    renderContent();
-}
-
-function setMode(mode, btn) {
-    document.querySelectorAll('.mode-btn').forEach(x => x.classList.remove('active'));
-    if(btn) btn.classList.add('active');
-    currentMode = mode;
-    renderContent();
-}
-
-function renderContent() {
-    if (currentTab === 'favorites') {
-        renderFavoritesView();
-    } else {
-        renderLeaguesView();
-    }
-}
-
-function getFilteredMatches() {
-    return allMatches.filter(item => {
-        let status = item.fixture && item.fixture.status && item.fixture.status.short ? item.fixture.status.short : "";
-        let isLive = ["1H", "2H", "HT", "ET", "P", "LIVE"].includes(status);
-        return currentMode === 'live' ? isLive : !isLive;
-    });
-}
-
-function renderLeaguesView() {
-    const output = document.getElementById('output');
-    let matches = getFilteredMatches();
-    let leaguesMap = {};
-    
-    matches.forEach(item => {
-        let leagueName = item.league && item.league.name ? item.league.name : "بطولة أخرى";
-        let country = item.league && item.league.country ? item.league.country : "عالمي";
-        let key = `${country} - ${leagueName}`;
+async function loadOriginalData() {
+    try {
+        const response = await fetch('https://raw.githubusercontent.com/khaledcc14/kella-analytics/main/live.json');
+        const data = await response.json();
         
-        if (!leaguesMap[key]) {
-            leaguesMap[key] = { country: country, name: leagueName, fullName: key, count: 0 };
-        }
-        leaguesMap[key].count++;
-    });
-
-    let keys = Object.keys(leaguesMap);
-    if (keys.length === 0) {
-        output.innerHTML = `<div style="text-align: center; color: #94a3b8; padding: 30px;">لا توجد مباريات متاحة حالياً في هذا القسم.</div>`;
-        return;
-    }
-
-    let html = "";
-    keys.forEach(k => {
-        let l = leaguesMap[k];
-        let safeKey = l.fullName.replace(/"/g, '&quot;');
-        html += `
-            <div class="league-item" onclick='showLeagueMatches("${safeKey}")'>
-                <div class="league-info">
-                    <span>⚽</span>
-                    <span>${l.country} : ${l.name}</span>
-                </div>
-                <div class="league-meta">
-                    <span class="match-count">${l.count}</span>
-                    <span style="color:#64748b;">➡️</span>
-                </div>
-            </div>
-        `;
-    });
-    output.innerHTML = html;
-}
-
-function showLeagueMatches(leagueKey) {
-    let matches = getFilteredMatches();
-    let filtered = matches.filter(i => {
-        let country = i.league && i.league.country ? i.league.country : "عالمي";
-        let name = i.league && i.league.name ? i.league.name : "بطولة أخرى";
-        return `${country} - ${name}` === leagueKey;
-    });
-
-    renderMatchesList(filtered, `<button class="back-btn" onclick="renderLeaguesView()">⬅ العودة لقائمة الدوريات</button>`);
-}
-
-function renderFavoritesView() {
-    let matches = getFilteredMatches();
-    let filtered = matches.filter(item => {
-        let home = item.teams && item.teams.home ? item.teams.home.name : "";
-        let away = item.teams && item.teams.away ? item.teams.away.name : "";
-        let matchId = `${home}-${away}`;
-        return favoriteMatches.includes(matchId);
-    });
-
-    if (filtered.length === 0) {
-        document.getElementById('output').innerHTML = `<div style="text-align: center; color: #94a3b8; padding: 30px; font-size: 13px;">⭐ لم تقم بإضافة أي مباراة إلى المفضلة بعد.</div>`;
-        return;
-    }
-
-    renderMatchesList(filtered, `<div style="color: #38bdf8; font-weight: bold; margin-bottom: 10px; font-size: 14px;">⭐ المباريات المفضلة للمتابعة:</div>`);
-}
-
-function renderMatchesList(matches, headerHtml) {
-    const output = document.getElementById('output');
-    let html = headerHtml || "";
-
-    matches.forEach((item) => {
-        let home = item.teams && item.teams.home ? item.teams.home.name : "مضيف";
-        let away = item.teams && item.teams.away ? item.teams.away.name : "ضيف";
-        let matchId = `${home}-${away}`;
-        
-        let timeStr = "قريباً";
-        if (item.fixture && item.fixture.date) {
-            let d = new Date(item.fixture.date);
-            timeStr = d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        }
-        
-        let hash = (home + away).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-        let homeProb = 30 + (hash % 45);
-        let awayProb = 95 - homeProb;
-        let isGold = homeProb >= 68 || awayProb >= 68;
-        
-        let predScore1 = `${hash % 3}-${(hash + 1) % 3}`;
-        let predScore2 = `${(hash + 2) % 3}-${hash % 2}`;
-        let selectedBestTeam = homeProb >= awayProb ? home : away;
-        let bestProbVal = Math.max(homeProb, awayProb);
-
-        let isFav = favoriteMatches.includes(matchId);
-        let starClass = isFav ? "match-star active" : "match-star";
-
-        let aiClass = isGold ? "ai-prediction gold-tier" : "ai-prediction";
-        let goldBadge = isGold ? "🔥 <b>فرصة ذهبية ومضمونة بنسبة عالية!</b><br>" : "";
-
-        html += `
-            <div class="match-card">
-                <div class="match-header-row">
-                    <span style="color:#38bdf8; font-weight:bold;">🏟️ ${home} vs ${away}</span>
-                    <span class="${starClass}" onclick='toggleMatchFavorite("${matchId.replace(/"/g, "&quot;")}")'>⭐</span>
-                </div>
-                <span style="color:#94a3b8; font-size:11px;">⏰ التوقيت: ${timeStr}</span>
-                
-                <div class="${aiClass}">
-                    ${goldBadge}
-                    🤖 <b>التحليل العميق:</b> نسبة فوز <b>${selectedBestTeam}</b> تقدر بـ <b>${bestProbVal}%</b><br>
-                    🎯 <b>النتيجة المتوقعة:</b> ${predScore1} أو ${predScore2} | الأهداف: +1.5 في اللقاء.
-                </div>
-            </div>
-        `;
-    });
-    output.innerHTML = html;
-}
-
-function toggleMatchFavorite(matchId) {
-    if (favoriteMatches.includes(matchId)) {
-        favoriteMatches = favoriteMatches.filter(id => id !== matchId);
-    } else {
-        favoriteMatches.push(matchId);
-    }
-    localStorage.setItem('kella_fav_matches', JSON.stringify(favoriteMatches));
-    renderContent();
-}
-
-function switchTab(tab, b) {
-    document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
-    b.classList.add('active');
-    currentTab = tab;
-    renderContent();
-}
-
-function filterData() {
-    let q = document.getElementById('searchInput').value.toLowerCase();
-    let matches = getFilteredMatches();
-    
-    let filtered = matches.filter(i => {
-        let l = i.league?.name?.toLowerCase() || '';
-        let c = i.league?.country?.toLowerCase() || '';
-        let h = i.teams?.home?.name?.toLowerCase() || '';
-        let a = i.teams?.away?.name?.toLowerCase() || '';
-        return l.includes(q) || c.includes(q) || h.includes(q) || a.includes(q);
-    });
-
-    if (currentTab === 'favorites') {
-        filtered = filtered.filter(item => {
-            let home = item.teams && item.teams.home ? item.teams.home.name : "";
-            let away = item.teams && item.teams.away ? item.teams.away.name : "";
-            return favoriteMatches.includes(`${home}-${away}`);
-        });
-        renderMatchesList(filtered, `<div style="color: #38bdf8; font-weight: bold; margin-bottom: 10px; font-size: 14px;">⭐ المباريات المفضلة:</div>`);
-    } else {
-        let leaguesMap = {};
-        filtered.forEach(item => {
-            let leagueName = item.league && item.league.name ? item.league.name : "بطولة أخرى";
-            let country = item.league && item.league.country ? item.league.country : "عالمي";
-            let key = `${country} - ${leagueName}`;
-            if (!leaguesMap[key]) {
-                leaguesMap[key] = { country: country, name: leagueName, fullName: key, count: 0 };
-            }
-            leaguesMap[key].count++;
-        });
-
-        let keys = Object.keys(leaguesMap);
-        let output = document.getElementById('output');
-        if (keys.length === 0) {
-            output.innerHTML = `<div style="text-align: center; color: #94a3b8; padding: 30px;">لا توجد نتائج مطابقة لبحثك.</div>`;
-            return;
-        }
-
         let html = "";
-        keys.forEach(k => {
-            let l = leaguesMap[k];
-            let safeKey = l.fullName.replace(/"/g, '&quot;');
+        data.forEach(item => {
+            let home = item.teams?.home?.name || "مضيف";
+            let away = item.teams?.away?.name || "ضيف";
+            let league = item.league?.name || "دوري";
+            
             html += `
-                <div class="league-item" onclick='showLeagueMatches("${safeKey}")'>
-                    <div class="league-info">
-                        <span>⚽</span>
-                        <span>${l.country} : ${l.name}</span>
-                    </div>
-                    <div class="league-meta">
-                        <span class="match-count">${l.count}</span>
-                        <span style="color:#64748b;">➡️</span>
-                    </div>
+                <div class="match-card">
+                    <div style="color:#38bdf8; font-weight:bold;">🏆 ${league}</div>
+                    <div style="font-size:14px; font-weight:bold; margin-top:5px;">${home} vs ${away}</div>
                 </div>
             `;
         });
-        output.innerHTML = html;
+        document.getElementById('output').innerHTML = html;
+        document.getElementById('status').innerHTML = "🟢";
+    } catch (e) {
+        document.getElementById('status').innerHTML = "🔴";
+        document.getElementById('output').innerHTML = "خطأ في تحميل الملف";
     }
 }
-
-window.onload = loadData;
+loadOriginalData();
 </script>
 
 </body>
