@@ -131,13 +131,13 @@ button {
 }
 .ai-prediction {
     margin-top: 8px;
-    padding: 8px 10px;
+    padding: 10px;
     background: #1e293b80;
     border: 1px dashed #38bdf8;
     border-radius: 8px;
     font-size: 11px;
     color: #38bdf8;
-    line-height: 1.5;
+    line-height: 1.6;
     word-break: break-word;
 }
 @keyframes pulse {
@@ -154,24 +154,25 @@ button {
 <div class="subtitle">Live Global Engine & AI Predictor - Khaled</div>
 
 <button onclick="loadLiveMatches()">⚡ تحديث وجلب مباريات اليوم</button>
-<input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث عن فريق أو دوري..." onkeyup="filterMatches()">
+<input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث عن فريق أو دوري (مثال: Real, PSG)..." onkeyup="filterMatches()">
 
-<!-- أزرار تصفية الحالة (الكل / Live / Next) -->
+<!-- أزرار تصفية الحالة -->
 <div class="filter-tabs">
     <button class="tab-btn active" onclick="setStatusFilter('all', this)">الكل 🌍</button>
     <button class="tab-btn" onclick="setStatusFilter('live', this)">🔴 مباريات مباشرة</button>
     <button class="tab-btn" onclick="setStatusFilter('upcoming', this)">⏰ لم تبدأ بعد</button>
 </div>
 
-<!-- أزرار تصفية الدوريات السريعة -->
+<!-- أزرار تصفية الدوريات (محدثة وشاملة) -->
 <div class="leagues-container">
     <button class="league-btn active" onclick="filterByLeague('all', this)">كل الدوريات</button>
-    <button class="league-btn" onclick="filterByLeague('Spain', this)">🇪🇸 إسبانيا</button>
-    <button class="league-btn" onclick="filterByLeague('France', this)">🇫🇷 فرنسا</button>
-    <button class="league-btn" onclick="filterByLeague('Brazil', this)">🇧🇷 البرازيل</button>
-    <button class="league-btn" onclick="filterByLeague('Belgium', this)">🇧🇪 بلجيكا</button>
-    <button class="league-btn" onclick="filterByLeague('England', this)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 إنجلترا</button>
-    <button class="league-btn" onclick="filterByLeague('Italy', this)">🇮🇹 إيطاليا</button>
+    <button class="league-btn" onclick="filterByLeague('champions league', this)">⭐ دوري الأبطال</button>
+    <button class="league-btn" onclick="filterByLeague('france', this)">🇫🇷 فرنسا</button>
+    <button class="league-btn" onclick="filterByLeague('spain', this)">🇪🇸 إسبانيا</button>
+    <button class="league-btn" onclick="filterByLeague('england', this)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 إنجلترا</button>
+    <button class="league-btn" onclick="filterByLeague('italy', this)">🇮🇹 إيطاليا</button>
+    <button class="league-btn" onclick="filterByLeague('brazil', this)">🇧🇷 البرازيل</button>
+    <button class="league-btn" onclick="filterByLeague('belgium', this)">🇧🇪 بلجيكا</button>
 </div>
 
 <div id="output" style="text-align: center; color: #94a3b8; font-size: 13px; padding: 10px;">جاري تحميل المحرك الذكي...</div>
@@ -184,7 +185,7 @@ let currentStatusFilter = 'all';
 
 async function loadLiveMatches() {
     const output = document.getElementById('output');
-    output.innerHTML = "جاري تحليل المباريات وجلب توقعات الذكاء الاصطناعي...";
+    output.innerHTML = "جاري تحليل المباريات وجلب توقعات الذكاء الاصطناعي العميق...";
 
     try {
         const response = await fetch('https://raw.githubusercontent.com/khaledcc14/kella-analytics/main/live.json?t=' + new Date().getTime());
@@ -202,7 +203,13 @@ async function loadLiveMatches() {
 
         applyFilters();
 
-    } catch (err) {
+    } catch, (err) {
+        // Fallback catch syntax adjustment
+    }
+    {
+    }
+    // Correct catch block handling
+    catch (err) {
         output.innerHTML = `
             <div style="background: #ef444420; border: 1px solid #ef4444; color: #fca5a5; padding: 10px; border-radius: 8px; text-align: center; font-size: 12px;">
                 ⚠️ تنبيه: ${err.message}
@@ -215,14 +222,16 @@ function generateAIPrediction(home, away) {
     let hash = (home + away).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     let scoreH = hash % 3;
     let scoreA = (hash + 1) % 3;
-    
-    let options = [
-        `🤖 <b>التوقعات والنتيجة:</b> فوز محتمل لـ ${away} (${scoreH}-${scoreA + 1})، لقاء متكافئ تكتيكياً.`,
-        `🤖 <b>التوقعات والنتيجة:</b> تعادل إيجابي أو فوز صعب لـ ${home} بنتيجة (${scoreH + 1}-${scoreA}).`,
-        `🤖 <b>التوقعات والنتيجة:</b> سيطرة مرتقبة لـ ${home} وتوقع تسجيل أهداف لتنتهي (${scoreH}-${scoreA}).`,
-        `🤖 <b>التوقعات والنتيجة:</b> حذر دفاعي وانتهائها على وقع تعادل أو هدف يتيم (${scoreH}-${scoreA}).`
-    ];
-    return options[hash % options.length];
+    let probHome = 40 + (hash % 25);
+    let probAway = 100 - probHome - 15;
+    if(probAway < 15) probAway = 20;
+
+    return `
+        🤖 <b>التوقعات والنتيجة المقترحة:</b><br>
+        🎯 <b>النتيجة المتوقعة:</b> ${home} (${scoreH}) - (${scoreA}) ${away}<br>
+        📊 <b>نسب الفوز:</b> ${home} (${probHome}%) | ${away} (${probAway}%)<br>
+        💡 <b>تحليل تكتيكي:</b> مواجهة تتطلب حذراً دفاعياً مع ترجيح كفة المضيف لاستغلال العامل البدني وتسجيل هدف مبكر.
+    `;
 }
 
 function displayMatches(matches) {
@@ -230,7 +239,7 @@ function displayMatches(matches) {
     output.innerHTML = "";
 
     if (matches.length === 0) {
-        output.innerHTML = `<div style="color: #f59e0b; text-align: center; padding: 15px;">لا توجد مباريات مطابقة للخيارات المحددة.</div>`;
+        output.innerHTML = `<div style="color: #f59e0b; text-align: center; padding: 15px;">لا توجد مباريات مطابقة للخيارات المحددة في هذا الوقت. جرب اختيار "الكل".</div>`;
         return;
     }
 
@@ -325,7 +334,8 @@ function applyFilters() {
 
         let matchesLeagueBtn = true;
         if (currentLeagueFilter !== 'all') {
-            matchesLeagueBtn = country.includes(currentLeagueFilter.toLowerCase()) || league.includes(currentLeagueFilter.toLowerCase());
+            let filterKey = currentLeagueFilter.toLowerCase();
+            matchesLeagueBtn = league.includes(filterKey) || country.includes(filterKey);
         }
 
         let matchesSearchQuery = league.includes(query) || homeTeam.includes(query) || awayTeam.includes(query) || country.includes(query);
