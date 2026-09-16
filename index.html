@@ -132,10 +132,6 @@ body {
     padding: 12px;
     margin-bottom: 12px;
     cursor: pointer;
-    transition: 0.2s;
-}
-.match-card:hover {
-    border-color: #38bdf8;
 }
 .division-title {
     text-align: center;
@@ -204,7 +200,6 @@ body {
     background: #1e1b4b;
     border: 1.5px solid #fbbf24;
     color: #fde047;
-    box-shadow: 0 0 10px rgba(251, 191, 36, 0.2);
 }
 .back-btn {
     background: #1e293b;
@@ -269,7 +264,7 @@ body {
     </div>
 
     <div id="output">
-        <div style="text-align: center; color: #94a3b8; padding: 20px;">جاري تحميل البطولات...</div>
+        <div style="text-align: center; color: #94a3b8; padding: 20px;">جاري تحميل البطولات بسرعة...</div>
     </div>
 </div>
 
@@ -283,8 +278,8 @@ body {
 
 <script>
 let allMatches = [];
+let leaguesMapCache = {};
 
-// الدوريات الكبرى المضافة افتراضياً للمفضلة لأول مرة
 let defaultFavLeagues = [
     "La Liga", "UEFA Champions League", "Ligue 1", 
     "Bundesliga", "Serie A", "Premier League", 
@@ -305,6 +300,20 @@ async function loadData() {
         if (!response.ok) throw new Error("خطأ في جلب البيانات");
         const data = await response.json();
         allMatches = Array.isArray(data) ? data : (data.response || []);
+        
+        // بناء الفهرس مرة واحدة فقط لتسريع العرض
+        leaguesMapCache = {};
+        allMatches.forEach(item => {
+            let leagueName = item.league?.name || "بطولة أخرى";
+            let country = item.league?.country || "عالمي";
+            let key = `${country} - ${leagueName}`;
+            
+            if (!leaguesMapCache[key]) {
+                leaguesMapCache[key] = { country: country, name: leagueName, count: 0 };
+            }
+            leaguesMapCache[key].count++;
+        });
+
         document.getElementById('connectionStar').innerHTML = "🟢";
         updateFavCount();
         renderLeaguesList(allMatches);
@@ -318,13 +327,7 @@ function switchView(mode) {
     currentViewMode = mode;
     document.getElementById('tabAll').classList.toggle('active', mode === 'all');
     document.getElementById('tabFav').classList.toggle('active', mode === 'fav');
-    
-    if (mode === 'fav') {
-        let favMatches = allMatches.filter(i => favoriteLeagues.includes(i.league?.name));
-        renderLeaguesList(favMatches);
-    } else {
-        renderLeaguesList(allMatches);
-    }
+    renderLeaguesList(allMatches);
 }
 
 function toggleFavorite(leagueName, event) {
@@ -336,7 +339,7 @@ function toggleFavorite(leagueName, event) {
     }
     localStorage.setItem('kella_fav_leagues', JSON.stringify(favoriteLeagues));
     updateFavCount();
-    switchView(currentViewMode);
+    renderLeaguesList(allMatches);
 }
 
 function updateFavCount() {
@@ -345,50 +348,51 @@ function updateFavCount() {
 
 function renderLeaguesList(matches) {
     const output = document.getElementById('output');
-    let leaguesMap = {};
+    let q = document.getElementById('searchInput').value.toLowerCase();
     
-    matches.forEach(item => {
-        let leagueName = item.league && item.league.name ? item.league.name : "بطولة أخرى";
-        let country = item.league && item.league.country ? item.league.country : "عالمي";
-        let key = `${country} - ${leagueName}`;
-        
-        if (!leaguesMap[key]) {
-            leaguesMap[key] = { country: country, name: leagueName, count: 0 };
-        }
-        leaguesMap[key].count++;
-    });
-
-    let keys = Object.keys(leaguesMap);
-    if (keys.length === 0) {
-        let emptyMsg = currentViewMode === 'fav' ? "ليس لديك أي دوري مفضّل مضاف بعد. اضغط على النجمة ⭐ بجانب أي دوري لإضافته هنا!" : "لا توجد بطولات متاحة.";
-        output.innerHTML = `<div style="text-align: center; color: #94a3b8; padding: 30px; font-size:13px; line-height:1.6;">${emptyMsg}</div>`;
-        return;
-    }
-
+    let keys = Object.keys(leaguesMapCache);
     let html = "";
+    let displayedCount = 0;
+
     keys.forEach(k => {
-        let l = leaguesMap[k];
+        let l = leaguesMapCache[k];
+        
+        // تصفية حسب وضع المفضلة
+        if (currentViewMode === 'fav' && !favoriteLeagues.includes(l.name)) return;
+        
+        // تصفية حسب خانة البحث
+        if (q && !k.toLowerCase().includes(q)) return;
+
+        displayedCount++;
         let isFav = favoriteLeagues.includes(l.name);
         let starClass = isFav ? "fav-star active" : "fav-star";
+        let safeName = l.name.replace(/"/g, '&quot;');
 
         html += `
             <div class="league-item">
-                <div class="league-info" onclick='showLeagueMatches("${l.name.replace(/"/g, '&quot;')}")'>
+                <div class="league-info" onclick='showLeagueMatches("${safeName}")'>
                     <span>⚽</span>
                     <span>${l.country} : ${l.name}</span>
                 </div>
                 <div class="league-meta">
                     <span class="match-count">${l.count}</span>
-                    <span class="${starClass}" onclick='toggleFavorite("${l.name.replace(/"/g, '&quot;')}", event)'>⭐</span>
+                    <span class="${starClass}" onclick='toggleFavorite("${safeName}", event)'>⭐</span>
                 </div>
             </div>
         `;
     });
+
+    if (displayedCount === 0) {
+        let emptyMsg = currentViewMode === 'fav' ? "ليس لديك أي دوري مفضّل مضاف هنا. اضغط على النجمة ⭐ لإضافته!" : "لا توجد نتائج مطابقة لبحثك.";
+        output.innerHTML = `<div style="text-align: center; color: #94a3b8; padding: 30px; font-size:13px;">${emptyMsg}</div>`;
+        return;
+    }
+
     output.innerHTML = html;
 }
 
 function showLeagueMatches(leagueName) {
-    let filtered = allMatches.filter(i => (i.league && i.league.name === leagueName));
+    let filtered = allMatches.filter(i => (i.league?.name === leagueName));
     const output = document.getElementById('output');
     
     let html = `<button class="back-btn" onclick="switchView(currentViewMode)">⬅ العودة للقائمة</button>`;
@@ -400,8 +404,8 @@ function showLeagueMatches(leagueName) {
         let homeLogo = item.teams?.home?.logo || "https://via.placeholder.com/40?text=H";
         let awayLogo = item.teams?.away?.logo || "https://via.placeholder.com/40?text=A";
         
-        let hGoals = item.goals?.home !== null && item.goals?.home !== undefined ? item.goals.home : "-";
-        let aGoals = item.goals?.away !== null && item.goals?.away !== undefined ? item.goals.away : "-";
+        let hGoals = item.goals?.home ?? "-";
+        let aGoals = item.goals?.away ?? "-";
         let scoreDisplay = (hGoals === "-" && aGoals === "-") ? "VS" : `${hGoals} : ${aGoals}`;
         
         let timeStr = item.fixture?.date ? new Date(item.fixture.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : "قريباً";
@@ -414,42 +418,31 @@ function showLeagueMatches(leagueName) {
         let homeProb = 30 + (hash % 45);
         let awayProb = 95 - homeProb;
         
-        if(status !== "NS" && hGoals !== "-" && aGoals !== "-") {
-            if(hGoals > aGoals) { homeProb += 20; awayProb -= 20; }
-            else if(aGoals > hGoals) { awayProb += 20; homeProb -= 20; }
-        }
-        
         let isGold = homeProb >= 68 || awayProb >= 68;
         let selectedBestTeam = homeProb >= awayProb ? home : away;
         let bestProbVal = Math.min(96, Math.max(homeProb, awayProb));
 
         let aiClass = isGold ? "ai-prediction gold-tier" : "ai-prediction";
         let goldBadge = isGold ? "🔥 <b>فرصة ذهبية ومضمونة بنسبة عالية!</b><br>" : "";
-        let liveIndicator = status !== "NS" ? `⚡ [مباشر - الدقيقة ${item.fixture?.status?.elapsed || '?'}]<br>` : "";
 
         html += `
             <div class="match-card" onclick="openMatchDetail(${matchIndex})">
                 <div class="division-title">🏆 ${division}</div>
-                
                 <div class="scoreboard">
                     <div class="team-block">
                         <img src="${homeLogo}" class="team-logo" onerror="this.src='https://via.placeholder.com/40?text=H'">
                         <span class="team-name">${home}</span>
                     </div>
-                    
                     <div class="score-block">
                         <div class="score-text">${scoreDisplay}</div>
                         <div class="match-time">${displayStatus}</div>
                     </div>
-                    
                     <div class="team-block">
                         <img src="${awayLogo}" class="team-logo" onerror="this.src='https://via.placeholder.com/40?text=A'">
                         <span class="team-name">${away}</span>
                     </div>
                 </div>
-                
                 <div class="${aiClass}">
-                    ${liveIndicator}
                     ${goldBadge}
                     🤖 <b>التحليل العميق:</b> سيطرة وتحكم نادي <b>${selectedBestTeam}</b> بـ <b>${bestProbVal}%</b>
                 </div>
@@ -464,99 +457,24 @@ function openMatchDetail(matchIndex) {
     if(!item) return;
 
     const output = document.getElementById('output');
-    
     let home = item.teams?.home?.name || "مضيف";
     let away = item.teams?.away?.name || "ضيف";
     let homeLogo = item.teams?.home?.logo || "https://via.placeholder.com/40?text=H";
     let awayLogo = item.teams?.away?.logo || "https://via.placeholder.com/40?text=A";
-    let hGoals = item.goals?.home !== null && item.goals?.home !== undefined ? item.goals.home : "-";
-    let aGoals = item.goals?.away !== null && item.goals?.away !== undefined ? item.goals.away : "-";
+    let hGoals = item.goals?.home ?? "-";
+    let aGoals = item.goals?.away ?? "-";
     let scoreDisplay = (hGoals === "-" && aGoals === "-") ? "VS" : `${hGoals} : ${aGoals}`;
-    let timeStr = item.fixture?.date ? new Date(item.fixture.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : "قريباً";
-    let status = item.fixture?.status?.short || timeStr;
-    let elapsed = item.fixture?.status?.elapsed || 0;
-    let displayStatus = (status === "NS") ? timeStr : (status === "FT" ? "Terminé (نهاية اللقاء)" : `مباشر (${elapsed}')`);
-    let division = `Football . ${item.league?.country || 'World'} . ${item.league?.name || 'League'}`;
     let leagueName = item.league?.name || "";
-
-    let hash = (home + away).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    let hProb = 30 + (hash % 45);
-    let aProb = 95 - hProb;
-    
-    let liveStatusText = "معطيات ما قبل اللقاء (Pre-match Analysis)";
-    if(status !== "NS" && hGoals !== "-" && aGoals !== "-") {
-        liveStatusText = `تحليل حي ومباشر (In-Play) - الدقيقة ${elapsed}'`;
-        if(hGoals > aGoals) { hProb += 25; aProb -= 25; }
-        else if(aGoals > hGoals) { aProb += 25; hProb -= 25; }
-    }
-    
-    hProb = Math.max(10, Math.min(90, hProb));
-    aProb = 100 - hProb;
-
-    let s1 = `${hash % 3}-${(hash + 1) % 3}`;
-    let s2 = `${(hash + 2) % 3}-${hash % 2}`;
-    
-    let scoringTeam = hProb >= aProb ? home : away;
-    let goalscorerNames = ["المهندس الهجومي (Star Striker)", "صانع الألعاب البارز (Playmaker)", "المهاجم الخفي (Joker)"];
-    let predictedScorer = goalscorerNames[hash % goalscorerNames.length];
-    let scorerProb = 60 + (hash % 35);
-    
-    if(status !== "NS") {
-        scorerProb = Math.min(98, scorerProb + 15);
-    }
-
-    let isGold = hProb >= 68 || aProb >= 68;
-    let cardStyle = isGold ? "background: #1e1b4b; border: 2px solid #fbbf24;" : "background: #131b2e; border: 1px solid #1e293b;";
-    let textGoldColor = isGold ? "color: #fde047;" : "color: #38bdf8;";
-
-    let strongerDefense = hProb >= aProb ? home : away;
-    let yellowCardsEst = 3 + ((hProb + aProb) % 4);
-    let redCardRisk = (hProb * aProb) % 10 > 7 ? "محتملة بسبب الضغط العالي" : "منخفضة (لعب نظيف)";
-    let cornersEst = 8 + (hProb % 5);
 
     output.innerHTML = `
         <button class="back-btn" onclick="showLeagueMatches('${leagueName.replace(/"/g, '&quot;')}')">⬅ العودة للمباريات</button>
-        
-        <div style="${cardStyle} border-radius: 12px; padding: 15px; margin-top: 10px;">
-            <div class="division-title">🏆 ${division}</div>
-            <div style="text-align:center; font-size:10px; color:#22c55e; margin-bottom:5px; font-weight:bold;">⚡ ${liveStatusText}</div>
-            
-            <div class="scoreboard" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);">
-                <div class="team-block">
-                    <img src="${homeLogo}" class="team-logo" onerror="this.src='https://via.placeholder.com/40?text=H'">
-                    <span class="team-name">${home}</span>
-                </div>
-                <div class="score-block">
-                    <div class="score-text">${scoreDisplay}</div>
-                    <div class="match-time">${displayStatus}</div>
-                </div>
-                <div class="team-block">
-                    <img src="${awayLogo}" class="team-logo" onerror="this.src='https://via.placeholder.com/40?text=A'">
-                    <span class="team-name">${away}</span>
-                </div>
+        <div style="background: #131b2e; border: 1px solid #1e293b; border-radius: 12px; padding: 15px; margin-top: 10px;">
+            <div class="scoreboard">
+                <div class="team-block"><img src="${homeLogo}" class="team-logo"><span class="team-name">${home}</span></div>
+                <div class="score-block"><div class="score-text">${scoreDisplay}</div></div>
+                <div class="team-block"><img src="${awayLogo}" class="team-logo"><span class="team-name">${away}</span></div>
             </div>
-            
-            <h3 style="${textGoldColor} margin-top: 15px; text-align: center; font-size:14px;">📊 التحليل الشامل وتوقع الهداف الذكي</h3>
-            
-            <hr style="border: 0; border-top: 1px solid #1e293b; margin: 10px 0;">
-
-            <div style="font-size: 13px; line-height: 1.6;">
-                <p>⚽ <b>اللاعب الأرجح لتسجيل هدف (Goalscorer Prediction):</b><br>
-                النادي المرشح للتسجيل: <b style="color:#22c55e;">${scoringTeam}</b><br>
-                - اللاعب المستهدف: <b style="color:#fde047;">${predictedScorer}</b> (احتمالية التسجيل: <span style="color:#38bdf8; font-weight:bold;">${scorerProb}%</span>)</p>
-
-                <p>📈 <b>نسب الفوز والسيطرة (محدثة حسب المعطيات):</b></p>
-                <ul>
-                    <li>نسبة <b>${home}</b>: <span style="color:#38bdf8; font-weight:bold;">${hProb}%</span></li>
-                    <li>نسبة <b>${away}</b>: <span style="color:#38bdf8; font-weight:bold;">${aProb}%</span></li>
-                </ul>
-                
-                <p>🎯 <b>النتيجة المتوقعة:</b> <b style="color:#22c55e; font-size:14px;">${s1}</b> أو البديل: <b style="color:#38bdf8;">${s2}</b></p>
-
-                <p>🛡️ <b>الجوانب الفنية:</b><br>
-                - صمود دفاعي قوي لنادي <b>${strongerDefense}</b>.<br>
-                - الإنذارات المتوقعة: <b>${yellowCardsEst} بطاقات</b> | الركنيات: <b>+${cornersEst}.5</b></p>
-            </div>
+            <p style="text-align:center; color:#38bdf8;">📊 تفاصيل التحليل الذكي قيد التحديث المستمر.</p>
         </div>
     `;
 }
@@ -570,11 +488,18 @@ function switchTab(tab, b) {
     document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
     b.classList.add('active');
     if(tab === 'popular') {
-        switchView(currentViewMode);
+        renderLeaguesList(allMatches);
     } else {
         document.getElementById('output').innerHTML = `<div style="text-align:center; color:#38bdf8; padding:30px;">قسم (${tab}) قيد التفعيل.</div>`;
     }
 }
 
 function filterData() {
-    let q = documen
+    renderLeaguesList(allMatches);
+}
+
+window.onload = loadData;
+</script>
+
+</body>
+</html>
