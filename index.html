@@ -1,487 +1,64 @@
-<!DOCTYPE html>
-<html lang="fr" dir="ltr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KELLA Analytics Pro</title>
-<meta name="theme-color" content="#0b0f19">
-<style>
-body {
-    background: #0b0f19;
-    color: #f8fafc;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding-bottom: 70px;
-}
-.app-container {
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 10px;
-}
-.top-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px 10px;
-}
-.top-header h2 {
-    color: #38bdf8;
-    margin: 0;
-    font-size: 18px;
-}
-.status-star {
-    font-size: 20px;
-}
-.mode-toggle {
-    display: flex;
-    background: #131b2e;
-    border-radius: 25px;
-    padding: 4px;
-    margin: 10px 0;
-    border: 1px solid #1e293b;
-}
-.mode-btn {
-    flex: 1;
-    background: transparent;
-    color: #94a3b8;
-    border: none;
-    padding: 8px;
-    font-size: 13px;
-    font-weight: bold;
-    border-radius: 20px;
-    cursor: pointer;
-}
-.mode-btn.active {
-    background: #22c55e;
-    color: #0b0f19;
-}
-.search-box {
-    width: 100%;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #1e293b;
-    background: #131b2e;
-    color: #f8fafc;
-    margin-bottom: 10px;
-    box-sizing: border-box;
-    font-size: 13px;
-}
-.match-card {
-    background: #131b2e;
-    border: 1px solid #1e293b;
-    border-left: 4px solid #38bdf8;
-    border-radius: 10px;
-    padding: 12px;
-    margin-bottom: 10px;
-    font-size: 13px;
-    position: relative;
-}
-.match-header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
-    font-size: 11px;
-    color: #38bdf8;
-}
-.match-teams {
-    font-size: 14px;
-    font-weight: bold;
-    color: #ffffff;
-    margin-bottom: 6px;
-    cursor: pointer;
-}
-.match-subtext {
-    font-size: 11px;
-    color: #94a3b8;
-    cursor: pointer;
-}
-.fav-btn {
-    position: absolute;
-    top: 10px;
-    right: 12px;
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-}
-.analysis-box {
-    margin-top: 10px;
-    padding: 12px;
-    background: #0f172a;
-    border: 1px solid #1e293b;
-    border-radius: 8px;
-    font-size: 12px;
-    color: #f8fafc;
-    line-height: 1.6;
-}
-.analysis-title {
-    color: #38bdf8;
-    font-weight: bold;
-    margin-bottom: 8px;
-    font-size: 13px;
-    border-bottom: 1px solid #1e293b;
-    padding-bottom: 4px;
-}
-.stats-container {
-    margin-top: 10px;
-    background: #0f172a;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #1e293b;
-}
-.stat-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    margin-bottom: 4px;
-    color: #94a3b8;
-}
-.stat-bar-bg {
-    background: #1e293b;
-    height: 6px;
-    border-radius: 3px;
-    margin-bottom: 8px;
-    overflow: hidden;
-    display: flex;
-}
-.stat-bar-home {
-    background: #38bdf8;
-    height: 100%;
-}
-.stat-bar-away {
-    background: #22c55e;
-    height: 100%;
-}
-.back-btn {
-    background: #1e293b;
-    color: #38bdf8;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    font-weight: bold;
-}
-.bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #0f172a;
-    border-top: 1px solid #1e293b;
-    display: flex;
-    justify-content: space-around;
-    padding: 8px 0;
-    z-index: 1000;
-}
-.nav-item {
-    background: transparent;
-    border: none;
-    color: #94a3b8;
-    font-size: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-    gap: 2px;
-}
-.nav-item.active {
-    color: #22c55e;
-    font-weight: bold;
-}
-.nav-item span.icon {
-    font-size: 18px;
-}
-</style>
-</head>
-<body>
+name: Update Football Data On-Demand
 
-<div class="app-container">
-    <div class="top-header">
-        <h2>KELLA Analytics Pro ⚽</h2>
-        <span id="connectionStar" class="status-star">⏳</span>
-    </div>
+on:
+  workflow_dispatch:
 
-    <div id="mainModeToggle" class="mode-toggle">
-        <button class="mode-btn" onclick="setMode('live', this)">EN DIRECT</button>
-        <button class="mode-btn active" onclick="setMode('upcoming', this)">Avant-match</button>
-    </div>
+permissions:
+  contents: write
 
-    <div id="searchContainer">
-        <input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث عن فريق..." onkeyup="filterData()">
-    </div>
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    <div id="output"></div>
-</div>
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
-<div class="bottom-nav">
-    <button class="nav-item active" onclick="switchTab('popular', this)"><span class="icon">🔥</span> Populaire</button>
-    <button class="nav-item" onclick="switchTab('favorites', this)"><span class="icon">⭐</span> Favoris</button>
-    <button class="nav-item" onclick="switchTab('history', this)"><span class="icon">⏰</span> Historique</button>
-    <button class="nav-item" onclick="switchTab('menu', this)"><span class="icon">📂</span> Menu</button>
-</div>
+      - name: Run smart fetch script for fixtures
+        run: |
+          python -c '
+          import urllib.request
+          import json
+          from datetime import datetime, timedelta
 
-<script>
-let allMatches = [];
-let currentMode = 'upcoming';
-let currentTab = 'popular';
-let favorites = JSON.parse(localStorage.getItem('kella_favs') || '[]');
+          api_key = "9089a8397ff28245938e358f0c9b5847"
+          headers = {"x-apisports-key": api_key}
 
-async function initApp() {
-    try {
-        // محاولة جلب البيانات مباشرة من المصدر الحي أو الملف الاحتياطي المحدث
-        const cacheBuster = '?t=' + new Date().getTime();
-        let response = await fetch('https://raw.githubusercontent.com/khaledcc14/kella-analytics/main/live.json' + cacheBuster);
-        
-        if (!response.ok) throw new Error("Network error");
-        
-        const jsonResult = await response.json();
-        allMatches = jsonResult.response || [];
-        
-        document.getElementById('connectionStar').innerHTML = "🟢";
-        renderContent();
-    } catch (e) {
-        // في حال حدوث أي انقطاع، نعرض مؤشر تنبيه مع بيانات تجريبية خفيفة لكي لا تبقى الشاشة فارغة
-        document.getElementById('connectionStar').innerHTML = "🟡";
-        allMatches = [
-            {
-                league: { name: "الدوري الإسباني - La Liga", country: "إسبانيا" },
-                teams: { home: { name: "Real Madrid" }, away: { name: "Barcelona" } },
-                fixture: { date: "2026-09-16T21:00:00+00:00", status: { short: "NS" } },
-                goals: { home: null, away: null }
-            },
-            {
-                league: { name: "دوري أبطال أوروبا - UCL", country: "أوروبا" },
-                teams: { home: { name: "Paris Saint-Germain" }, away: { name: "Manchester City" } },
-                fixture: { date: "2026-09-16T20:00:00+00:00", status: { short: "1H" } },
-                goals: { home: 1, away: 0 }
-            }
-        ];
-        renderContent();
-    }
-}
+          def fetch_api(url):
+              try:
+                  req = urllib.request.Request(url, headers=headers)
+                  with urllib.request.urlopen(req) as response:
+                      return json.loads(response.read().decode())
+              except Exception as e:
+                  print("API Error:", e)
+                  return None
 
-function setMode(mode, btn) {
-    document.querySelectorAll('.mode-btn').forEach(x => x.classList.remove('active'));
-    if(btn) btn.classList.add('active');
-    currentMode = mode;
-    renderContent();
-}
+          algeria_time = datetime.utcnow() + timedelta(hours=1)
+          today_str = algeria_time.strftime("%Y-%m-%d")
+          print(f"Target Date (Algeria Time): {today_str}")
 
-function switchTab(tab, b) {
-    document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
-    b.classList.add('active');
-    currentTab = tab;
-    
-    let modeToggle = document.getElementById('mainModeToggle');
-    let searchContainer = document.getElementById('searchContainer');
-    
-    if(tab === 'popular') {
-        modeToggle.style.display = 'flex';
-        searchContainer.style.display = 'block';
-        renderContent();
-    } else if(tab === 'favorites') {
-        modeToggle.style.display = 'none';
-        searchContainer.style.display = 'none';
-        renderFavorites();
-    } else if(tab === 'history') {
-        modeToggle.style.display = 'none';
-        searchContainer.style.display = 'none';
-        renderHistory();
-    } else if(tab === 'menu') {
-        modeToggle.style.display = 'none';
-        searchContainer.style.display = 'none';
-        renderMenu();
-    }
-}
+          # جلب مباريات اليوم بنفس هيكلة API-Sports الأصلية التي يتوقعها التطبيق
+          data = fetch_api(f"https://v3.football.api-sports.io/fixtures?date={today_str}")
 
-function toggleFavorite(matchId, event) {
-    event.stopPropagation();
-    let index = favorites.indexOf(matchId);
-    if(index > -1) {
-        favorites.splice(index, 1);
-    } else {
-        favorites.push(matchId);
-    }
-    localStorage.setItem('kella_favs', JSON.stringify(favorites));
-    if(currentTab === 'popular') renderContent();
-    else if(currentTab === 'favorites') renderFavorites();
-}
+          matches_list = []
+          if data and "response" in data:
+              print(f"Total matches found from API: {len(data[\"response\"])}")
+              matches_list = data["response"]
 
-function generateAdvancedAIAnalysis(home, away) {
-    let seed = (home.length + away.length) * 7;
-    let homeScore = seed % 3;
-    let awayScore = (seed + 2) % 3;
-    if(homeScore === awayScore) homeScore += 1;
+          final_output = {"matches": matches_list}
+          with open("live.json", "w", encoding="utf-8") as f:
+              json.dump(final_output, f, ensure_ascii=False, indent=4)
+          print("live.json updated successfully with", len(matches_list), "matches in original API format.")
+          '
 
-    let probHome = 45 + (seed % 30);
-    let probAway = 100 - probHome - 15;
-    let probDraw = 15;
-
-    let possHome = 45 + (seed % 15);
-    let possAway = 100 - possHome;
-    let shotsHome = 8 + (seed % 7);
-    let shotsAway = 6 + (seed % 6);
-
-    return {
-        text: `
-            <div class="analysis-title">🤖 تقرير تحليل الخوارزميات الذكي</div>
-            • <b>توقع النتيجة الدقيقة:</b> ${home} (${homeScore} - ${awayScore}) ${away}<br><br>
-            • <b>نسب الفوز المتوقعة:</b><br>
-            - ${home}: ${probHome}% | التعادل: ${probDraw}% | ${away}: ${probAway}%<br><br>
-            • <b>قراءة الأداء الفني:</b> خط هجوم ${home} يعتمد على الاستحواذ وخلق الفرص، بينما يعتمد ${away} على المرتدات.<br><br>
-            • <b>توقع الأهداف (Over/Under):</b> المواجهة مرشحة لأكثر من 2.5 هدف (BTTS: نعم).
-        `,
-        stats: { possHome, possAway, shotsHome, shotsAway }
-    };
-}
-
-function renderContent() {
-    const output = document.getElementById('output');
-    let matches = getFilteredMatches();
-    
-    if (matches.length === 0) {
-        output.innerHTML = `<div style="text-align: center; color: #94a3b8; padding: 30px;">لا توجد مباريات في هذا القسم حالياً.</div>`;
-        return;
-    }
-
-    let html = "";
-    matches.forEach((item, index) => {
-        let leagueName = item.league?.name || "مباريات اليوم";
-        let home = item.teams?.home?.name || "مضيف";
-        let away = item.teams?.away?.name || "ضيف";
-        let matchTime = item.fixture?.date ? item.fixture.date.split('T')[1].substring(0,5) : "20:00";
-        let matchId = home + "_" + away;
-        let isFav = favorites.includes(matchId) ? "⭐" : "☆";
-
-        html += `
-            <div class="match-card">
-                <button class="fav-btn" onclick="toggleFavorite('${matchId}', event)">${isFav}</button>
-                <div class="match-header-row" onclick="showMatchDetails(${index})">
-                    <span>🏆 ${leagueName}</span>
-                    <span>⏰ ${matchTime}</span>
-                </div>
-                <div class="match-teams" onclick="showMatchDetails(${index})">${home} vs ${away}</div>
-                <div class="match-subtext" onclick="showMatchDetails(${index})">انقر لعرض إحصائيات وتوقعات الذكاء الاصطناعي 📊</div>
-            </div>
-        `;
-    });
-    output.innerHTML = html;
-}
-
-function getFilteredMatches() {
-    return allMatches.filter(item => {
-        let status = item.fixture?.status?.short || "NS";
-        let isLive = ["1H", "2H", "HT", "ET", "P", "LIVE"].includes(status);
-        return currentMode === 'live' ? isLive : !isLive;
-    });
-}
-
-function showMatchDetails(index) {
-    let matches = getFilteredMatches();
-    let item = matches[index];
-    if (!item) return;
-
-    let leagueName = item.league?.name || "بطولة رسمية";
-    let country = item.league?.country || "عالمي";
-    let home = item.teams?.home?.name || "مضيف";
-    let away = item.teams?.away?.name || "ضيف";
-    let status = item.fixture?.status?.short || "NS";
-    let homeGoals = item.goals?.home ?? "-";
-    let awayGoals = item.goals?.away ?? "-";
-
-    let aiData = generateAdvancedAIAnalysis(home, away);
-
-    const output = document.getElementById('output');
-    output.innerHTML = `
-        <button class="back-btn" onclick="renderContent()">⬅ العودة للمباريات</button>
-        <div class="match-card" style="cursor: default; border-left-color: #22c55e;">
-            <div style="color:#22c55e; font-weight:bold; margin-bottom: 8px;">📊 تفاصيل المباراة الشاملة</div>
-            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 5px;">البطولة: ${country} - ${leagueName}</div>
-            <div style="font-size: 16px; font-weight: bold; margin: 10px 0; text-align: center;">${home} [ ${homeGoals} - ${awayGoals} ] ${away}</div>
-            <div style="font-size: 12px; color: #38bdf8; margin-bottom: 10px; text-align: center;">حالة المباراة: ${status === 'NS' ? 'لم تبدأ بعد' : status}</div>
-            
-            <div class="analysis-box">
-                ${aiData.text}
-            </div>
-
-            <div class="stats-container">
-                <div style="color:#38bdf8; font-weight:bold; margin-bottom: 8px; font-size: 12px;">📈 الإحصائيات الافتراضية المتوقعة</div>
-                <div class="stat-row"><span>${home}</span><span>الاستحواذ</span><span>${away}</span></div>
-                <div class="stat-bar-bg">
-                    <div class="stat-bar-home" style="width: ${aiData.stats.possHome}%;"></div>
-                    <div class="stat-bar-away" style="width: ${aiData.stats.possAway}%;"></div>
-                </div>
-                <div class="stat-row"><span>${aiData.stats.shotsHome}</span><span>التسديدات على المرمى</span><span>${aiData.stats.shotsAway}</span></div>
-            </div>
-        </div>
-    `;
-}
-
-function renderFavorites() {
-    const output = document.getElementById('output');
-    if(favorites.length === 0) {
-        output.innerHTML = `<div style="text-align: center; color: #94a3b8; padding: 30px;">لا توجد مباريات في المفضلة حالياً. ⭐</div>`;
-        return;
-    }
-    let html = `<div style="color:#38bdf8; font-weight:bold; margin-bottom:10px;">⭐ المباريات المفضلة</div>`;
-    favorites.forEach(fav => {
-        let teams = fav.replace('_', ' vs ');
-        html += `<div class="match-card"><div class="match-teams">${teams}</div></div>`;
-    });
-    output.innerHTML = html;
-}
-
-function renderHistory() {
-    const output = document.getElementById('output');
-    output.innerHTML = `<div style="text-align: center; color: #94a3b8; padding: 30px;">⏰ سجل المباريات السابقة والنتائج المؤرشفة.</div>`;
-}
-
-function renderMenu() {
-    const output = document.getElementById('output');
-    output.innerHTML = `
-        <div style="background:#131b2e; padding:15px; border-radius:10px; border:1px solid #1e293b;">
-            <div style="color:#38bdf8; font-weight:bold; margin-bottom:10px;">📂 إعدادات التطبيق</div>
-            <div style="font-size:13px; margin-bottom:8px;">• الإصدار: KELLA Analytics Pro v2.8</div>
-            <div style="font-size:13px; margin-bottom:8px;">• مصدر البيانات: Direct API & Cloud Sync</div>
-            <div style="font-size:13px;">• الحالة: متصل بنجاح 🟢</div>
-        </div>
-    `;
-}
-
-function filterData() {
-    let q = document.getElementById('searchInput').value.toLowerCase();
-    let output = document.getElementById('output');
-    let matches = getFilteredMatches();
-    let filtered = matches.filter(i => {
-        let h = i.teams?.home?.name?.toLowerCase() || '';
-        let a = i.teams?.away?.name?.toLowerCase() || '';
-        let l = i.league?.name?.toLowerCase() || '';
-        return h.includes(q) || a.includes(q) || l.includes(q);
-    });
-
-    if (filtered.length === 0) {
-        output.innerHTML = `<div style="text-align: center; color: #94a3b8; padding: 30px;">لا توجد نتائج مطابقة لبحثك.</div>`;
-        return;
-    }
-
-    let html = "";
-    filtered.forEach((item, index) => {
-        let home = item.teams?.home?.name || "مضيف";
-        let away = item.teams?.away?.name || "ضيف";
-        html += `
-            <div class="match-card" onclick="showMatchDetails(${index})">
-                <div class="match-teams">${home} vs ${away}</div>
-                <div class="match-subtext">انقر لعرض التحليل والإحصائيات</div>
-            </div>
-        `;
-    });
-    output.innerHTML = html;
-}
-
-window.onload = initApp;
-</script>
-
-</body>
-</html>
+      - name: Commit and push changes safely
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add live.json
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update live.json with raw API format [skip ci]"
+          git push || echo "Push skipped or no changes"
