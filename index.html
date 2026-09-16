@@ -483,14 +483,13 @@ function openMatchDetail(matchIndex) {
     let s1 = `${hash % 3}-${(hash + 1) % 3}`;
     let s2 = `${(hash + 2) % 3}-${hash % 2}`;
     
-    // خوارزمية ذكية لتوقع اللاعب الأرجح للتسجيل بناء على اسم الفريق والنظام الحي
     let scoringTeam = hProb >= aProb ? home : away;
     let goalscorerNames = ["المهندس الهجومي (Star Striker)", "صانع الألعاب البارز (Playmaker)", "المهاجم الخفي (Joker)"];
     let predictedScorer = goalscorerNames[hash % goalscorerNames.length];
     let scorerProb = 60 + (hash % 35);
     
     if(status !== "NS") {
-        scorerProb = Math.min(98, scorerProb + 15); // ترتفع النسبة إذا كانت المباراة في الأطوار الحاسمة
+        scorerProb = Math.min(98, scorerProb + 15);
     }
 
     let isGold = hProb >= 68 || aProb >= 68;
@@ -569,4 +568,7 @@ function filterData() {
     let baseMatches = currentViewMode === 'fav' ? allMatches.filter(i => favoriteLeagues.includes(i.league?.name)) : allMatches;
     
     let filtered = baseMatches.filter(i => {
-        let l = i.league?.name?.toL
+        let l = i.league?.name?.toLowerCase() || '';
+        let c = i.league?.country?.toLowerCase() || '';
+        let h = i.teams?.home?.name?.toLowerCase() || '';
+   
