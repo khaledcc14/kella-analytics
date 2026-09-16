@@ -51,9 +51,34 @@ button {
     border: 1px solid #1e293b;
     background: #0f172a;
     color: #f8fafc;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     box-sizing: border-box;
     font-size: 13px;
+}
+.leagues-container {
+    display: flex;
+    gap: 5px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+.league-btn {
+    background: #1e293b;
+    color: #38bdf8;
+    border: 1px solid #38bdf840;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 11px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: 0.2s;
+    width: auto;
+    margin: 0;
+}
+.league-btn:hover, .league-btn.active {
+    background: #38bdf8;
+    color: #0b0f19;
+    font-weight: bold;
 }
 .match-card {
     background: #0f172a;
@@ -94,11 +119,23 @@ button {
 <button onclick="loadLiveMatches()">⚡ تحديث وجلب مباريات اليوم</button>
 <input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث عن فريق أو دوري..." onkeyup="filterMatches()">
 
+<!-- أزرار تصفية الدوريات السريعة -->
+<div class="leagues-container">
+    <button class="league-btn active" onclick="filterByLeague('all', this)">الكل 🌍</button>
+    <button class="league-btn" onclick="filterByLeague('Spain', this)">🇪🇸 إسبانيا</button>
+    <button class="league-btn" onclick="filterByLeague('France', this)">🇫🇷 فرنسا</button>
+    <button class="league-btn" onclick="filterByLeague('Brazil', this)">🇧🇷 البرازيل</button>
+    <button class="league-btn" onclick="filterByLeague('Belgium', this)">🇧🇪 بلجيكا</button>
+    <button class="league-btn" onclick="filterByLeague('England', this)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 إنجلترا</button>
+    <button class="league-btn" onclick="filterByLeague('Italy', this)">🇮🇹 إيطاليا</button>
+</div>
+
 <div id="output" style="text-align: center; color: #94a3b8; font-size: 13px; padding: 10px;">جاري تحميل المحرك الذكي...</div>
 </div>
 
 <script>
 let allMatches = [];
+let currentLeagueFilter = 'all';
 
 async function loadLiveMatches() {
     const output = document.getElementById('output');
@@ -118,7 +155,7 @@ async function loadLiveMatches() {
             allMatches = [];
         }
 
-        displayMatches(allMatches);
+        applyFilters();
 
     } catch (err) {
         output.innerHTML = `
@@ -129,7 +166,6 @@ async function loadLiveMatches() {
     }
 }
 
-// محرك ذكاء اصطناعي وهمي مبني على معطيات اللقاء لتوليد توقع احترافي
 function generateAIPrediction(home, away) {
     let hash = (home + away).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     let options = [
@@ -146,7 +182,7 @@ function displayMatches(matches) {
     output.innerHTML = "";
 
     if (matches.length === 0) {
-        output.innerHTML = `<div style="color: #f59e0b; text-align: center; padding: 10px;">لا توجد مباريات مطابقة للبحث.</div>`;
+        output.innerHTML = `<div style="color: #f59e0b; text-align: center; padding: 10px;">لا توجد مباريات مطابقة للبحث أو الدوري المحدد.</div>`;
         return;
     }
 
@@ -181,16 +217,41 @@ function displayMatches(matches) {
     });
 }
 
+function filterByLeague(leagueKey, btnElement) {
+    currentLeagueFilter = leagueKey;
+    
+    // تغيير التحديد البصري للأزرار
+    document.querySelectorAll('.league-btn').forEach(b => b.classList.remove('active'));
+    btnElement.classList.add('active');
+
+    applyFilters();
+}
+
 function filterMatches() {
+    applyFilters();
+}
+
+function applyFilters() {
     let query = document.getElementById('searchInput').value.toLowerCase();
+
     let filtered = allMatches.filter(item => {
         let league = (item.league && item.league.name) ? item.league.name.toLowerCase() : "";
+        let country = (item.league && item.league.country) ? item.league.country.toLowerCase() : "";
         let homeTeam = (item.teams && item.teams.home) ? item.teams.home.name.toLowerCase() : "";
         let awayTeam = (item.teams && item.teams.away) ? item.teams.away.name.toLowerCase() : "";
-        let country = (item.league && item.league.country) ? item.league.country.toLowerCase() : "";
 
-        return league.includes(query) || homeTeam.includes(query) || awayTeam.includes(query) || country.includes(query);
+        // تصفية حسب زر الدوري السريع
+        let matchesLeagueBtn = true;
+        if (currentLeagueFilter !== 'all') {
+            matchesLeagueBtn = country.includes(currentLeagueFilter.toLowerCase()) || league.includes(currentLeagueFilter.toLowerCase());
+        }
+
+        // تصفية حسب خانة البحث اليدوي
+        let matchesSearchQuery = league.includes(query) || homeTeam.includes(query) || awayTeam.includes(query) || country.includes(query);
+
+        return matchesLeagueBtn && matchesSearchQuery;
     });
+
     displayMatches(filtered);
 }
 
