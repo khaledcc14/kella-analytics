@@ -283,7 +283,20 @@ body {
 
 <script>
 let allMatches = [];
-let favoriteLeagues = JSON.parse(localStorage.getItem('kella_fav_leagues')) || [];
+
+// الدوريات الكبرى المضافة افتراضياً للمفضلة لأول مرة
+let defaultFavLeagues = [
+    "La Liga", "UEFA Champions League", "Ligue 1", 
+    "Bundesliga", "Serie A", "Premier League", 
+    "Saudi Professional League", "Primeira Liga", "Süper Lig"
+];
+
+let storedFavs = JSON.parse(localStorage.getItem('kella_fav_leagues'));
+if (!storedFavs) {
+    storedFavs = defaultFavLeagues;
+    localStorage.setItem('kella_fav_leagues', JSON.stringify(storedFavs));
+}
+let favoriteLeagues = storedFavs;
 let currentViewMode = 'all';
 
 async function loadData() {
@@ -564,11 +577,4 @@ function switchTab(tab, b) {
 }
 
 function filterData() {
-    let q = document.getElementById('searchInput').value.toLowerCase();
-    let baseMatches = currentViewMode === 'fav' ? allMatches.filter(i => favoriteLeagues.includes(i.league?.name)) : allMatches;
-    
-    let filtered = baseMatches.filter(i => {
-        let l = i.league?.name?.toLowerCase() || '';
-        let c = i.league?.country?.toLowerCase() || '';
-        let h = i.teams?.home?.name?.toLowerCase() || '';
-   
+    let q = documen
