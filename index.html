@@ -74,7 +74,7 @@ body {
     padding: 12px;
     margin-bottom: 10px;
     font-size: 13px;
-    cursor: pointer;
+    position: relative;
 }
 .match-header-row {
     display: flex;
@@ -89,10 +89,21 @@ body {
     font-weight: bold;
     color: #ffffff;
     margin-bottom: 6px;
+    cursor: pointer;
 }
 .match-subtext {
     font-size: 11px;
     color: #94a3b8;
+    cursor: pointer;
+}
+.fav-btn {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
 }
 .analysis-box {
     margin-top: 10px;
@@ -111,6 +122,52 @@ body {
     font-size: 13px;
     border-bottom: 1px solid #1e293b;
     padding-bottom: 4px;
+}
+.stats-container {
+    margin-top: 10px;
+    background: #0f172a;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #1e293b;
+}
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    margin-bottom: 4px;
+    color: #94a3b8;
+}
+.stat-bar-bg {
+    background: #1e293b;
+    height: 6px;
+    border-radius: 3px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    display: flex;
+}
+.stat-bar-home {
+    background: #38bdf8;
+    height: 100%;
+}
+.stat-bar-away {
+    background: #22c55e;
+    height: 100%;
+}
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+.action-btn {
+    flex: 1;
+    background: #22c55e;
+    color: #0b0f19;
+    border: none;
+    padding: 8px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 11px;
+    cursor: pointer;
 }
 .back-btn {
     background: #1e293b;
@@ -162,12 +219,14 @@ body {
         <span id="connectionStar" class="status-star">⏳</span>
     </div>
 
-    <div class="mode-toggle">
+    <div id="mainModeToggle" class="mode-toggle">
         <button class="mode-btn" onclick="setMode('live', this)">EN DIRECT</button>
         <button class="mode-btn active" onclick="setMode('upcoming', this)">Avant-match</button>
     </div>
 
-    <input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث عن فريق..." onkeyup="filterData()">
+    <div id="searchContainer">
+        <input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث عن فريق..." onkeyup="filterData()">
+    </div>
 
     <div id="output"></div>
 </div>
@@ -184,6 +243,8 @@ body {
 let allMatches = [];
 let currentMode = 'upcoming';
 let currentTab = 'popular';
+let favorites = JSON.parse(localStorage.getItem('kella_favs') || '[]');
+let coupon = JSON.parse(localStorage.getItem('kella_coupon') || '[]');
 
 async function initApp() {
     try {
@@ -194,11 +255,6 @@ async function initApp() {
         const jsonResult = await response.json();
         allMatches = jsonResult.response || [];
         
-        // إذا حبيت تختبر EN DIRECT، نقوم محلياً بجعل أول مباراتين في حالة مباشر للاختبار
-        if(allMatches.length > 0 && currentMode === 'live') {
-            allMatches[0].fixture.status.short = '1H';
-        }
-
         document.getElementById('connectionStar').innerHTML = "🟢";
         renderContent();
     } catch (e) {
@@ -214,6 +270,61 @@ function setMode(mode, btn) {
     renderContent();
 }
 
+function switchTab(tab, b) {
+    document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    currentTab = tab;
+    
+    let modeToggle = document.getElementById('mainModeToggle');
+    let searchContainer = document.getElementById('searchContainer');
+    
+    if(tab === 'popular') {
+        modeToggle.style.display = 'flex';
+        searchContainer.style.display = 'block';
+        renderContent();
+    } else if(tab === 'favorites') {
+        modeToggle.style.display = 'none';
+        searchContainer.style.display = 'none';
+        renderFavorites();
+    } else if(tab === 'coupon') {
+        modeToggle.style.display = 'none';
+        searchContainer.style.display = 'none';
+        renderCoupon();
+    } else if(tab === 'history') {
+        modeToggle.style.display = 'none';
+        searchContainer.style.display = 'none';
+        renderHistory();
+    } else if(tab === 'menu') {
+        modeToggle.style.display = 'none';
+        searchContainer.style.display = 'none';
+        renderMenu();
+    }
+}
+
+function toggleFavorite(matchId, event) {
+    event.stopPropagation();
+    let index = favorites.indexOf(matchId);
+    if(index > -1) {
+        favorites.splice(index, 1);
+    } else {
+        favorites.push(matchId);
+    }
+    localStorage.setItem('kella_favs', JSON.stringify(favorites));
+    renderContent();
+    if(currentTab === 'favorites') renderFavorites();
+}
+
+function addToCoupon(matchStr, event) {
+    event.stopPropagation();
+    if(!coupon.includes(matchStr)) {
+        coupon.push(matchStr);
+        localStorage.setItem('kella_coupon', JSON.stringify(coupon));
+        alert("تمت إضافة التوقع إلى القسيمة بنجاح! 🎟️");
+    } else {
+        alert("التوقع موجود مسبقاً في القسيمة.");
+    }
+}
+
 function generateAdvancedAIAnalysis(home, away) {
     let seed = (home.length + away.length) * 7;
     let homeScore = seed % 3;
@@ -224,16 +335,23 @@ function generateAdvancedAIAnalysis(home, away) {
     let probAway = 100 - probHome - 15;
     let probDraw = 15;
 
-    return `
-        <div class="analysis-title">🤖 تقرير تحليل الخوارزميات الذكي</div>
-        • <b>توقع النتيجة الدقيقة:</b> ${home} (${homeScore} - ${awayScore}) ${away}<br><br>
-        • <b>نسب الفوز المتوقعة:</b><br>
-        - ${home}: ${probHome}%<br>
-        - التعادل: ${probDraw}%<br>
-        - ${away}: ${probAway}%<br><br>
-        • <b>قراءة الأداء الفني:</b> خط هجوم ${home} يعتمد على الاستحواذ وخلق الفرص من الأطراف، بينما يعتمد ${away} على الهجمات المرتدة السريعة وإغلاق المساحات في خط الدفاع.<br><br>
-        • <b>توقع الأهداف (Over/Under):</b> المواجهة مرشحة لتسجيل أكثر من 2.5 هدف مع احتمالية اهتزاز شباك الفريقين (BTTS: نعم).
-    `;
+    let possHome = 45 + (seed % 15);
+    let possAway = 100 - possHome;
+    let shotsHome = 8 + (seed % 7);
+    let shotsAway = 6 + (seed % 6);
+
+    return {
+        text: `
+            <div class="analysis-title">🤖 تقرير تحليل الخوارزميات الذكي</div>
+            • <b>توقع النتيجة الدقيقة:</b> ${home} (${homeScore} - ${awayScore}) ${away}<br><br>
+            • <b>نسب الفوز المتوقعة:</b><br>
+            - ${home}: ${probHome}% | التعادل: ${probDraw}% | ${away}: ${probAway}%<br><br>
+            • <b>قراءة الأداء الفني:</b> خط هجوم ${home} يعتمد على الاستحواذ وخلق الفرص، بينما يعتمد ${away} على المرتدات.<br><br>
+            • <b>توقع الأهداف (Over/Under):</b> المواجهة مرشحة لأكثر من 2.5 هدف (BTTS: نعم).
+        `,
+        stats: { possHome, possAway, shotsHome, shotsAway },
+        predictionStr: `${home} vs ${away} (${homeScore}-${awayScore})`
+    };
 }
 
 function renderContent() {
@@ -251,16 +369,18 @@ function renderContent() {
         let home = item.teams?.home?.name || "مضيف";
         let away = item.teams?.away?.name || "ضيف";
         let matchTime = item.fixture?.date ? item.fixture.date.split('T')[1].substring(0,5) : "20:00";
+        let matchId = home + "_" + away;
+        let isFav = favorites.includes(matchId) ? "⭐" : "☆";
 
-        // الواجهة الرئيسية نظيفة ومخصصة للفرق والبطولة فقط بدون حشو التحليل
         html += `
-            <div class="match-card" onclick="showMatchDetails(${index})">
-                <div class="match-header-row">
+            <div class="match-card">
+                <button class="fav-btn" onclick="toggleFavorite('${matchId}', event)">${isFav}</button>
+                <div class="match-header-row" onclick="showMatchDetails(${index})">
                     <span>🏆 ${leagueName}</span>
                     <span>⏰ ${matchTime}</span>
                 </div>
-                <div class="match-teams">${home} vs ${away}</div>
-                <div class="match-subtext">انقر لعرض إحصائيات وتوقعات الذكاء الاصطناعي 📊</div>
+                <div class="match-teams" onclick="showMatchDetails(${index})">${home} vs ${away}</div>
+                <div class="match-subtext" onclick="showMatchDetails(${index})">انقر لعرض إحصائيات وتوقعات الذكاء الاصطناعي 📊</div>
             </div>
         `;
     });
@@ -288,7 +408,7 @@ function showMatchDetails(index) {
     let homeGoals = item.goals?.home ?? "-";
     let awayGoals = item.goals?.away ?? "-";
 
-    let detailedAnalysis = generateAdvancedAIAnalysis(home, away);
+    let aiData = generateAdvancedAIAnalysis(home, away);
 
     const output = document.getElementById('output');
     output.innerHTML = `
@@ -300,16 +420,68 @@ function showMatchDetails(index) {
             <div style="font-size: 12px; color: #38bdf8; margin-bottom: 10px; text-align: center;">حالة المباراة: ${status === 'NS' ? 'لم تبدأ بعد' : status}</div>
             
             <div class="analysis-box">
-                ${detailedAnalysis}
+                ${aiData.text}
+            </div>
+
+            <div class="stats-container">
+                <div style="color:#38bdf8; font-weight:bold; margin-bottom: 8px; font-size: 12px;">📈 الإحصائيات الافتراضية المتوقعة</div>
+                <div class="stat-row"><span>${home}</span><span>الاستحواذ</span><span>${away}</span></div>
+                <div class="stat-bar-bg">
+                    <div class="stat-bar-home" style="width: ${aiData.stats.possHome}%;"></div>
+                    <div class="stat-bar-away" style="width: ${aiData.stats.possAway}%;"></div>
+                </div>
+                <div class="stat-row"><span>${aiData.stats.shotsHome}</span><span>التسديدات على المرمى</span><span>${aiData.stats.shotsAway}</span></div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="addToCoupon('${aiData.predictionStr}', event)">🎟️ إضافة إلى القسيمة</button>
             </div>
         </div>
     `;
 }
 
-function switchTab(tab, b) {
-    document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
-    b.classList.add('active');
-    currentTab = tab;
+function renderFavorites() {
+    const output = document.getElementById('output');
+    if(favorites.length === 0) {
+        output.innerHTML = `<div style="text-align: center; color: #94a3b8; padding: 30px;">لا توجد مباريات في المفضلة حالياً. ⭐</div>`;
+        return;
+    }
+    let html = `<div style="color:#38bdf8; font-weight:bold; margin-bottom:10px;">⭐ المباريات المفضلة</div>`;
+    favorites.forEach(fav => {
+        html += `<div class="match-card"><div class="match-teams">${fav.replace('_', ' vs ')}</div></div>`;
+    });
+    output.innerHTML = html;
+}
+
+function renderCoupon() {
+    const output = document.getElementById('output');
+    if(coupon.length === 0) {
+        output.innerHTML = `<div style="text-align: center; color: #94a3b8; padding: 30px;">قسيمة التوقعات فارغة 🎟️</div>`;
+        return;
+    }
+    let html = `<div style="color:#22c55e; font-weight:bold; margin-bottom:10px;">🎟️ قسيمة التوقعات الخاصة بك</div>`;
+    coupon.forEach((item, idx) => {
+        html += `<div class="match-card"><div style="font-size:13px;">${idx+1}. ${item}</div></div>`;
+    });
+    html += `<button class="action-btn" style="margin-top:10px;" onclick="coupon=[];localStorage.removeItem('kella_coupon');renderCoupon();">مسح القسيمة</button>`;
+    output.innerHTML = html;
+}
+
+function renderHistory() {
+    const output = document.getElementById('output');
+    output.innerHTML = `<div style="text-align: center; color: #94a3b8; padding: 30px;">⏰ سجل المباريات السابقة والنتائج المؤرشفة.</div>`;
+}
+
+function renderMenu() {
+    const output = document.getElementById('output');
+    output.innerHTML = `
+        <div style="background:#131b2e; padding:15px; border-radius:10px; border:1px solid #1e293b;">
+            <div style="color:#38bdf8; font-weight:bold; margin-bottom:10px;">📂 إعدادات التطبيق</div>
+            <div style="font-size:13px; margin-bottom:8px;">• الإصدار: KELLA Analytics Pro v2.5</div>
+            <div style="font-size:13px; margin-bottom:8px;">• مصدر البيانات: GitHub API & Live JSON</div>
+            <div style="font-size:13px;">• الحالة: متصل بنجاح 🟢</div>
+        </div>
+    `;
 }
 
 function filterData() {
@@ -335,7 +507,7 @@ function filterData() {
         html += `
             <div class="match-card" onclick="showMatchDetails(${index})">
                 <div class="match-teams">${home} vs ${away}</div>
-                <div class="match-subtext">انقر لعرض التحليل</div>
+                <div class="match-subtext">انقر لعرض التحليل والإحصائيات</div>
             </div>
         `;
     });
