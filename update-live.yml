@@ -1,0 +1,51 @@
+name: Update Live Scores Cron
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Run script to fetch API and update live.json
+        run: |
+          python -c '
+          import urllib.request
+          import json
+          import datetime
+
+          api_url = "https://v3.football.api-sports.io/fixtures?date=" + datetime.datetime.now().strftime("%Y-%m-%d")
+          
+          headers = {
+              "x-apisports-key": "YOUR_API_KEY_HERE"
+          }
+
+          try:
+              req = urllib.request.Request(api_url, headers=headers)
+              with urllib.request.urlopen(req) as response:
+                  data = json.loads(response.read().decode())
+                  
+                  with open("live.json", "w", encoding="utf-8") as f:
+                      json.dump(data, f, ensure_ascii=False, indent=4)
+                  print("Live.json updated successfully via Cron!")
+          except Exception as e:
+              print("Error fetching data:", e)
+          '
+
+      - name: Commit and push changes to GitHub
+        run: |
+          git config --global user.name "Kella Cron Bot"
+          git config --global user.email "bot@kella.com"
+          git add live.json
+          git commit -m "Auto-update live.json via Cron [skip ci]" || echo "No changes to commit"
+          git push
