@@ -17,16 +17,15 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Run script to fetch live events and scores
+      - name: Run script to fetch active live matches
         run: |
           python -c '
           import urllib.request
           import json
           import datetime
 
-          today_date = datetime.datetime.now().strftime("%Y-%m-%d")
-          # جلب مباريات اليوم مع التركيز على المباشر والحالي
-          api_url = f"https://v3.football.api-sports.io/fixtures?date={today_date}"
+          # طلب المباريات الحية المشتعلة في هذه اللحظة مباشرة من API-Football
+          api_url = "https://v3.football.api-sports.io/fixtures?live=all"
           
           headers = {
               "x-apisports-key": "9089a8397ff28245938e358f0c9b5847"
@@ -42,15 +41,14 @@ jobs:
                   if "response" in api_data:
                       for item in api_data["response"]:
                           league = item.get("league", {}).get("name", "General")
-                          
                           home_team = item.get("teams", {}).get("home", {}).get("name", "Home")
                           away_team = item.get("teams", {}).get("away", {}).get("name", "Away")
                           
                           goals_home = item.get("goals", {}).get("home")
-                          goals_away = item.get("goals", {}).get("away")
+                          goals_away = item.get("goals", {}).get("goals", {}).get("away") if "goals" in item else item.get("goals", {}).get("away")
                           
                           fixture_status = item.get("fixture", {}).get("status", {})
-                          status_short = fixture_status.get("short", "NS")
+                          status_short = fixture_status.get("short", "LIVE")
                           elapsed = fixture_status.get("elapsed", 0)
                           
                           matches_list.append({
@@ -67,9 +65,9 @@ jobs:
 
                   with open("live.json", "w", encoding="utf-8") as f:
                       json.dump(final_output, f, ensure_ascii=False, indent=4)
-                  print("Live events and scores updated successfully!")
+                  print("Live matches updated successfully!")
           except Exception as e:
-              print("Error fetching live events:", e)
+              print("Error fetching live games:", e)
           '
 
       - name: Commit and push changes to GitHub
@@ -77,5 +75,5 @@ jobs:
           git config --global user.name "Kella Cron Bot"
           git config --global user.email "bot@kella.com"
           git add live.json
-          git commit -m "Update live match events and scores [skip ci]" || echo "No changes to commit"
+          git commit -m "Update active live matches [skip ci]" || echo "No changes to commit"
           git push
