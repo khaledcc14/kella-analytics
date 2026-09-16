@@ -1,52 +1,32 @@
 [
   {
-    "league": { "country": "Espagne", "name": "La Liga" },
-    "teams": { "home": { "name": "Barcelone" }, "away": { "name": "Real Madrid" } },
-    "fixture": { "date": "2026-09-16T21:00:00", "status": { "short": "NS" } }
-  },
-  {
-    "league": { "country": "Espagne", "name": "La Liga" },
-    "teams": { "home": { "name": "Atlético de Madrid" }, "away": { "name": "Osasuna" } },
-    "fixture": { "date": "2026-09-16T18:30:00", "status": { "short": "NS" } }
-  },
-  {
-    "league": { "country": "Espagne", "name": "La Liga" },
-    "teams": { "home": { "name": "Villarreal" }, "away": { "name": "Real Sociedad" } },
-    "fixture": { "date": "2026-09-16T16:00:00", "status": { "short": "NS" } }
-  },
-  {
-    "league": { "country": "Angleterre", "name": "Premier League" },
-    "teams": { "home": { "name": "Manchester City" }, "away": { "name": "Arsenal" } },
-    "fixture": { "date": "2026-09-16T20:00:00", "status": { "short": "NS" } }
-  },
-  {
-    "league": { "country": "Angleterre", "name": "Premier League" },
-    "teams": { "home": { "name": "Liverpool" }, "away": { "name": "Chelsea" } },
-    "fixture": { "date": "2026-09-16T17:30:00", "status": { "short": "NS" } }
-  },
-  {
-    "league": { "country": "Italie", "name": "Serie A" },
-    "teams": { "home": { "name": "AC Milan" }, "away": { "name": "Inter" } },
-    "fixture": { "date": "2026-09-16T19:45:00", "status": { "short": "NS" } }
-  },
-  {
-    "league": { "country": "Italie", "name": "Serie A" },
-    "teams": { "home": { "name": "Juventus" }, "away": { "name": "Napoli" } },
-    "fixture": { "date": "2026-09-16T17:00:00", "status": { "short": "NS" } }
-  },
-  {
-    "league": { "country": "France", "name": "Ligue 1" },
-    "teams": { "home": { "name": "Paris Saint-Germain" }, "away": { "name": "Marseille" } },
-    "fixture": { "date": "2026-09-16T20:45:00", "status": { "short": "NS" } }
+    "league": { "country": "Europe", "name": "UEFA Champions League" },
+    "teams": { "home": { "name": "Young Boys" }, "away": { "name": "Aston Villa" } },
+    "fixture": { "date": "2026-09-16T17:45:00", "status": { "short": "NS" } }
   },
   {
     "league": { "country": "Europe", "name": "UEFA Champions League" },
-    "teams": { "home": { "name": "Bayern Munich" }, "away": { "name": "Borussia Dortmund" } },
+    "teams": { "home": { "name": "Juventus" }, "away": { "name": "PSV Eindhoven" } },
+    "fixture": { "date": "2026-09-16T17:45:00", "status": { "short": "NS" } }
+  },
+  {
+    "league": { "country": "Europe", "name": "UEFA Champions League" },
+    "teams": { "home": { "name": "AC Milan" }, "away": { "name": "Liverpool" } },
     "fixture": { "date": "2026-09-16T20:00:00", "status": { "short": "NS" } }
   },
   {
     "league": { "country": "Europe", "name": "UEFA Champions League" },
-    "teams": { "home": { "name": "Real Madrid" }, "away": { "name": "Manchester City" } },
-    "fixture": { "date": "2026-09-17T20:00:00", "status": { "short": "NS" } }
+    "teams": { "home": { "name": "Bayern Munich" }, "away": { "name": "Dinamo Zagreb" } },
+    "fixture": { "date": "2026-09-16T20:00:00", "status": { "short": "NS" } }
+  },
+  {
+    "league": { "country": "Europe", "name": "UEFA Champions League" },
+    "teams": { "home": { "name": "Real Madrid" }, "away": { "name": "Stuttgart" } },
+    "fixture": { "date": "2026-09-16T20:00:00", "status": { "short": "NS" } }
+  },
+  {
+    "league": { "country": "Europe", "name": "UEFA Champions League" },
+    "teams": { "home": { "name": "Sporting CP" }, "away": { "name": "Lille" } },
+    "fixture": { "date": "2026-09-16T20:00:00", "status": { "short": "NS" } }
   }
 ]
