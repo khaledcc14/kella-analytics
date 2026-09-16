@@ -17,7 +17,7 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Run script to fetch and format API data safely
+      - name: Run script to fetch live events and scores
         run: |
           python -c '
           import urllib.request
@@ -25,6 +25,7 @@ jobs:
           import datetime
 
           today_date = datetime.datetime.now().strftime("%Y-%m-%d")
+          # جلب مباريات اليوم مع التركيز على المباشر والحالي
           api_url = f"https://v3.football.api-sports.io/fixtures?date={today_date}"
           
           headers = {
@@ -35,23 +36,40 @@ jobs:
               req = urllib.request.Request(api_url, headers=headers)
               with urllib.request.urlopen(req) as response:
                   res_body = response.read().decode()
-                  data = json.loads(res_body)
+                  api_data = json.loads(res_body)
                   
-                  # التأكد من أن البيانات صالحة وليست فارغة
-                  if "response" in data:
-                      out_data = data
-                  else:
-                      out_data = {"response": []}
+                  matches_list = []
+                  if "response" in api_data:
+                      for item in api_data["response"]:
+                          league = item.get("league", {}).get("name", "General")
+                          
+                          home_team = item.get("teams", {}).get("home", {}).get("name", "Home")
+                          away_team = item.get("teams", {}).get("away", {}).get("name", "Away")
+                          
+                          goals_home = item.get("goals", {}).get("home")
+                          goals_away = item.get("goals", {}).get("away")
+                          
+                          fixture_status = item.get("fixture", {}).get("status", {})
+                          status_short = fixture_status.get("short", "NS")
+                          elapsed = fixture_status.get("elapsed", 0)
+                          
+                          matches_list.append({
+                              "league": league,
+                              "homeTeam": home_team,
+                              "awayTeam": away_team,
+                              "homeGoals": goals_home if goals_home is not None else 0,
+                              "awayGoals": goals_away if goals_away is not None else 0,
+                              "status": status_short,
+                              "elapsed": elapsed
+                          })
+
+                  final_output = {"matches": matches_list}
 
                   with open("live.json", "w", encoding="utf-8") as f:
-                      json.dump(out_data, f, ensure_ascii=False, indent=4)
-                  print("Live.json updated safely!")
+                      json.dump(final_output, f, ensure_ascii=False, indent=4)
+                  print("Live events and scores updated successfully!")
           except Exception as e:
-              print("Error occurred, keeping safe fallback:", e)
-              # قالب احتياطي آمن يمنع خطأ 500 إذا انقطع الـ API
-              fallback = {"response": []}
-              with open("live.json", "w", encoding="utf-8") as f:
-                  json.dump(fallback, f, ensure_ascii=False, indent=4)
+              print("Error fetching live events:", e)
           '
 
       - name: Commit and push changes to GitHub
@@ -59,5 +77,5 @@ jobs:
           git config --global user.name "Kella Cron Bot"
           git config --global user.email "bot@kella.com"
           git add live.json
-          git commit -m "Safe update live.json [skip ci]" || echo "No changes to commit"
+          git commit -m "Update live match events and scores [skip ci]" || echo "No changes to commit"
           git push
