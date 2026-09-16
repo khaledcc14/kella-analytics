@@ -203,7 +203,9 @@ body {
 
 <script>
 let allMatches = [];
-// الدوريات المحددة فقط التي طلبها المستخدم لتخفيف الضغط
+let currentMode = 'upcoming'; // 'upcoming' أو 'live'
+
+// الدوريات المطلوبة فقط لتخفيف الضغط
 const allowedLeagues = [
     "La Liga", 
     "Ligue 1", 
@@ -221,18 +223,41 @@ async function loadData() {
         const data = await response.json();
         let rawMatches = Array.isArray(data) ? data : (data.response || []);
         
-        // تصفية المباريات لجلب الدوريات المحددة فقط
+        // تصفية الدوريات المحددة فقط
         allMatches = rawMatches.filter(i => {
             let lName = i.league && i.league.name ? i.league.name : "";
             return allowedLeagues.includes(lName);
         });
 
         document.getElementById('connectionStar').innerHTML = "🟢";
-        renderLeaguesList(allMatches);
+        filterAndRender();
     } catch (err) {
         document.getElementById('connectionStar').innerHTML = "🔴";
         document.getElementById('output').innerHTML = `<div style="color: #fca5a5; text-align:center; padding:20px;">⚠️ تعذر الاتصال بالخادم.</div>`;
     }
+}
+
+function setMode(mode, btn) {
+    document.querySelectorAll('.mode-btn').forEach(x => x.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+    currentMode = mode;
+    filterAndRender();
+}
+
+function filterAndRender() {
+    let filteredByMode = allMatches.filter(item => {
+        let status = item.fixture && item.fixture.status && item.fixture.status.short ? item.fixture.status.short : "";
+        let isLive = ["1H", "2H", "HT", "ET", "P", "LIVE"].includes(status);
+        
+        if (currentMode === 'live') {
+            return isLive;
+        } else {
+            // Avant-match (لم تبدأ بعد أو مؤجلة)
+            return !isLive;
+        }
+    });
+
+    renderLeaguesList(filteredByMode);
 }
 
 function renderLeaguesList(matches) {
@@ -252,7 +277,7 @@ function renderLeaguesList(matches) {
 
     let keys = Object.keys(leaguesMap);
     if (keys.length === 0) {
-        output.innerHTML = `<div style="text-align: center; color: #94a3b8; padding: 20px;">لا توجد دوريات مطابقة حالياً.</div>`;
+        output.innerHTML = `<div style="text-align: center; color: #94a3b8; padding: 30px;">لا توجد مباريات متاحة في هذا القسم حالياً.</div>`;
         return;
     }
 
@@ -276,10 +301,16 @@ function renderLeaguesList(matches) {
 }
 
 function showLeagueMatches(leagueName) {
-    let filtered = allMatches.filter(i => (i.league && i.league.name === leagueName));
+    let currentFilteredMode = allMatches.filter(item => {
+        let status = item.fixture && item.fixture.status && item.fixture.status.short ? item.fixture.status.short : "";
+        let isLive = ["1H", "2H", "HT", "ET", "P", "LIVE"].includes(status);
+        return currentMode === 'live' ? isLive : !isLive;
+    });
+
+    let filtered = currentFilteredMode.filter(i => (i.league && i.league.name === leagueName));
     const output = document.getElementById('output');
     
-    let html = `<button class="back-btn" onclick="renderLeaguesList(allMatches)">⬅ العودة لقائمة الدوريات</button>`;
+    let html = `<button class="back-btn" onclick="filterAndRender()">⬅ العودة لقائمة الدوريات</button>`;
     
     filtered.forEach((item) => {
         let home = item.teams && item.teams.home ? item.teams.home.name : "مضيف";
@@ -322,7 +353,7 @@ function openMatchDetail(home, away, time, hProb, aProb, s1, s2) {
     let textGoldColor = isGold ? "color: #fde047;" : "color: #38bdf8;";
 
     output.innerHTML = `
-        <button class="back-btn" onclick="renderLeaguesList(allMatches)">⬅ العودة للمباريات</button>
+        <button class="back-btn" onclick="filterAndRender()">⬅ العودة للمباريات</button>
         <div style="${cardStyle} border-radius: 12px; padding: 15px; margin-top: 10px;">
             <h3 style="${textGoldColor} margin-top: 0; text-align: center;">📊 التحليل الشامل والذكي للقاء</h3>
             <div style="text-align: center; font-size: 15px; font-weight: bold; margin-bottom: 12px; color: #f8fafc;">
@@ -349,21 +380,22 @@ function openMatchDetail(home, away, time, hProb, aProb, s1, s2) {
     `;
 }
 
-function setMode(m, b) {
-    document.querySelectorAll('.mode-btn.active').forEach(x => x.classList.remove('active'));
-    b.classList.add('active');
-}
-
 function switchTab(tab, b) {
     document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
     b.classList.add('active');
-    if(tab === 'popular') renderLeaguesList(allMatches);
+    if(tab === 'popular') filterAndRender();
     else document.getElementById('output').innerHTML = `<div style="text-align:center; color:#38bdf8; padding:30px;">قسم (${tab}) قيد التفعيل.</div>`;
 }
 
 function filterData() {
     let q = document.getElementById('searchInput').value.toLowerCase();
-    let filtered = allMatches.filter(i => {
+    let currentFilteredMode = allMatches.filter(item => {
+        let status = item.fixture && item.fixture.status && item.fixture.status.short ? item.fixture.status.short : "";
+        let isLive = ["1H", "2H", "HT", "ET", "P", "LIVE"].includes(status);
+        return currentMode === 'live' ? isLive : !isLive;
+    });
+
+    let filtered = currentFilteredMode.filter(i => {
         let l = i.league?.name?.toLowerCase() || '';
         let c = i.league?.country?.toLowerCase() || '';
         let h = i.teams?.home?.name?.toLowerCase() || '';
