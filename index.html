@@ -148,11 +148,12 @@ let currentMode = 'upcoming';
 
 async function initApp() {
     try {
-        const response = await fetch('https://raw.githubusercontent.com/khaledcc14/kella-analytics/main/live.json');
+        // إضافة توقيت عشوائي لمنع الـ Cache نهائياً وجلب أحدث نسخة من GitHub
+        const cacheBuster = '?t=' + new Date().getTime();
+        const response = await fetch('https://raw.githubusercontent.com/khaledcc14/kella-analytics/main/live.json' + cacheBuster);
         if (!response.ok) throw new Error("Server error");
         
         const jsonResult = await response.json();
-        // جلب المباريات من مصفوفة response الموجودة في ملف الـ JSON
         allMatches = jsonResult.response || [];
         
         document.getElementById('connectionStar').innerHTML = "🟢";
@@ -180,18 +181,16 @@ function renderContent() {
     }
 
     allMatches.forEach(item => {
+        let leagueName = item.league?.name || "مباريات اليوم";
         let home = item.teams?.home?.name || "مضيف";
         let away = item.teams?.away?.name || "ضيف";
-        let homeGoals = item.goals?.home;
-        let awayGoals = item.goals?.away;
-        let scoreText = (homeGoals !== undefined && awayGoals !== undefined) ? ` (${homeGoals} - ${awayGoals})` : "";
 
         html += `
             <div class="match-card">
-                <div style="color:#38bdf8; font-weight:bold; margin-bottom: 5px;">🏟️ مباراة قمة</div>
-                <div style="font-size: 14px; font-weight: bold;">${home} vs ${away} ${scoreText}</div>
+                <div style="color:#38bdf8; font-weight:bold; margin-bottom: 5px;">🏆 ${leagueName}</div>
+                <div style="font-size: 14px; font-weight: bold;">${home} vs ${away}</div>
                 <div class="ai-prediction">
-                    🤖 <b>تحليل الذكاء الاصطناعي:</b> مباراة مثيرة، نسبة الأهداف متقاربة بين الطرفين.
+                    🤖 <b>تحليل الذكاء الاصطناعي:</b> مواجهة قوية ومثيرة ترقبوا أداءً مميزاً.
                 </div>
             </div>
         `;
@@ -210,7 +209,8 @@ function filterData() {
     let filtered = allMatches.filter(i => {
         let h = i.teams?.home?.name?.toLowerCase() || '';
         let a = i.teams?.away?.name?.toLowerCase() || '';
-        return h.includes(q) || a.includes(q);
+        let l = i.league?.name?.toLowerCase() || '';
+        return h.includes(q) || a.includes(q) || l.includes(q);
     });
 
     if (filtered.length === 0) {
