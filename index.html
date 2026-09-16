@@ -77,20 +77,41 @@ async function loadLiveMatches() {
         const data = await response.json();
         output.innerHTML = "";
 
-        if (!data.response || data.response.length === 0) {
+        // التأكد من أن البيانات عبارة عن مصفوفة صالحة
+        let matches = [];
+        if (Array.isArray(data)) {
+            matches = data;
+        } else if (data && Array.isArray(data.response)) {
+            matches = data.response;
+        } else if (data && typeof data === 'object') {
+            matches = [data]; // في حال كان عنصر واحد فقط
+        }
+
+        if (matches.length === 0) {
             output.innerHTML = `<div style="color: #f59e0b; text-align: center; padding: 10px;">لا توجد مباريات مسجلة لليوم.</div>`;
             return;
         }
 
-        // عرض كل المباريات مع حماية البيانات الفارغة
-        data.response.forEach(item => {
+        // عرض كل المباريات بأمان تامة
+        matches.forEach(item => {
             let leagueName = (item.league && item.league.name) ? item.league.name : "بطولة رسمية";
             let country = (item.league && item.league.country) ? item.league.country : "عالمي";
-            let home = (item.teams && item.teams.home) ? item.teams.home.name : "مضيف";
-            let away = (item.teams && item.teams.away) ? item.teams.away.name : "ضيف";
+            
+            let home = "مضيف";
+            let away = "ضيف";
+            if (item.teams) {
+                home = item.teams.home ? item.teams.home.name : "مضيف";
+                away = item.teams.away ? item.teams.away.name : "ضيف";
+            }
+
             let status = (item.fixture && item.fixture.status) ? item.fixture.status.short : "NS";
-            let goalsHome = (item.goals && item.goals.home !== null) ? item.goals.home : "-";
-            let goalsAway = (item.goals && item.goals.away !== null) ? item.goals.away : "-";
+            
+            let goalsHome = "-";
+            let goalsAway = "-";
+            if (item.goals) {
+                goalsHome = item.goals.home !== null ? item.goals.home : "-";
+                goalsAway = item.goals.away !== null ? item.goals.away : "-";
+            }
 
             output.innerHTML += `
                 <div class="match-card">
