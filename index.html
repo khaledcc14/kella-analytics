@@ -125,20 +125,73 @@ body {
 .fav-star.active {
     color: #eab308;
 }
+/* تصميم البطاقات ولوحة النتيجة الجديدة */
 .match-card {
     background: #131b2e;
     border: 1px solid #1e293b;
-    border-left: 4px solid #38bdf8;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 12px;
-    margin-bottom: 10px;
-    font-size: 13px;
+    margin-bottom: 12px;
     cursor: pointer;
     transition: 0.2s;
 }
 .match-card:hover {
     border-color: #38bdf8;
 }
+.division-title {
+    text-align: center;
+    font-size: 11px;
+    color: #94a3b8;
+    margin-bottom: 12px;
+    font-weight: bold;
+}
+.scoreboard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #0f172a;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+.team-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    flex: 1;
+}
+.team-logo {
+    width: 35px;
+    height: 35px;
+    object-fit: contain;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+    padding: 2px;
+}
+.team-name {
+    font-size: 11px;
+    font-weight: bold;
+    color: #f8fafc;
+    text-align: center;
+    max-width: 80px;
+}
+.score-block {
+    text-align: center;
+    min-width: 70px;
+}
+.score-text {
+    font-size: 20px;
+    font-weight: bold;
+    color: #f8fafc;
+    letter-spacing: 2px;
+}
+.match-time {
+    font-size: 10px;
+    color: #22c55e;
+    margin-top: 4px;
+}
+/* التحليل */
 .ai-prediction {
     margin-top: 8px;
     padding: 10px;
@@ -330,17 +383,28 @@ function showLeagueMatches(leagueName) {
     let html = `<button class="back-btn" onclick="switchView(currentViewMode)">⬅ العودة للقائمة</button>`;
     
     filtered.forEach((item) => {
-        let home = item.teams && item.teams.home ? item.teams.home.name : "مضيف";
-        let away = item.teams && item.teams.away ? item.teams.away.name : "ضيف";
-        let timeStr = item.fixture && item.fixture.date ? new Date(item.fixture.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : "قريباً";
+        // استخراج البيانات بدقة (الأسماء، الشعارات، الأهداف، الوقت، الـ Division)
+        let matchIndex = allMatches.indexOf(item);
+        let home = item.teams?.home?.name || "مضيف";
+        let away = item.teams?.away?.name || "ضيف";
+        let homeLogo = item.teams?.home?.logo || "https://via.placeholder.com/40?text=H";
+        let awayLogo = item.teams?.away?.logo || "https://via.placeholder.com/40?text=A";
         
+        let hGoals = item.goals?.home !== null && item.goals?.home !== undefined ? item.goals.home : "-";
+        let aGoals = item.goals?.away !== null && item.goals?.away !== undefined ? item.goals.away : "-";
+        let scoreDisplay = (hGoals === "-" && aGoals === "-") ? "VS" : `${hGoals} : ${aGoals}`;
+        
+        let timeStr = item.fixture?.date ? new Date(item.fixture.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : "قريباً";
+        let status = item.fixture?.status?.short || timeStr;
+        let displayStatus = (status === "NS") ? timeStr : (status === "FT" ? "Terminé" : status);
+        
+        let division = `Football . ${item.league?.country || 'World'} . ${item.league?.name || 'League'}`;
+        
+        // خوارزمية النسب
         let hash = (home + away).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
         let homeProb = 30 + (hash % 45);
         let awayProb = 95 - homeProb;
         let isGold = homeProb >= 68 || awayProb >= 68;
-        
-        let predScore1 = `${hash % 3}-${(hash + 1) % 3}`;
-        let predScore2 = `${(hash + 2) % 3}-${hash % 2}`;
         let selectedBestTeam = homeProb >= awayProb ? home : away;
         let bestProbVal = Math.max(homeProb, awayProb);
 
@@ -348,14 +412,29 @@ function showLeagueMatches(leagueName) {
         let goldBadge = isGold ? "🔥 <b>فرصة ذهبية ومضمونة بنسبة عالية!</b><br>" : "";
 
         html += `
-            <div class="match-card" onclick="openMatchDetail('${home.replace(/'/g, "\\'")}', '${away.replace(/'/g, "\\'")}', '${timeStr}', ${homeProb}, ${awayProb}, '${predScore1}', '${predScore2}', '${leagueName.replace(/'/g, "\\'")}')">
-                <span style="color:#38bdf8; font-weight:bold;">🏟️ ${home} vs ${away}</span><br>
-                <span style="color:#94a3b8; font-size:11px;">⏰ التوقيت: ${timeStr}</span>
+            <div class="match-card" onclick="openMatchDetail(${matchIndex})">
+                <div class="division-title">🏆 ${division}</div>
+                
+                <div class="scoreboard">
+                    <div class="team-block">
+                        <img src="${homeLogo}" class="team-logo" onerror="this.src='https://via.placeholder.com/40?text=H'">
+                        <span class="team-name">${home}</span>
+                    </div>
+                    
+                    <div class="score-block">
+                        <div class="score-text">${scoreDisplay}</div>
+                        <div class="match-time">${displayStatus}</div>
+                    </div>
+                    
+                    <div class="team-block">
+                        <img src="${awayLogo}" class="team-logo" onerror="this.src='https://via.placeholder.com/40?text=A'">
+                        <span class="team-name">${away}</span>
+                    </div>
+                </div>
                 
                 <div class="${aiClass}">
                     ${goldBadge}
-                    🤖 <b>التحليل العميق:</b> نسبة فوز <b>${selectedBestTeam}</b> تقدر بـ <b>${bestProbVal}%</b><br>
-                    🎯 <b>النتيجة المتوقعة:</b> ${predScore1} أو ${predScore2}
+                    🤖 <b>التحليل العميق:</b> نسبة فوز <b>${selectedBestTeam}</b> تقدر بـ <b>${bestProbVal}%</b>
                 </div>
             </div>
         `;
@@ -363,27 +442,65 @@ function showLeagueMatches(leagueName) {
     output.innerHTML = html;
 }
 
-function openMatchDetail(home, away, time, hProb, aProb, s1, s2, leagueName) {
+function openMatchDetail(matchIndex) {
+    let item = allMatches[matchIndex];
+    if(!item) return;
+
     const output = document.getElementById('output');
+    
+    // استخراج بيانات المباراة للتحليل
+    let home = item.teams?.home?.name || "مضيف";
+    let away = item.teams?.away?.name || "ضيف";
+    let homeLogo = item.teams?.home?.logo || "https://via.placeholder.com/40?text=H";
+    let awayLogo = item.teams?.away?.logo || "https://via.placeholder.com/40?text=A";
+    let hGoals = item.goals?.home !== null && item.goals?.home !== undefined ? item.goals.home : "-";
+    let aGoals = item.goals?.away !== null && item.goals?.away !== undefined ? item.goals.away : "-";
+    let scoreDisplay = (hGoals === "-" && aGoals === "-") ? "VS" : `${hGoals} : ${aGoals}`;
+    let timeStr = item.fixture?.date ? new Date(item.fixture.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : "قريباً";
+    let status = item.fixture?.status?.short || timeStr;
+    let displayStatus = (status === "NS") ? timeStr : (status === "FT" ? "Terminé" : status);
+    let division = `Football . ${item.league?.country || 'World'} . ${item.league?.name || 'League'}`;
+    let leagueName = item.league?.name || "";
+
+    // حسابات الذكاء الاصطناعي
+    let hash = (home + away).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    let hProb = 30 + (hash % 45);
+    let aProb = 95 - hProb;
+    let s1 = `${hash % 3}-${(hash + 1) % 3}`;
+    let s2 = `${(hash + 2) % 3}-${hash % 2}`;
+    
     let isGold = hProb >= 68 || aProb >= 68;
     let cardStyle = isGold ? "background: #1e1b4b; border: 2px solid #fbbf24;" : "background: #131b2e; border: 1px solid #1e293b;";
     let textGoldColor = isGold ? "color: #fde047;" : "color: #38bdf8;";
 
-    // تحديد الفرق الأقوى بوضوح ودقة بناءً على البيانات
     let strongerDefense = hProb >= aProb ? home : away;
     let strongerAttack = hProb >= aProb ? away : home;
-    let yellowCardsEst = 3 + ((hProb + aProb) % 4); // توقع عدد البطاقات الصفراء
+    let yellowCardsEst = 3 + ((hProb + aProb) % 4);
     let redCardRisk = (hProb * aProb) % 10 > 7 ? "محتملة (حذر مطلووب)" : "منخفضة (لعب نظيف)";
-    let cornersEst = 8 + (hProb % 5); // توقع عدد الركنيات
+    let cornersEst = 8 + (hProb % 5);
 
     output.innerHTML = `
         <button class="back-btn" onclick="showLeagueMatches('${leagueName.replace(/"/g, '&quot;')}')">⬅ العودة للمباريات</button>
+        
         <div style="${cardStyle} border-radius: 12px; padding: 15px; margin-top: 10px;">
-            <h3 style="${textGoldColor} margin-top: 0; text-align: center;">📊 التحليل الشامل والذكي للقاء</h3>
-            <div style="text-align: center; font-size: 15px; font-weight: bold; margin-bottom: 12px; color: #f8fafc;">
-                ${home} 🆚 ${away}
+            <div class="division-title">🏆 ${division}</div>
+            
+            <div class="scoreboard" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);">
+                <div class="team-block">
+                    <img src="${homeLogo}" class="team-logo" onerror="this.src='https://via.placeholder.com/40?text=H'">
+                    <span class="team-name">${home}</span>
+                </div>
+                <div class="score-block">
+                    <div class="score-text">${scoreDisplay}</div>
+                    <div class="match-time">${displayStatus}</div>
+                </div>
+                <div class="team-block">
+                    <img src="${awayLogo}" class="team-logo" onerror="this.src='https://via.placeholder.com/40?text=A'">
+                    <span class="team-name">${away}</span>
+                </div>
             </div>
-            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 10px; text-align: center;">⏰ موعد اللقاء: ${time}</div>
+            
+            <h3 style="${textGoldColor} margin-top: 15px; text-align: center; font-size:14px;">📊 التحليل الشامل والذكي للقاء</h3>
             
             <hr style="border: 0; border-top: 1px solid #1e293b; margin: 10px 0;">
 
