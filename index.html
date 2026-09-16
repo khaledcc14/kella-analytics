@@ -203,31 +203,14 @@ body {
 
 <script>
 let allMatches = [];
-let currentMode = 'upcoming'; // 'upcoming' أو 'live'
-
-// الدوريات المطلوبة فقط لتخفيف الضغط
-const allowedLeagues = [
-    "La Liga", 
-    "Ligue 1", 
-    "Saudi Professional League", 
-    "Süper Lig", 
-    "Brasileirão Série A", 
-    "Premier League", 
-    "UEFA Champions League"
-];
+let currentMode = 'upcoming';
 
 async function loadData() {
     try {
         const response = await fetch('https://raw.githubusercontent.com/khaledcc14/kella-analytics/main/live.json?t=' + new Date().getTime());
         if (!response.ok) throw new Error("خطأ في جلب البيانات");
         const data = await response.json();
-        let rawMatches = Array.isArray(data) ? data : (data.response || []);
-        
-        // تصفية الدوريات المحددة فقط
-        allMatches = rawMatches.filter(i => {
-            let lName = i.league && i.league.name ? i.league.name : "";
-            return allowedLeagues.includes(lName);
-        });
+        allMatches = Array.isArray(data) ? data : (data.response || []);
 
         document.getElementById('connectionStar').innerHTML = "🟢";
         filterAndRender();
@@ -252,7 +235,6 @@ function filterAndRender() {
         if (currentMode === 'live') {
             return isLive;
         } else {
-            // Avant-match (لم تبدأ بعد أو مؤجلة)
             return !isLive;
         }
     });
@@ -270,7 +252,7 @@ function renderLeaguesList(matches) {
         let key = `${country} - ${leagueName}`;
         
         if (!leaguesMap[key]) {
-            leaguesMap[key] = { country: country, name: leagueName, count: 0 };
+            leaguesMap[key] = { country: country, name: leagueName, fullName: key, count: 0 };
         }
         leaguesMap[key].count++;
     });
@@ -284,8 +266,9 @@ function renderLeaguesList(matches) {
     let html = "";
     keys.forEach(k => {
         let l = leaguesMap[k];
+        let safeKey = l.fullName.replace(/"/g, '&quot;');
         html += `
-            <div class="league-item" onclick='showLeagueMatches("${l.name.replace(/"/g, '&quot;')}")'>
+            <div class="league-item" onclick='showLeagueMatches("${safeKey}")'>
                 <div class="league-info">
                     <span>⚽</span>
                     <span>${l.country} : ${l.name}</span>
@@ -300,16 +283,21 @@ function renderLeaguesList(matches) {
     output.innerHTML = html;
 }
 
-function showLeagueMatches(leagueName) {
+function showLeagueMatches(leagueKey) {
     let currentFilteredMode = allMatches.filter(item => {
         let status = item.fixture && item.fixture.status && item.fixture.status.short ? item.fixture.status.short : "";
         let isLive = ["1H", "2H", "HT", "ET", "P", "LIVE"].includes(status);
         return currentMode === 'live' ? isLive : !isLive;
     });
 
-    let filtered = currentFilteredMode.filter(i => (i.league && i.league.name === leagueName));
+    // التصفية بدقة حسب مفتاح الدوري (البلد + الاسم) لضمان عدم تكرار المباريات الخاطئة
+    let filtered = currentFilteredMode.filter(i => {
+        let country = i.league && i.league.country ? i.league.country : "عالمي";
+        let name = i.league && i.league.name ? i.league.name : "بطولة أخرى";
+        return `${country} - ${name}` === leagueKey;
+    });
+
     const output = document.getElementById('output');
-    
     let html = `<button class="back-btn" onclick="filterAndRender()">⬅ العودة لقائمة الدوريات</button>`;
     
     filtered.forEach((item) => {
@@ -331,7 +319,7 @@ function showLeagueMatches(leagueName) {
         let goldBadge = isGold ? "🔥 <b>فرصة ذهبية ومضمونة بنسبة عالية!</b><br>" : "";
 
         html += `
-            <div class="match-card" onclick="openMatchDetail('${home}', '${away}', '${timeStr}', ${homeProb}, ${awayProb}, '${predScore1}', '${predScore2}')">
+            <div class="match-card" onclick="openMatchDetail('${home}', '${away}', '${timeStr}', ${homeProb}, ${awayProb}, '${predScore1}', '${predScore2}', '${leagueKey}')">
                 <span style="color:#38bdf8; font-weight:bold;">🏟️ ${home} vs ${away}</span><br>
                 <span style="color:#94a3b8; font-size:11px;">⏰ التوقيت: ${timeStr}</span>
                 
@@ -346,14 +334,14 @@ function showLeagueMatches(leagueName) {
     output.innerHTML = html;
 }
 
-function openMatchDetail(home, away, time, hProb, aProb, s1, s2) {
+function openMatchDetail(home, away, time, hProb, aProb, s1, s2, leagueKey) {
     const output = document.getElementById('output');
     let isGold = hProb >= 68 || aProb >= 68;
     let cardStyle = isGold ? "background: #1e1b4b; border: 2px solid #fbbf24;" : "background: #131b2e; border: 1px solid #1e293b;";
     let textGoldColor = isGold ? "color: #fde047;" : "color: #38bdf8;";
 
     output.innerHTML = `
-        <button class="back-btn" onclick="filterAndRender()">⬅ العودة للمباريات</button>
+        <button class="back-btn" onclick="showLeagueMatches('${leagueKey}')">⬅ العودة للمباريات</button>
         <div style="${cardStyle} border-radius: 12px; padding: 15px; margin-top: 10px;">
             <h3 style="${textGoldColor} margin-top: 0; text-align: center;">📊 التحليل الشامل والذكي للقاء</h3>
             <div style="text-align: center; font-size: 15px; font-weight: bold; margin-bottom: 12px; color: #f8fafc;">
