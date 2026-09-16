@@ -509,7 +509,7 @@
                 "timestamp": 1789534800,
                 "periods": {
                     "first": 1789534800,
-                    "second": null
+                    "second": 1789538400
                 },
                 "venue": {
                     "id": 0,
@@ -517,9 +517,9 @@
                     "city": null
                 },
                 "status": {
-                    "long": "First Half",
-                    "short": "1H",
-                    "elapsed": 14,
+                    "long": "Second Half",
+                    "short": "2H",
+                    "elapsed": 62,
                     "extra": null
                 }
             },
@@ -538,18 +538,18 @@
                     "id": 10184,
                     "name": "UAE U23",
                     "logo": "https://media.api-sports.io/football/teams/10184.png",
-                    "winner": null
+                    "winner": false
                 },
                 "away": {
                     "id": 10937,
                     "name": "Iran U23",
                     "logo": "https://media.api-sports.io/football/teams/10937.png",
-                    "winner": null
+                    "winner": true
                 }
             },
             "goals": {
-                "home": 0,
-                "away": 0
+                "home": 1,
+                "away": 2
             },
             "score": {
                 "halftime": {
