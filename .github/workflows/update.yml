@@ -18,14 +18,14 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Fetch and Format Real API Data
+      - name: Fetch Full Match Events and Goals
         run: |
           python -c '
           import urllib.request
           import json
 
           api_key = "a8950bd15129e3c88a017109cb2dd1981661bb901886343"
-          # استعلام شامل للبطولات الكبرى مباشرة لتجنب قيود النطاق الزمني الضيق
+          # استعلام شامل لمباريات اليوم مع طلب تفاصيل الأحداث إن وجدت
           url = f"https://apiv3.apifootball.com/?action=get_matches&APIkey={api_key}&from=2026-09-17&to=2026-09-17"
 
           try:
@@ -40,6 +40,7 @@ jobs:
                   formatted_matches = []
                   for m in api_matches:
                       match_obj = {
+                          "match_id": m.get("match_id"),
                           "league": {
                               "name": m.get("league_name", "General")
                           },
@@ -48,19 +49,25 @@ jobs:
                               "away": {"name": m.get("match_awayteam_name", "Away")}
                           },
                           "fixture": {
+                              "date": m.get("match_date"),
+                              "time": m.get("match_time"),
                               "status": {"short": m.get("match_status", "NS")}
                           },
                           "goals": {
                               "home": m.get("match_hometeam_score", 0),
                               "away": m.get("match_awayteam_score", 0)
-                          }
+                          },
+                          # جلب تفاصيل الأحداث والأهداف والبطاقات إن توفرت في استجابة الـ API
+                          "goalscorers": m.get("goalscorers", []),
+                          "cards": m.get("cards", []),
+                          "substitutions": m.get("substitutions", [])
                       }
                       formatted_matches.append(match_obj)
 
                   final_output = {"matches": formatted_matches}
                   with open("live.json", "w", encoding="utf-8") as f:
                       json.dump(final_output, f, ensure_ascii=False, indent=4)
-                  print(f"Successfully processed {len(formatted_matches)} matches.")
+                  print(f"Successfully processed {len(formatted_matches)} matches with full events data.")
           except Exception as e:
               print("Error:", e)
           '
@@ -70,6 +77,6 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add live.json
-          git diff --quiet && git diff --staged --quiet || git commit -m "Update live.json with real API matches [skip ci]"
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update live.json with full match events and goals [skip ci]"
           git push || echo "Push skipped or no changes"
           
