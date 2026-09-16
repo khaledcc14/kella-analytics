@@ -3,7 +3,10 @@ name: Update Football Data
 on:
   schedule:
     - cron: '0 * * * *' # يتم التحديث كل ساعة أوتوماتيكياً
-  workflow_dispatch: # زر لتشغيل التحديث يدوياً متى شئت من موقع GitHub
+  workflow_dispatch: # زر لتشغيل الحديث يدوياً من منت منح من GitHub
+
+permissions:
+  contents: write
 
 jobs:
   update-data:
