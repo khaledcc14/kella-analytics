@@ -1,12 +1,40 @@
 {
     "response": [
         {
-            "fixture": { "status": { "short": "FT" } },
+            "league": { "country": "Europe", "name": "UEFA Champions League" },
             "teams": {
-                "home": { "name": "Real Madrid" },
-                "away": { "name": "Barcelona" }
+                "home": { "name": "Manchester City" },
+                "away": { "name": "Inter" }
             },
-            "goals": { "home": 3, "away": 2 }
+            "fixture": { "status": { "short": "NS" } },
+            "goals": { "home": null, "away": null }
+        },
+        {
+            "league": { "country": "Europe", "name": "UEFA Champions League" },
+            "teams": {
+                "home": { "name": "Paris Saint-Germain" },
+                "away": { "name": "Real Madrid" }
+            },
+            "fixture": { "status": { "short": "NS" } },
+            "goals": { "home": null, "away": null }
+        },
+        {
+            "league": { "country": "Espagne", "name": "La Liga" },
+            "teams": {
+                "home": { "name": "Barcelone" },
+                "away": { "name": "Atlético de Madrid" }
+            },
+            "fixture": { "status": { "short": "NS" } },
+            "goals": { "home": null, "away": null }
+        },
+        {
+            "league": { "country": "Angleterre", "name": "Premier League" },
+            "teams": {
+                "home": { "name": "Arsenal" },
+                "away": { "name": "Liverpool" }
+            },
+            "fixture": { "status": { "short": "NS" } },
+            "goals": { "home": null, "away": null }
         }
     ]
 }
