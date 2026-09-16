@@ -1,40 +1,94 @@
 {
-    "response": [
-        {
-            "league": { "country": "Europe", "name": "UEFA Champions League" },
-            "teams": {
-                "home": { "name": "Manchester City" },
-                "away": { "name": "Inter" }
-            },
-            "fixture": { "status": { "short": "NS" } },
-            "goals": { "home": null, "away": null }
-        },
-        {
-            "league": { "country": "Europe", "name": "UEFA Champions League" },
-            "teams": {
-                "home": { "name": "Paris Saint-Germain" },
-                "away": { "name": "Real Madrid" }
-            },
-            "fixture": { "status": { "short": "NS" } },
-            "goals": { "home": null, "away": null }
-        },
-        {
-            "league": { "country": "Espagne", "name": "La Liga" },
-            "teams": {
-                "home": { "name": "Barcelone" },
-                "away": { "name": "Atlético de Madrid" }
-            },
-            "fixture": { "status": { "short": "NS" } },
-            "goals": { "home": null, "away": null }
-        },
-        {
-            "league": { "country": "Angleterre", "name": "Premier League" },
-            "teams": {
-                "home": { "name": "Arsenal" },
-                "away": { "name": "Liverpool" }
-            },
-            "fixture": { "status": { "short": "NS" } },
-            "goals": { "home": null, "away": null }
-        }
-    ]
+  "response": [
+    {
+      "league": {
+        "name": "Ligue Europa de l'UEFA",
+        "country": "Europe"
+      },
+      "teams": {
+        "home": { "name": "Ararat-Armenie" },
+        "away": { "name": "AC Sparta Prague" }
+      },
+      "fixture": {
+        "date": "2026-09-16T17:45:00",
+        "status": { "short": "NS" }
+      },
+      "goals": { "home": null, "away": null }
+    },
+    {
+      "league": {
+        "name": "Ligue Europa de l'UEFA",
+        "country": "Europe"
+      },
+      "teams": {
+        "home": { "name": "AC Omonia" },
+        "away": { "name": "Celta de Vigo" }
+      },
+      "fixture": {
+        "date": "2026-09-16T17:45:00",
+        "status": { "short": "NS" }
+      },
+      "goals": { "home": null, "away": null }
+    },
+    {
+      "league": {
+        "name": "Ligue Europa de l'UEFA",
+        "country": "Europe"
+      },
+      "teams": {
+        "home": { "name": "Anderlecht" },
+        "away": { "name": "Lyon" }
+      },
+      "fixture": {
+        "date": "2026-09-16T20:00:00",
+        "status": { "short": "NS" }
+      },
+      "goals": { "home": null, "away": null }
+    },
+    {
+      "league": {
+        "name": "Espagne. La Liga",
+        "country": "Spain"
+      },
+      "teams": {
+        "home": { "name": "Atlético de Madrid" },
+        "away": { "name": "Osasuna" }
+      },
+      "fixture": {
+        "date": "2026-09-16T18:00:00",
+        "status": { "short": "NS" }
+      },
+      "goals": { "home": null, "away": null }
+    },
+    {
+      "league": {
+        "name": "Espagne. La Liga",
+        "country": "Spain"
+      },
+      "teams": {
+        "home": { "name": "Barcelone" },
+        "away": { "name": "Racing de Santander" }
+      },
+      "fixture": {
+        "date": "2026-09-16T20:30:00",
+        "status": { "short": "NS" }
+      },
+      "goals": { "home": null, "away": null }
+    },
+    {
+      "league": {
+        "name": "Angleterre. Coupe de la Ligue",
+        "country": "England"
+      },
+      "teams": {
+        "home": { "name": "Manchester United" },
+        "away": { "name": "Brighton & Hove Albion" }
+      },
+      "fixture": {
+        "date": "2026-09-16T20:00:00",
+        "status": { "short": "NS" }
+      },
+      "goals": { "home": null, "away": null }
+    }
+  ]
 }
