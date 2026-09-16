@@ -17,7 +17,7 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Run script to fetch real API and update live.json
+      - name: Run script to fetch and format API data safely
         run: |
           python -c '
           import urllib.request
@@ -34,13 +34,24 @@ jobs:
           try:
               req = urllib.request.Request(api_url, headers=headers)
               with urllib.request.urlopen(req) as response:
-                  data = json.loads(response.read().decode())
+                  res_body = response.read().decode()
+                  data = json.loads(res_body)
                   
+                  # التأكد من أن البيانات صالحة وليست فارغة
+                  if "response" in data:
+                      out_data = data
+                  else:
+                      out_data = {"response": []}
+
                   with open("live.json", "w", encoding="utf-8") as f:
-                      json.dump(data, f, ensure_ascii=False, indent+4 if False else 4)
-                  print("Live.json updated successfully with real API data!")
+                      json.dump(out_data, f, ensure_ascii=False, indent=4)
+                  print("Live.json updated safely!")
           except Exception as e:
-              print("Error fetching real API data:", e)
+              print("Error occurred, keeping safe fallback:", e)
+              # قالب احتياطي آمن يمنع خطأ 500 إذا انقطع الـ API
+              fallback = {"response": []}
+              with open("live.json", "w", encoding="utf-8") as f:
+                  json.dump(fallback, f, ensure_ascii=False, indent=4)
           '
 
       - name: Commit and push changes to GitHub
@@ -48,5 +59,5 @@ jobs:
           git config --global user.name "Kella Cron Bot"
           git config --global user.email "bot@kella.com"
           git add live.json
-          git commit -m "Auto-update live matches from API-Football [skip ci]" || echo "No changes to commit"
+          git commit -m "Safe update live.json [skip ci]" || echo "No changes to commit"
           git push
