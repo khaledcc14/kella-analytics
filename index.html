@@ -121,7 +121,7 @@
         </div>
 
         <div id="output">
-            <div style="text-align: center; color: #9ca3af; padding: 30px;">جاري تحميل المباريات...</div>
+            <div style="text-align: center; color: #9ca3af; padding: 30px;">جاري جلب المباريات الحقيقية من API...</div>
         </div>
 
         <div class="bottom-nav">
@@ -146,18 +146,11 @@
         let currentTab = 'popular';
         const AUTH_TOKEN = "3d9f5cb78f521d0803";
 
-        // مباريات واقعية واحتياطية تضمن عمل التطبيق فوراً وبقوة
-        const liveFallback = [
-            { league: "La Liga", home: "Real Betis", away: "Getafe", time: "21:00", score: "1 - 0 (LIVE)", status: "IN_PLAY", odds: "1: 1.70 | X: 3.20 | 2: 5.00" },
-            { league: "Copa Libertadores", home: "SC Corinthians", away: "Estudiantes de La Plata", time: "00:30", score: "0 - 0 (SCHEDULED)", status: "SCHEDULED", odds: "1: 1.90 | X: 3.40 | 2: 2.10" },
-            { league: "UEFA Champions League", home: "Real Madrid", away: "Paris Saint-Germain", time: "21:00", score: "2 - 1 (LIVE)", status: "IN_PLAY", odds: "1: 1.85 | X: 3.40 | 2: 4.10" }
-        ];
-
         async function initApp() {
             try {
-                // استعمال بروكسي corsproxy.io السريع جداً لدعم الـ Headers
+                // استخدام thingproxy المخصص لتجاوز الـ CORS وجلب البيانات الحقيقية
                 const targetUrl = 'https://api.football-data.org/v4/matches';
-                const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(targetUrl);
+                const proxyUrl = 'https://thingproxy.freeboard.io/fetch/' + targetUrl;
                 
                 const response = await fetch(proxyUrl, {
                     headers: {
@@ -165,11 +158,11 @@
                     }
                 });
                 
-                if (!response.ok) throw new Error('API Error');
+                if (!response.ok) throw new Error('Network response failed');
 
                 const data = await response.json();
                 
-                if (data.matches && Array.isArray(data.matches) && data.matches.length > 0) {
+                if (data.matches && Array.isArray(data.matches)) {
                     allMatches = data.matches.map(match => {
                         let scoreText = match.status;
                         if (match.score && match.score.fullTime && match.score.fullTime.home !== null) {
@@ -190,13 +183,15 @@
                     });
                     document.getElementById('connectionStar').innerHTML = '🟢';
                 } else {
-                    allMatches = liveFallback;
-                    document.getElementById('connectionStar').innerHTML = '🟡';
+                    document.getElementById('connectionStar').innerHTML = '🔴';
+                    document.getElementById('output').innerHTML = `<div style="text-align: center; color: #ef4444; padding: 30px;">لا توجد مباريات متاحة حالياً في الـ API</div>`;
+                    return;
                 }
             } catch (e) {
-                console.log('Falling back to default matches due to network/CORS:', e);
-                allMatches = liveFallback;
-                document.getElementById('connectionStar').innerHTML = '🟡';
+                console.error('Error fetching matches:', e);
+                document.getElementById('connectionStar').innerHTML = '🔴';
+                document.getElementById('output').innerHTML = `<div style="text-align: center; color: #ef4444; padding: 30px;">فشل الاتصال بالـ API الحقيقي (CORS/Network Error)</div>`;
+                return;
             }
 
             renderContent();
@@ -223,6 +218,8 @@
         }
 
         function renderContent() {
+            if (currentTab !== 'popular') return;
+
             const output = document.getElementById('output');
             const searchVal = document.getElementById('searchInput') ? document.getElementById('searchInput').value.toLowerCase() : '';
 
@@ -241,7 +238,7 @@
             });
 
             if (filtered.length === 0) {
-                output.innerHTML = `<div style="text-align: center; color: #9ca3af; padding: 30px;">لا توجد مباريات مطابقة حالياً في وضع (${currentMode === 'live' ? 'المباشر' : 'Avant-match'})</div>`;
+                output.innerHTML = `<div style="text-align: center; color: #9ca3af; padding: 30px;">لا توجد مباريات مطابقة حالياً</div>`;
                 return;
             }
 
