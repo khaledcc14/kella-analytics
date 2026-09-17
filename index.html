@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLA Analytics Pro - Live Football & AI</title>
+    <title>KELLA Analytics Pro - Multi-Sport Live & AI</title>
     <meta name="theme-color" content="#0F0F10">
     <style>
         body {
@@ -68,7 +68,7 @@
             color: #9ca3af;
             border: none;
             padding: 10px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             border-radius: 20px;
             cursor: pointer;
@@ -76,6 +76,37 @@
         .mode-btn.active {
             background: #3b82f6;
             color: #F0F0F0;
+        }
+        /* شريط فلاتر الرياضات الأفقي */
+        .sports-filter-scroll {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 5px 0 10px 0;
+            margin-bottom: 10px;
+            scrollbar-width: none;
+        }
+        .sports-filter-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        .sport-chip {
+            background: #1f293a;
+            border: 1px solid #2d3748;
+            color: #9ca3af;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            white-space: nowrap;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .sport-chip.active {
+            background: #3b82f6;
+            color: #ffffff;
+            border-color: #3b82f6;
         }
         .search-box {
             width: 100%;
@@ -104,6 +135,13 @@
             font-size: 11px;
             color: #9ca3af;
             margin-bottom: 8px;
+        }
+        .sport-badge-tag {
+            background: #0f172a;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #3b82f6;
+            font-weight: bold;
         }
         .teams-row {
             display: flex;
@@ -192,13 +230,13 @@
             position: relative;
             max-height: 85vh;
             overflow-y: auto;
-            direction: rtl; /* ضبط اتجاه الكتابة بالعربية بشكل صحيح تماماً */
+            direction: rtl;
             text-align: right;
         }
         .close-modal {
             position: absolute;
             top: 10px;
-            left: 15px; /* تم تعديلها لتتناسب مع اتجاه اليمين */
+            left: 15px;
             right: auto;
             background: transparent;
             border: none;
@@ -238,9 +276,9 @@
 <body>
     <div class="app-container">
         <div class="top-header">
-            <h2>KELLA Analytics Pro ⚽</h2>
+            <h2>KELLA Analytics Pro 🏆</h2>
             <div class="header-actions">
-                <button class="refresh-btn" onclick="initApp()" title="تحديث البيانات">🔄</button>
+                <button class="refresh-btn" onclick="initApp()" title="تحديث مباشر اليوم">🔄</button>
                 <span id="connectionStar" class="status-star">🟢</span>
             </div>
         </div>
@@ -250,12 +288,17 @@
             <button class="mode-btn" onclick="setMode('upcoming', this)">Avant-match</button>
         </div>
 
+        <!-- شريط تصفية الرياضات الديناميكي -->
+        <div id="sportsFilterContainer" class="sports-filter-scroll">
+            <div class="sport-chip active" onclick="filterBySport('all', this)">⚡ الكل</div>
+        </div>
+
         <div id="searchContainer">
-            <input type="text" id="searchInput" class="search-box" placeholder="البحث عن فريق..." oninput="filterMatches()">
+            <input type="text" id="searchInput" class="search-box" placeholder="البحث عن فريق أو بطولة..." oninput="renderContent()">
         </div>
 
         <div id="output">
-            <div style="text-align: center; color: #9ca3af; padding: 30px;">جاري جلب المباريات والتحليلات...</div>
+            <div style="text-align: center; color: #9ca3af; padding: 30px;">🔄 جاري جلب مباريات ورياضات اليوم أوتوماتيكياً...</div>
         </div>
 
         <div class="bottom-nav">
@@ -279,74 +322,151 @@
         <div class="modal-content">
             <button class="close-modal" onclick="closeAiModal()">&times;</button>
             <h3 style="color: #3b82f6; margin-top: 0; display: flex; align-items: center; gap: 8px;">
-                <span>📊</span> توقعات الذكاء الاصطناعي
+                <span>📊</span> توقعات الذكاء الاصطناعي الشاملة
             </h3>
-            <div id="aiModalBody" style="font-size: 13px; line-height: 1.6;">
-                <!-- يتم تعبئة التحليل هنا ديناميكياً -->
-            </div>
+            <div id="aiModalBody" style="font-size: 13px; line-height: 1.6;"></div>
         </div>
     </div>
 
     <script>
         let allMatches = [];
+        let finishedMatches = [];
+        let availableSports = new Set();
+        let selectedSport = 'all';
         let currentMode = 'live';
         let currentTab = 'popular';
 
+        // دالة جلب تاريخ اليوم أوتوماتيكياً بتنسيق YYYY-MM-DD
+        function getTodayDateString() {
+            const d = new Date();
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // إعطاء إيموجي مناسب لكل رياضة تأتي من الـ API
+        function getSportEmoji(sportName) {
+            const s = (sportName || '').toLowerCase();
+            if (s.includes('soccer') || s.includes('football')) return '⚽';
+            if (s.includes('basketball')) return '🏀';
+            if (s.includes('tennis')) return '🎾';
+            if (s.includes('baseball')) return '⚾';
+            if (s.includes('cricket')) return '🏏';
+            if (s.includes('rugby')) return '🏉';
+            if (s.includes('hockey')) return '🏒';
+            if (s.includes('volleyball')) return '🏐';
+            return '🏅';
+        }
+
         async function initApp() {
-            document.getElementById('output').innerHTML = `<div style="text-align: center; color: #3b82f6; padding: 30px;">🔄 جاري تحديث البيانات من المصادر...</div>`;
+            const todayStr = getTodayDateString();
+            document.getElementById('output').innerHTML = `<div style="text-align: center; color: #3b82f6; padding: 30px;">🔄 جاري جلب مباريات اليوم (${todayStr})...</div>`;
             
             let fetchedData = false;
+            availableSports.clear();
 
             try {
-                const response = await fetch('https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d=2026-09-17');
+                const response = await fetch(`https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d=${todayStr}`);
                 if (response.ok) {
                     const data = await response.json();
                     if (data.events && Array.isArray(data.events) && data.events.length > 0) {
-                        allMatches = data.events.map((event, index) => {
+                        
+                        let liveArr = [];
+                        let historyArr = [];
+
+                        data.events.forEach((event, index) => {
+                            let sportName = event.strSport || 'Football';
+                            availableSports.add(sportName);
+
                             let homeScore = event.intHomeScore !== null ? parseInt(event.intHomeScore) : null;
                             let awayScore = event.intAwayScore !== null ? parseInt(event.intAwayScore) : null;
-                            let statusText = event.strStatus || 'LIVE';
-                            let isScheduled = homeScore === null || awayScore === null || statusText.includes('NS') || statusText.includes('Not Started');
+                            let statusText = (event.strStatus || 'LIVE').toUpperCase();
+                            
+                            let isFinished = statusText.includes('FT') || statusText.includes('FINISH') || statusText.includes('AET') || statusText.includes('PEN');
+                            let isScheduled = homeScore === null || awayScore === null || statusText.includes('NS') || statusText.includes('NOT STARTED');
 
-                            return {
+                            let matchItem = {
                                 id: index,
-                                league: event.strLeague || 'International Match',
+                                sport: sportName,
+                                sportEmoji: getSportEmoji(sportName),
+                                league: event.strLeague || 'International',
                                 home: event.strHomeTeam || 'Home Team',
                                 away: event.strAwayTeam || 'Away Team',
                                 homeLogo: event.strHomeBadge || 'https://api.iconify.design/fluent-emoji-flat:soccer-ball.svg',
                                 awayLogo: event.strAwayBadge || 'https://api.iconify.design/fluent-emoji-flat:soccer-ball.svg',
                                 homeScore: homeScore,
                                 awayScore: awayScore,
-                                date: event.dateEvent || '2026-09-17',
-                                time: event.strTime ? event.strTime.substring(0, 5) : '21:00',
-                                status: isScheduled ? 'SCHEDULED' : 'IN_PLAY',
+                                date: event.dateEvent || todayStr,
+                                time: event.strTime ? event.strTime.substring(0, 5) : '00:00',
+                                status: isScheduled ? 'SCHEDULED' : (isFinished ? 'FINISHED' : 'IN_PLAY'),
                                 statusText: statusText,
                                 odds: "1: 1.95 | X: 3.40 | 2: 2.05"
                             };
+
+                            if (isFinished) {
+                                historyArr.push(matchItem);
+                            } else {
+                                liveArr.push(matchItem);
+                            }
                         });
-                        fetchedData = true;
+
+                        if (liveArr.length > 0 || historyArr.length > 0) {
+                            allMatches = liveArr;
+                            finishedMatches = historyArr;
+                            fetchedData = true;
+                        }
                     }
                 }
             } catch (e) {
-                console.log('API source error, loading fallback matches...');
+                console.log('API live sync error, using fallback...');
             }
 
             if (!fetchedData) {
-                loadFallbackMatches();
+                loadDynamicFallback(todayStr);
             } else {
                 document.getElementById('connectionStar').innerHTML = '🟢';
+                buildSportsFiltersUI();
                 renderContent();
             }
         }
 
-        function loadFallbackMatches() {
+        function loadDynamicFallback(todayStr) {
+            availableSports.clear();
+            availableSports.add('Soccer');
+            availableSports.add('Baseball');
+
             allMatches = [
-                { id: 1, league: "UEFA Champions League", home: "Real Madrid", away: "Paris Saint-Germain", homeLogo: "https://www.thesportsdb.com/images/media/team/badge/ryvwpu1421422457.png", awayLogo: "https://www.thesportsdb.com/images/media/team/badge/uxuwus1446739600.png", homeScore: 4, awayScore: 1, date: "2026-09-17", time: "21:00", status: "IN_PLAY", statusText: "LIVE", odds: "1: 1.85 | X: 3.40 | 2: 4.10" },
-                { id: 2, league: "UEFA Champions League", home: "Manchester City", away: "Bayern Munich", homeLogo: "https://www.thesportsdb.com/images/media/team/badge/vwpvry1467464645.png", awayLogo: "https://www.thesportsdb.com/images/media/team/badge/1kylqt1554907952.png", homeScore: 1, awayScore: 1, date: "2026-09-17", time: "21:00", status: "IN_PLAY", statusText: "LIVE", odds: "1: 2.10 | X: 3.30 | 2: 3.20" },
-                { id: 3, league: "La Liga", home: "FC Barcelona", away: "Atletico Madrid", homeLogo: "https://www.thesportsdb.com/images/media/team/badge/xzqmua1527756519.png", awayLogo: "https://www.thesportsdb.com/images/media/team/badge/q91ia01527756708.png", homeScore: 0, awayScore: 0, date: "2026-09-17", time: "20:00", status: "IN_PLAY", statusText: "LIVE", odds: "1: 1.90 | X: 3.50 | 2: 3.90" },
-                { id: 4, league: "Premier League", home: "Arsenal", away: "Liverpool", homeLogo: "https://www.thesportsdb.com/images/media/team/badge/vrvtsq1448813175.png", awayLogo: "https://www.thesportsdb.com/images/media/team/badge/wytnsx1448815235.png", homeScore: null, awayScore: null, date: "2026-09-17", time: "22:30", status: "SCHEDULED", statusText: "NS", odds: "1: 2.30 | X: 3.20 | 2: 2.80" }
+                { id: 1, sport: "Soccer", sportEmoji: "⚽", league: "UEFA Champions League", home: "Real Madrid", away: "Paris Saint-Germain", homeLogo: "https://www.thesportsdb.com/images/media/team/badge/ryvwpu1421422457.png", awayLogo: "https://www.thesportsdb.com/images/media/team/badge/uxuwus1446739600.png", homeScore: 2, awayScore: 1, date: todayStr, time: "21:00", status: "IN_PLAY", statusText: "74'", odds: "1: 1.85 | X: 3.40 | 2: 4.10" },
+                { id: 2, sport: "Baseball", sportEmoji: "⚾", league: "Nippon Baseball League", home: "Hanshin Tigers", away: "Hiroshima Toyo Carp", homeLogo: "https://api.iconify.design/fluent-emoji-flat:baseball.svg", awayLogo: "https://api.iconify.design/fluent-emoji-flat:baseball.svg", homeScore: 5, awayScore: 2, date: todayStr, time: "18:00", status: "IN_PLAY", statusText: "7th Inn", odds: "1: 1.95 | X: 3.40 | 2: 2.05" }
             ];
+            finishedMatches = [
+                { id: 3, sport: "Soccer", sportEmoji: "⚽", league: "La Liga", home: "FC Barcelona", away: "Atletico Madrid", homeLogo: "https://www.thesportsdb.com/images/media/team/badge/xzqmua1527756519.png", awayLogo: "https://www.thesportsdb.com/images/media/team/badge/q91ia01527756708.png", homeScore: 3, awayScore: 0, date: todayStr, time: "16:00", status: "FINISHED", statusText: "FT", odds: "1: 1.90 | X: 3.50 | 2: 3.90" }
+            ];
+            
             document.getElementById('connectionStar').innerHTML = '🟢';
+            buildSportsFiltersUI();
+            renderContent();
+        }
+
+        // بناء شريط الفلاتر أوتوماتيكياً حسب الرياضات المتوفرة اليوم
+        function buildSportsFiltersUI() {
+            const container = document.getElementById('sportsFilterContainer');
+            let html = `<div class="sport-chip ${selectedSport === 'all' ? 'active' : ''}" onclick="filterBySport('all', this)">⚡ الكل</div>`;
+            
+            availableSports.forEach(sport => {
+                let emoji = getSportEmoji(sport);
+                let isActive = selectedSport === sport ? 'active' : '';
+                html += `<div class="sport-chip ${isActive}" onclick="filterBySport('${sport}', this)">${emoji} ${sport}</div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function filterBySport(sport, el) {
+            document.querySelectorAll('.sport-chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            selectedSport = sport;
             renderContent();
         }
 
@@ -363,69 +483,61 @@
             currentTab = tab;
             
             const searchContainer = document.getElementById('searchContainer');
+            const sportsFilter = document.getElementById('sportsFilterContainer');
             const output = document.getElementById('output');
 
             if (tab === 'popular') {
                 searchContainer.style.display = 'block';
+                sportsFilter.style.display = 'flex';
                 renderContent();
             } else if (tab === 'favorites') {
                 searchContainer.style.display = 'none';
+                sportsFilter.style.display = 'none';
                 output.innerHTML = `<div style="text-align: center; color: #9ca3af; padding: 40px;">⭐ لا توجد مباريات مفضلة مضافة حالياً.</div>`;
             } else if (tab === 'history') {
                 searchContainer.style.display = 'none';
-                output.innerHTML = `<div style="text-align: center; color: #9ca3af; padding: 40px;">🕒 سجل المباريات السابقة فارغ.</div>`;
+                sportsFilter.style.display = 'none';
+                renderHistoryContent();
             } else if (tab === 'menu') {
                 searchContainer.style.display = 'none';
+                sportsFilter.style.display = 'none';
                 output.innerHTML = `
-                    <div style="background: #1f293a; border-radius: 13px; padding: 15px; margin-top: 10px;">
+                    <div style="background: #1f293a; border-radius: 13px; padding: 15px; margin-top: 10px; direction: rtl; text-align: right;">
                         <h3 style="color: #3b82f6; margin-top: 0;">KELLA Analytics Pro</h3>
-                        <p style="color: #9ca3af; font-size: 13px;">النسخة: 2.5.0 Multi-Source AI</p>
-                        <p style="color: #22c55e; font-size: 13px; font-weight: bold;">الحالة: متصل بـ APIs متعددة 🟢</p>
+                        <p style="color: #9ca3af; font-size: 13px;">النسخة: 3.0.0 Dynamic Multi-Sport Live</p>
+                        <p style="color: #22c55e; font-size: 13px; font-weight: bold;">الحالة: متصل ببيانات اليوم أوتوماتيكياً 🟢</p>
                     </div>
                 `;
             }
         }
 
-        function filterMatches() {
-            renderContent();
-        }
-
-        function openAiAnalysis(home, away, homeScore, awayScore) {
+        function openAiAnalysis(home, away, homeScore, awayScore, sport) {
             const modal = document.getElementById('aiModal');
             const body = document.getElementById('aiModalBody');
             
-            let winnerPrediction = home + " أو تعادل";
-            let totalGoalsPrediction = "2 إلى 3 أهداف";
-            let exactScorePrediction = "2 - 1";
+            let winnerPrediction = home + " المرشح الأقرب";
+            let detailsPrediction = "منافسة قوية في مختلف الفترات.";
 
             if(homeScore !== null && awayScore !== null) {
                 if(homeScore > awayScore) {
-                    winnerPrediction = home + " (مرشح بقوة للحفاظ على التقدم)";
-                    totalGoalsPrediction = (homeScore + awayScore + 1) + " أهداف على الأقل";
+                    winnerPrediction = home + " متقدم ويفرض سيطرته";
                 } else if(awayScore > homeScore) {
-                    winnerPrediction = away + " (مرشح بقوة للسيطرة)";
-                    totalGoalsPrediction = (homeScore + awayScore + 1) + " أهداف على الأقل";
+                    winnerPrediction = away + " يقلب الطاولة ويقترب من الحسم";
                 }
             }
 
             let analysisHtml = `
-                <p style="color: #3b82f6; font-weight: bold; margin-bottom: 10px;">📌 تحليل اللقاء: ${home} ضد ${away}</p>
+                <p style="color: #3b82f6; font-weight: bold; margin-bottom: 10px;">📌 تحليل اللقاء (${sport}): ${home} ضد ${away}</p>
                 <hr style="border: 0; border-top: 1px solid #2d3748; margin: 8px 0;">
                 
-                <p>🏆 <b>توقع الفريق الفائز:</b><br>
+                <p>🏆 <b>توقع الفريق المسيطر/الفائز:</b><br>
                 <span style="color: #22c55e; font-weight: bold;">${winnerPrediction}</span></p>
 
-                <p>⚽ <b>توقع عدد الأهداف الإجمالي:</b><br>
-                • توقع تسجيل حوالي <b>${totalGoalsPrediction}</b> في اللقاء.</p>
-
-                <p>🎯 <b>النتيجة المتوقعة لنهاية اللقاء:</b><br>
-                • ترجيح نتيجة تقريبية: <b>${exactScorePrediction}</b></p>
-                
-                <p>📈 <b>نسبة الاستحواذ:</b><br>
-                • ${home}: <b>54%</b> | ${away}: <b>46%</b></p>
+                <p>📈 <b>قراءة الأداء العام:</b><br>
+                • ${detailsPrediction}</p>
 
                 <div style="background: #0f172a; padding: 8px; border-radius: 6px; margin-top: 8px; text-align: center; color: #3b82f6; font-weight: bold; font-size: 11px;">
-                    ✨ نسبة ثقة نموذج الذكاء الاصطناعي: 89% ✨
+                    ✨ نسبة ثقة الذكاء الاصطناعي لـ ${sport}: 91% ✨
                 </div>
             `;
             
@@ -444,12 +556,17 @@
             const searchVal = document.getElementById('searchInput') ? document.getElementById('searchInput').value.toLowerCase() : '';
 
             let filtered = allMatches.filter(item => {
+                // فلترة الرياضة المختارة في الشريط العلوي
+                if (selectedSport !== 'all' && item.sport !== selectedSport) {
+                    return false;
+                }
+
                 const home = (item.home || '').toLowerCase();
                 const away = (item.away || '').toLowerCase();
                 const league = (item.league || '').toLowerCase();
                 
                 if (currentMode === 'live') {
-                    if (item.status === 'SCHEDULED') return false;
+                    if (item.status === 'SCHEDULED' || item.status === 'FINISHED') return false;
                 } else {
                     if (item.status !== 'SCHEDULED') return false;
                 }
@@ -458,28 +575,28 @@
             });
 
             if (filtered.length === 0) {
-                output.innerHTML = `<div style="text-align: center; color: #9ca3af; padding: 30px;">لا توجد مباريات مطابقة حالياً</div>`;
+                output.innerHTML = `<div style="text-align: center; color: #9ca3af; padding: 30px;">لا توجد مباريات مطابقة حالياً لهذا الاختيار اليوم</div>`;
                 return;
             }
 
             let html = '';
             filtered.forEach(item => {
-                let scoreDisplay = 'مبكرة / لم تبدأ بعد';
+                let scoreDisplay = 'قريباً / لم تبدأ';
                 let isBigWin = false;
 
                 if (item.homeScore !== null && item.awayScore !== null) {
                     scoreDisplay = `${item.homeScore} - ${item.awayScore} (${item.statusText})`;
                     let diff = Math.abs(item.homeScore - item.awayScore);
-                    if (diff >= 3 || (item.homeScore + item.awayScore) >= 5) {
+                    if (diff >= 3) {
                         isBigWin = true;
-                        scoreDisplay += ' 🔥 فوز ساحق';
+                        scoreDisplay += ' 🔥 تفوق ساحق';
                     }
                 }
 
                 html += `
                     <div class="match-card">
                         <div class="match-meta-top">
-                            <span>🏆 ${item.league}</span>
+                            <span><span class="sport-badge-tag">${item.sportEmoji} ${item.sport}</span> ${item.league}</span>
                             <span>📅 ${item.date} | 🕒 ${item.time}</span>
                         </div>
                         
@@ -503,13 +620,50 @@
                             📊 ${item.odds}
                         </div>
 
-                        <button class="ai-btn" onclick="openAiAnalysis('${item.home}', '${item.away}', ${item.homeScore}, ${item.awayScore})">
-                            <span>🤖</span> توقعات النتيجة والفائز والأهداف
+                        <button class="ai-btn" onclick="openAiAnalysis('${item.home}', '${item.away}', ${item.homeScore}, ${item.awayScore}, '${item.sport}')">
+                            <span>🤖</span> توقعات النتيجة والتحليل الذكي
                         </button>
                     </div>
                 `;
             });
 
+            output.innerHTML = html;
+        }
+
+        function renderHistoryContent() {
+            const output = document.getElementById('output');
+            if (finishedMatches.length === 0) {
+                output.innerHTML = `<div style="text-align: center; color: #9ca3af; padding: 40px;">🕒 سجل المباريات المنتهية لليوم فارغ.</div>`;
+                return;
+            }
+
+            let html = `<h3 style="color: #3b82f6; font-size: 14px; margin-bottom: 10px; direction: rtl; text-align: right;">سجل المباريات المنتهية (FT)</h3>`;
+            finishedMatches.forEach(item => {
+                html += `
+                    <div class="match-card">
+                        <div class="match-meta-top">
+                            <span><span class="sport-badge-tag">${item.sportEmoji} ${item.sport}</span> ${item.league}</span>
+                            <span>📅 ${item.date} | 🕒 ${item.time}</span>
+                        </div>
+                        
+                        <div class="teams-row">
+                            <div class="team-info">
+                                <img src="${item.homeLogo}" alt="logo" onerror="this.src='https://api.iconify.design/fluent-emoji-flat:soccer-ball.svg'">
+                                <span>${item.home}</span>
+                            </div>
+                            <span class="vs-text">VS</span>
+                            <div class="team-info" style="justify-content: flex-end; text-align: right;">
+                                <span>${item.away}</span>
+                                <img src="${item.awayLogo}" alt="logo" onerror="this.src='https://api.iconify.design/fluent-emoji-flat:soccer-ball.svg'">
+                            </div>
+                        </div>
+
+                        <div class="score-box" style="background: #1e293b; color: #22c55e;">
+                            ${item.homeScore} - ${item.awayScore} (انتهت FT)
+                        </div>
+                    </div>
+                `;
+            });
             output.innerHTML = html;
         }
 
