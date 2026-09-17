@@ -3,467 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLA Analytics Pro</title>
+    <title>KELLA Analytics Pro - منصة التحليل الرياضي الذكي</title>
     <style>
         :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
             --gold-primary: #d4af37;
-            --gold-light: #f3e5ab;
-            --gold-dark: #aa8c2c;
-            --bg-dark: #0a0a0a;
-            --card-bg: #141414;
+            --text-color: #f0f6fc;
+            --text-muted: #8b949e;
         }
-
-        * {
-            box-sizing: border-box;
+        body {
             margin: 0;
             padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
-        body {
-            background-color: var(--bg-dark);
-            color: #ffffff;
-            min-height: 100vh;
-        }
-
-        #splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, #1a1a1a 0%, #000000 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease;
-        }
-
-        .gold-logo {
-            font-size: 2.8rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, var(--gold-light), var(--gold-primary), var(--gold-dark));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-align: center;
-            animation: zoomInPulse 2s infinite alternate;
-        }
-
-        @keyframes zoomInPulse {
-            0% { transform: scale(0.95); }
-            100% { transform: scale(1.05); }
-        }
-
-        .splash-sub {
-            margin-top: 15px;
-            color: var(--gold-light);
-            font-size: 1rem;
-            letter-spacing: 1px;
-        }
-
-        #app-container {
-            display: none;
-            padding: 20px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
         header {
-            text-align: center;
-            margin-bottom: 25px;
-            border-bottom: 2px solid var(--gold-primary);
-            padding-bottom: 15px;
-            position: relative;
-        }
-
-        header h1 {
-            background: linear-gradient(135deg, var(--gold-light), var(--gold-primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 2rem;
-        }
-
-        /* زر التحكم في الموسيقى الأنيق */
-        .music-toggle-btn {
-            position: absolute;
-            top: 0;
-            left: 0;
-            background: rgba(212, 175, 55, 0.1);
-            border: 1px solid var(--gold-primary);
-            color: var(--gold-light);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: 0.3s;
-        }
-
-        .music-toggle-btn:hover {
-            background: var(--gold-primary);
-            color: #000;
-        }
-
-        .sports-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 20px;
-            padding: 10px;
-        }
-
-        .sport-cell {
-            height: 150px;
-            border-radius: 16px;
-            background: linear-gradient(145deg, #1f1f1f, #0d0d0d);
-            position: relative;
-            cursor: pointer;
-            overflow: hidden;
-            border: 2px solid var(--gold-dark);
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .sport-cell:hover {
-            transform: scale(1.03);
-            border-color: var(--gold-primary);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
-        }
-
-        .sport-icon {
-            font-size: 2.5rem;
-        }
-
-        .sport-title {
-            color: var(--gold-light);
-            font-weight: bold;
-            font-size: 1.1rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.9);
-        }
-
-        #sub-view {
-            display: none;
-        }
-
-        .back-btn {
-            background: var(--gold-primary);
-            color: #000;
-            border: none;
-            padding: 10px 20px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            transition: 0.3s;
-        }
-
-        .back-btn:hover {
-            background: var(--gold-light);
-        }
-
-        .leagues-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .league-card {
-            background: var(--card-bg);
-            border: 1px solid var(--gold-dark);
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .league-card:hover {
-            border-color: var(--gold-primary);
-            transform: translateY(-2px);
-        }
-
-        #analytics-view {
-            display: none;
-            background: var(--card-bg);
-            border: 2px solid var(--gold-primary);
-            border-radius: 15px;
-            padding: 20px;
-        }
-
-        .match-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 15px;
+            padding: 15px 25px;
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--gold-primary);
         }
-
-        .teams-container {
+        .logo-area h1 {
+            margin: 0;
+            font-size: 20px;
+            color: var(--gold-primary);
+        }
+        .logo-area span {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        /* زر الموسيقى الاحترافي */
+        .sound-btn {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--gold-primary);
+            color: var(--gold-primary);
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 5px;
         }
-
-        .team-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .sound-btn:hover {
+            background: var(--gold-primary);
+            color: var(--bg-color);
         }
-
-        .badge-status {
-            background: #2ecc71;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: bold;
+        .main-container {
+            padding: 25px;
+            max-width: 1000px;
+            margin: auto;
         }
-
-        .analytics-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
-
-        .stat-box {
-            background: rgba(0,0,0,0.4);
-            border: 1px solid #333;
-            padding: 15px;
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid #30363d;
             border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
-
-        .stat-box.flash-highlight {
-            border-color: #ff3838;
-            animation: flashAlert 0.8s infinite alternate;
-        }
-
-        @keyframes flashAlert {
-            0% { box-shadow: 0 0 5px rgba(255, 56, 56, 0.4); border-color: #ff3838; }
-            100% { box-shadow: 0 0 20px rgba(255, 56, 56, 1); background: rgba(255, 56, 56, 0.15); }
-        }
-
-        .stat-title {
-            color: #aaa;
-            font-size: 0.85rem;
-            margin-bottom: 5px;
-        }
-
-        .stat-value {
-            color: var(--gold-light);
-            font-size: 1.1rem;
-            font-weight: bold;
+        .card h3 {
+            margin-top: 0;
+            color: var(--gold-primary);
         }
     </style>
 </head>
 <body>
 
-    <!-- عنصر الصوت الخلفي (يمكن ربطه بملف mp3 محلي في مجلد التطبيق باسم background.mp3) -->
-    <audio id="bg-music" loop>
-        <source src="background.mp3" type="audio/mpeg">
+    <!-- الهيدر الخاص بالتطبيق -->
+    <header>
+        <div class="logo-area">
+            <h1>KELLA Analytics Pro ⚽</h1>
+            <span>أداة منطقية للتحليل الرياضي وتقليل المخاطر</span>
+        </div>
+        
+        <!-- زر التحكم في الموسيقى المح المحلية -->
+        <button id="sound-toggle-btn" class="sound-btn" onclick="toggleMusic()">
+            🔇 <span>تشغيل الموسيقى</span>
+        </button>
+    </header>
+
+    <!-- محتوى التطبيق الأساسي -->
+    <div class="main-container">
+        
+        <!-- قسم التنبيه التوعوي والأخلاقي -->
+        <div class="card" style="border-color: var(--gold-primary);">
+            <h3>🎯 الهدف من المنصة</h3>
+            <p>توفير قراءات رياضية دقيقة، مبنية على الأرقام والاحتمالات المنطقية البحتة، بعيداً عن العشوائية لترسيخ الوعي الرشيد.</p>
+        </div>
+
+        <!-- قسم لوحة المباريات والتحليلات -->
+        <div class="card">
+            <h3>📊 لوحة التحليلات الحية والمباريات</h3>
+            <p id="matches-status">جاري مزامنة البيانات الرياضية وتحميل الاحتمالات...</p>
+            <!-- هنا يتم جلب أو عرض مبارياتك وأكوادك الخاصة -->
+        </div>
+
+    </div>
+
+    <!-- عنصر الصوت الصامت في الخلفية يقرأ من مجلد sounds -->
+    <audio id="bg-music" loop preload="auto">
+        <source src="sounds/background.mp3" type="audio/mpeg">
+        متصفحك لا يدعم تشغيل الملفات الصوتية.
     </audio>
 
-    <div id="splash-screen">
-        <div class="gold-logo">KELLA Analytics Pro</div>
-        <div class="splash-sub">جاري تحميل المنصة الرياضية...</div>
-    </div>
-
-    <div id="app-container">
-        <header>
-            <button id="music-btn" class="music-toggle-btn" onclick="toggleMusic()">
-                <span id="music-icon">🔇</span> <span id="music-text">تشغيل الموسيقى</span>
-            </button>
-            <h1>KELLA Analytics Pro</h1>
-            <p style="color: var(--gold-light); font-size: 0.9rem; margin-top: 5px;">التحليل الرياضي الخوارزمي المتقدم</p>
-        </header>
-
-        <div id="main-dashboard" class="sports-grid">
-            <div class="sport-cell" onclick="openLeagues('football')">
-                <div class="sport-icon">⚽</div>
-                <div class="sport-title">كرة القدم</div>
-            </div>
-            <div class="sport-cell" onclick="openLeagues('basketball')">
-                <div class="sport-icon">🏀</div>
-                <div class="sport-title">كرة السلة</div>
-            </div>
-            <div class="sport-cell" onclick="openLeagues('tennis')">
-                <div class="sport-icon">🎾</div>
-                <div class="sport-title">التنس</div>
-            </div>
-            <div class="sport-cell" onclick="openLeagues('volleyball')">
-                <div class="sport-icon">🏐</div>
-                <div class="sport-title">الكرة الطائرة</div>
-            </div>
-            <div class="sport-cell" onclick="openLeagues('handball')">
-                <div class="sport-icon">🤾‍♂️</div>
-                <div class="sport-title">كرة اليد</div>
-            </div>
-            <div class="sport-cell" onclick="openLeagues('rugby')">
-                <div class="sport-icon">🏉</div>
-                <div class="sport-title">الرجبي</div>
-            </div>
-        </div>
-
-        <div id="sub-view">
-            <button class="back-btn" onclick="goBackToMain()">← العودة للرئيسية</button>
-            <h2 id="selected-sport-title" style="color: var(--gold-primary); margin-bottom: 20px; font-size: 1.3rem;"></h2>
-            <div class="leagues-grid" id="leagues-container"></div>
-        </div>
-
-        <div id="analytics-view">
-            <button class="back-btn" onclick="goBackToLeagues()">← العودة للدوريات</button>
-            <div class="match-header">
-                <div>
-                    <div class="teams-container" style="margin-bottom: 5px;">
-                        <div class="team-info">
-                            <span id="home-name" style="font-weight: bold; font-size: 1.1rem; color: #fff;">ريال مدريد</span>
-                        </div>
-                        <span style="color: var(--gold-primary); font-weight: bold; padding: 0 5px;">VS</span>
-                        <div class="team-info">
-                            <span id="away-name" style="font-weight: bold; font-size: 1.1rem; color: #fff;">برشلونة</span>
-                        </div>
-                    </div>
-                    <p id="match-type" style="color: var(--gold-light); font-size: 0.85rem;"></p>
-                </div>
-                <div>
-                    <span class="badge-status">LIVE PRO</span>
-                </div>
-            </div>
-
-            <div class="analytics-grid">
-                <div class="stat-box">
-                    <div class="stat-title">النتيجة المتوقعة (Score)</div>
-                    <div class="stat-value" id="stat-score">2 - 1</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-title">إجمالي الأهداف (Goals)</div>
-                    <div class="stat-value">أكثر من 2.5 هدف</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-title">الركنيات (Corners)</div>
-                    <div class="stat-value">9.5 ركنية</div>
-                </div>
-                <div class="stat-box flash-highlight">
-                    <div class="stat-title" style="color: #ff9f43;">نسبة الفوز والتأهل 🚨</div>
-                    <div class="stat-value" id="stat-win-rate" style="color: #ff4757;">84%</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-title">ضربات الجزاء (Penalties)</div>
-                    <div class="stat-value">محتملة بنسبة 45%</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-title">البطاقات (صفراء / حمراء)</div>
-                    <div class="stat-value">4 صفراء / 0 حمراء</div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
+    <!-- سكربت التحكم في الصوت وتشغيل الأيقونات -->
     <script>
-        const sportLeaguesData = {
-            'football': {
-                name: 'كرة القدم',
-                leagues: ["دوري أبطال أوروبا", "الدوري الإنجليزي الممتاز", "الدوري الإسباني", "الدوري الإيطالي"]
-            },
-            'basketball': {
-                name: 'كرة السلة',
-                leagues: ["الدوري الأمريكي NBA", "الدوري الأوروبي"]
-            },
-            'tennis': {
-                name: 'التنس',
-                leagues: ["ويمبلدون", "أمريكا المفتوحة"]
-            },
-            'volleyball': {
-                name: 'الكرة الطائرة',
-                leagues: ["دوري أبطال أوروبا للطائرة", "بطولة العالم"]
-            },
-            'handball': {
-                name: 'كرة اليد',
-                leagues: ["دوري أبطال أوروبا", "الدوري الألماني"]
-            },
-            'rugby': {
-                name: 'الرجبي',
-                leagues: ["بطولة الست الأمم", "الدوري الإنجليزي"]
-            }
-        };
-
-        window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                const appContainer = document.getElementById('app-container');
-                if(splash) splash.style.display = 'none';
-                if(appContainer) appContainer.style.display = 'block';
-            }, 1000);
-        });
-
-        // دالة التحكم في تشغيل وإيقاف الموسيقى حسب رغبة المستخدم
-        let isMusicPlaying = false;
         function toggleMusic() {
             const music = document.getElementById('bg-music');
-            const musicIcon = document.getElementById('music-icon');
-            const musicText = document.getElementById('music-text');
-
-            if (isMusicPlaying) {
-                music.pause();
-                isMusicPlaying = false;
-                musicIcon.innerText = "🔇";
-                musicText.innerText = "تشغيل الموسيقى";
-            } else {
+            const btn = document.getElementById('sound-toggle-btn');
+            
+            if (music.paused) {
                 music.play().then(() => {
-                    isMusicPlaying = true;
-                    musicIcon.innerText = "🎵";
-                    musicText.innerText = "إيقاف الموسيقى";
-                }).catch(e => {
-                    console.log("Audio play error: ", e);
+                    btn.innerHTML = '🎵 <span>إيقاف الموسيقى</span>';
+                }).catch(error => {
+                    console.log("التشغيل يتطلب تفاعل المستخدم:", error);
                 });
+            } else {
+                music.pause();
+                btn.innerHTML = '🔇 <span>تشغيل الموسيقى</span>';
             }
         }
-
-        function openLeagues(sportKey) {
-            const sportInfo = sportLeaguesData[sportKey];
-            if (!sportInfo) return;
-
-            document.getElementById('main-dashboard').style.display = 'none';
-            const subView = document.getElementById('sub-view');
-            subView.style.display = 'block';
-            document.getElementById('selected-sport-title').innerText = `دوريات العالم لـ: ${sportInfo.name}`;
-
-            const leaguesContainer = document.getElementById('leagues-container');
-            leaguesContainer.innerHTML = '';
-
-            sportInfo.leagues.forEach(league => {
-                const card = document.createElement('div');
-                card.className = 'league-card';
-                card.innerHTML = `<h3 style="color: var(--gold-light); font-size: 1rem;">${league}</h3><p style="color: #888; font-size: 0.75rem; margin-top: 5px;">Avant-match & En direct</p>`;
-                card.onclick = () => openAnalytics(sportInfo.name, league);
-                leaguesContainer.appendChild(card);
-            });
-        }
-
-        function goBackToMain() {
-            document.getElementById('sub-view').style.display = 'none';
-            document.getElementById('main-dashboard').style.display = 'grid';
-        }
-
-        function openAnalytics(sportName, leagueName) {
-            document.getElementById('sub-view').style.display = 'none';
-            document.getElementById('analytics-view').style.display = 'block';
-            document.getElementById('match-type').innerText = `${sportName} - ${leagueName} (تحليل خوارزمي متقدم)`;
-        }
-
-        function goBackToLeagues() {
-            document.getElementById('analytics-view').style.display = 'none';
-            document.getElementById('sub-view').style.display = 'block';
-        }
     </script>
+
 </body>
 </html>
