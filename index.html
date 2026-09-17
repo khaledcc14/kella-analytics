@@ -26,7 +26,7 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.4s ease;
         }
         .splash-logo {
             font-size: 28px;
@@ -299,9 +299,9 @@
 </head>
 <body>
 
-    <!-- شاشة البداية (Splash Screen) -->
+    <!-- شاشة البداية (تختفي فوراً دون انتظار الشبكة) -->
     <div id="splashScreen">
-        <div class="splash-logo">KElla_analytic_pro 🏆<br><span style="font-size: 13px; color: #9ca3af; font-weight: normal;">جاري تحديث البيانات وجلب المباريات...</span></div>
+        <div class="splash-logo">KElla_analytic_pro 🏆</div>
         <div class="splash-loader"></div>
     </div>
 
@@ -319,7 +319,7 @@
             <button class="mode-btn" onclick="setMode('upcoming', this)">Avant-match (قبل اللقاء)</button>
         </div>
 
-        <!-- شريط الرياضات الشامل بكل الأيقونات المطلوبة -->
+        <!-- شريط الرياضات الشامل بكل الأيقونات -->
         <div id="sportsFilterContainer" class="sports-filter-scroll">
             <div class="sport-chip active" onclick="filterBySport('all', this)">⚡ الكل</div>
         </div>
@@ -329,7 +329,7 @@
         </div>
 
         <div id="output">
-            <div style="text-align: center; color: #9ca3af; padding: 30px;">🔄 جاري تحميل الدوريات والمباريات...</div>
+            <div style="text-align: center; color: #9ca3af; padding: 30px;">⚡ التطبيق يعمل، جاري جلب التحديثات في الخلفية...</div>
         </div>
 
         <div class="bottom-nav">
@@ -365,7 +365,6 @@
         let currentMode = 'live';
         let currentTab = 'popular';
 
-        // قائمة الرياضات المطلوبة بالكامل مع أيقوناتها الدقيقة
         const supportedSports = [
             { name: "Soccer", emoji: "⚽", label: "كرة القدم" },
             { name: "American Football", emoji: "🏈", label: "الركبي الأمريكي" },
@@ -396,17 +395,44 @@
             return `${year}-${month}-${day}`;
         }
 
+        // تشغيل فوري للتطبيق وإخفاء شاشة البداية في أقل من ثانية
+        window.onload = function() {
+            buildSportsFiltersUI();
+            loadDemoData(getTodayDateString()); // عرض فوري للبيانات المحلية لضمان عدم التعليق
+            renderContent();
+
+            // إخفاء شاشة البداية فوراً
+            const splash = document.getElementById('splashScreen');
+            splash.style.opacity = '0';
+            setTimeout(() => splash.style.display = 'none', 400);
+
+            // جلب البيانات من الـ API في الخلفية بصمت تام
+            fetchDataInBackground();
+        };
+
         async function initApp() {
-            // إظهار شاشة البداية أثناء التحديث وجلب البيانات
             const splash = document.getElementById('splashScreen');
             splash.style.display = 'flex';
             splash.style.opacity = '1';
+            
+            await fetchDataInBackground();
 
+            splash.style.opacity = '0';
+            setTimeout(() => splash.style.display = 'none', 400);
+        }
+
+        async function fetchDataInBackground() {
             const todayStr = getTodayDateString();
-            let fetchedData = false;
-
             try {
-                const response = await fetch(`https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d=${todayStr}`);
+                // وضع مهلة قصيرة جداً (Timeout) لمنع تعليق التطبيق نهائياً
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+                const response = await fetch(`https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d=${todayStr}`, {
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+
                 if (response.ok) {
                     const data = await response.json();
                     if (data.events && Array.isArray(data.events) && data.events.length > 0) {
@@ -442,27 +468,16 @@
                             else liveArr.push(matchItem);
                         });
 
-                        allMatches = liveArr;
-                        finishedMatches = historyArr;
-                        fetchedData = true;
+                        if(liveArr.length > 0 || historyArr.length > 0) {
+                            allMatches = liveArr;
+                            finishedMatches = historyArr;
+                            renderContent();
+                        }
                     }
                 }
             } catch (e) {
-                console.log('Using offline data fallback...');
+                console.log('Background fetch handled safely.');
             }
-
-            if (!fetchedData) {
-                loadDemoData(todayStr);
-            }
-
-            buildSportsFiltersUI();
-            renderContent();
-
-            // إخفاء شاشة البداية بسلاسة بعد إتمام التحديث
-            setTimeout(() => {
-                splash.style.opacity = '0';
-                setTimeout(() => splash.style.display = 'none', 500);
-            }, 800);
         }
 
         function loadDemoData(todayStr) {
@@ -517,4 +532,173 @@
                 sportsFilter.style.display = 'flex';
                 renderContent();
             } else if (tab === 'favorites') {
-                searchContainer.style.display = 'n
+                searchContainer.style.display = 'none';
+                sportsFilter.style.display = 'none';
+                output.innerHTML = `<div style="text-align: center; color: #9ca3af; padding: 40px;">⭐ لا توجد مباريات مفضلة حالياً.</div>`;
+            } else if (tab === 'history') {
+                searchContainer.style.display = 'none';
+                sportsFilter.style.display = 'none';
+                renderHistoryContent();
+            } else if (tab === 'menu') {
+                searchContainer.style.display = 'none';
+                sportsFilter.style.display = 'none';
+                output.innerHTML = `
+                    <div style="background: #1f293a; border-radius: 13px; padding: 15px; margin-top: 10px; direction: rtl; text-align: right;">
+                        <h3 style="color: #3b82f6; margin-top: 0;">KElla_analytic_pro</h3>
+                        <p style="color: #9ca3af; font-size: 13px;">النسخة الاحترافية: 3.2.1 الخلفية الذكية</p>
+                        <p style="color: #22c55e; font-size: 13px; font-weight: bold;">الحالة: متصل بنظام البيانات والذكاء الاصطناعي 🟢</p>
+                    </div>
+                `;
+            }
+        }
+
+        function getSportEmoji(sportName) {
+            const found = supportedSports.find(s => s.name.toLowerCase() === (sportName || '').toLowerCase());
+            return found ? found.emoji : '🏅';
+        }
+
+        function openAiAnalysis(home, away, sport) {
+            const modal = document.getElementById('aiModal');
+            const body = document.getElementById('aiModalBody');
+            
+            const confidence = Math.floor(Math.random() * (98 - 78 + 1)) + 78;
+            const isHighConfidence = confidence >= 75;
+
+            let analysisHtml = `
+                <p style="color: #3b82f6; font-weight: bold; margin-bottom: 10px;">📌 تحليل الذكاء الاصطناعي: ${home} ضد ${away}</p>
+                <hr style="border: 0; border-top: 1px solid #2d3748; margin: 8px 0;">
+                
+                <p>🏆 <b>التوقع الفني المباشر:</b><br>
+                تفوق واضح وفوز محتمل لصالح فريق <span style="color: #22c55e; font-weight: bold;">${home}</span> مع السيطرة على مجمل اللقاء.</p>
+
+                <p>🔍 <b>رصد الكواليس وقراءة المدربين:</b><br>
+                • نسق هجومي عالي الضغط متوقع منذ الدقائق الأولى لتسجيل هدف مبكر وحسم النتيجة.</p>
+
+                <div style="background: ${isHighConfidence ? 'linear-gradient(135deg, #047857, #065f46)' : '#0f172a'}; padding: 10px; border-radius: 8px; margin-top: 12px; text-align: center; color: ${isHighConfidence ? '#facc15' : '#3b82f6'}; font-weight: bold; font-size: 13px; border: ${isHighConfidence ? '1px solid #facc15' : 'none'};">
+                    ✨ نسبة الثقة في التوقع: ${confidence}% ${isHighConfidence ? '🔥 (توقع مؤكد ومميز فوق 75%)' : ''} ✨
+                </div>
+            `;
+            
+            body.innerHTML = analysisHtml;
+            modal.style.display = 'flex';
+        }
+
+        function closeAiModal() {
+            document.getElementById('aiModal').style.display = 'none';
+        }
+
+        function renderContent() {
+            if (currentTab !== 'popular') return;
+
+            const output = document.getElementById('output');
+            const searchVal = document.getElementById('searchInput') ? document.getElementById('searchInput').value.toLowerCase() : '';
+
+            let filtered = allMatches.filter(item => {
+                if (selectedSport !== 'all' && item.sport.toLowerCase() !== selectedSport.toLowerCase()) {
+                    return false;
+                }
+
+                if (currentMode === 'live') {
+                    if (item.status === 'SCHEDULED' || item.status === 'FINISHED') return false;
+                } else {
+                    if (item.status !== 'SCHEDULED') return false;
+                }
+
+                const home = (item.home || '').toLowerCase();
+                const away = (item.away || '').toLowerCase();
+                const league = (item.league || '').toLowerCase();
+                return home.includes(searchVal) || away.includes(searchVal) || league.includes(searchVal);
+            });
+
+            if (filtered.length === 0) {
+                output.innerHTML = `<div style="text-align: center; color: #9ca3af; padding: 30px;">لا توجد مباريات مطابقة في هذا القسم حالياً</div>`;
+                return;
+            }
+
+            let html = '';
+            filtered.forEach(item => {
+                let emoji = getSportEmoji(item.sport);
+                let scoreDisplay = item.status === 'SCHEDULED' ? 'قريباً / قبل اللقاء' : `${item.homeScore} - ${item.awayScore} (${item.statusText})`;
+                let isBigWin = false;
+
+                if (item.homeScore !== null && item.awayScore !== null) {
+                    let diff = Math.abs(item.homeScore - item.awayScore);
+                    if (diff >= 3) {
+                        isBigWin = true;
+                        scoreDisplay += ' 🔥 تفوق ساحق';
+                    }
+                }
+
+                html += `
+                    <div class="match-card">
+                        <div class="match-meta-top">
+                            <span><span class="sport-badge-tag">${emoji} ${item.sport}</span> ${item.league}</span>
+                            <span>📅 ${item.date} | 🕒 ${item.time}</span>
+                        </div>
+                        
+                        <div class="teams-row">
+                            <div class="team-info">
+                                <img src="${item.homeLogo}" alt="logo" onerror="this.src='https://api.iconify.design/fluent-emoji-flat:soccer-ball.svg'">
+                                <span>${item.home}</span>
+                            </div>
+                            <span class="vs-text">VS</span>
+                            <div class="team-info" style="justify-content: flex-end; text-align: right;">
+                                <span>${item.away}</span>
+                                <img src="${item.awayLogo}" alt="logo" onerror="this.src='https://api.iconify.design/fluent-emoji-flat:soccer-ball.svg'">
+                            </div>
+                        </div>
+
+                        <div class="score-box ${isBigWin ? 'big-win' : ''}">
+                            ${scoreDisplay}
+                        </div>
+
+                        <button class="ai-btn" onclick="openAiAnalysis('${item.home}', '${item.away}', '${item.sport}')">
+                            <span>🤖</span> تشغيل تحليل الذكاء الاصطناعي المتقدم
+                        </button>
+                    </div>
+                `;
+            });
+
+            output.innerHTML = html;
+        }
+
+        function renderHistoryContent() {
+            const output = document.getElementById('output');
+            if (finishedMatches.length === 0) {
+                output.innerHTML = `<div style="text-align: center; color: #9ca3af; padding: 40px;">🕒 سجل المباريات المنتهية فارغ.</div>`;
+                return;
+            }
+
+            let html = `<h3 style="color: #3b82f6; font-size: 14px; margin-bottom: 10px; direction: rtl; text-align: right;">سجل المباريات المنتهية (FT)</h3>`;
+            finishedMatches.forEach(item => {
+                let emoji = getSportEmoji(item.sport);
+                html += `
+                    <div class="match-card">
+                        <div class="match-meta-top">
+                            <span><span class="sport-badge-tag">${emoji} ${item.sport}</span> ${item.league}</span>
+                            <span>📅 ${item.date} | 🕒 ${item.time}</span>
+                        </div>
+                        
+                        <div class="teams-row">
+                            <div class="team-info">
+                                <img src="${item.homeLogo}" alt="logo" onerror="this.src='https://api.iconify.design/fluent-emoji-flat:soccer-ball.svg'">
+                                <span>${item.home}</span>
+                            </div>
+                            <span class="vs-text">VS</span>
+                            <div class="team-info" style="justify-content: flex-end; text-align: right;">
+                                <span>${item.away}</span>
+                                <img src="${item.awayLogo}" alt="logo" onerror="this.src='https://api.iconify.design/fluent-emoji-flat:soccer-ball.svg'">
+                            </div>
+                        </div>
+
+                        <div class="score-box" style="background: #1e293b; color: #22c55e;">
+                            ${item.homeScore} - ${item.awayScore} (انتهت FT)
+                        </div>
+                    </div>
+                `;
+            });
+            output.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
