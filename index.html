@@ -81,7 +81,7 @@
             <span>أداة منطقية للتحليل الرياضي وتقليل المخاطر</span>
         </div>
         
-        <!-- زر التحكم في الموسيقى المح المحلية -->
+        <!-- زر التحكم في الموسيقى -->
         <button id="sound-toggle-btn" class="sound-btn" onclick="toggleMusic()">
             🔇 <span>تشغيل الموسيقى</span>
         </button>
@@ -100,14 +100,13 @@
         <div class="card">
             <h3>📊 لوحة التحليلات الحية والمباريات</h3>
             <p id="matches-status">جاري مزامنة البيانات الرياضية وتحميل الاحتمالات...</p>
-            <!-- هنا يتم جلب أو عرض مبارياتك وأكوادك الخاصة -->
         </div>
 
     </div>
 
-    <!-- عنصر الصوت الصامت في الخلفية يقرأ من مجلد sounds -->
+    <!-- عنصر الصوت المباشر (الملف خارج المجلد في الواجهة الرئيسية) -->
     <audio id="bg-music" loop preload="auto">
-        <source src="sounds/background.mp3" type="audio/mpeg">
+        <source src="background.mp3" type="audio/mpeg">
         متصفحك لا يدعم تشغيل الملفات الصوتية.
     </audio>
 
@@ -121,7 +120,8 @@
                 music.play().then(() => {
                     btn.innerHTML = '🎵 <span>إيقاف الموسيقى</span>';
                 }).catch(error => {
-                    console.log("التشغيل يتطلب تفاعل المستخدم:", error);
+                    console.log("خطأ في التشغيل:", error);
+                    alert("يرجى النقر مرة أخرى لتشغيل الصوت.");
                 });
             } else {
                 music.pause();
