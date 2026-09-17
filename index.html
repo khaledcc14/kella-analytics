@@ -11,32 +11,27 @@
             color: #F3F4F6;
             font-family: Arial, sans-serif;
             margin: 0;
-            padding-bottom: 70px; /* مساحة للناف بار */
+            padding-bottom: 70px;
         }
-
         .app-container {
             max-width: 400px;
             margin: 0 auto;
             padding: 10px;
         }
-
         .top-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 5px 10px;
         }
-
         .top-header h2 {
             color: #3b82f6;
             margin: 0;
             font-size: 18px;
         }
-
         .status-star {
             font-size: 20px;
         }
-
         .mode-toggle {
             display: flex;
             background: #1f293a;
@@ -45,7 +40,6 @@
             margin: 10px 0;
             border: 1px solid #1e293b;
         }
-
         .mode-btn {
             flex: 1;
             background: transparent;
@@ -57,12 +51,10 @@
             border-radius: 20px;
             cursor: pointer;
         }
-
         .mode-btn.active {
             background: #3b82f6;
             color: #F0F0F0;
         }
-
         .search-box {
             width: 100%;
             padding: 12px;
@@ -74,7 +66,6 @@
             box-sizing: border-box;
             font-size: 16px;
         }
-
         .match-card {
             background: #1f293a;
             border-radius: 13px;
@@ -84,7 +75,6 @@
             font-size: 13px;
             position: relative;
         }
-
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -97,7 +87,6 @@
             padding: 9px 0;
             z-index: 1000;
         }
-
         .nav-item {
             background: transparent;
             border: none;
@@ -109,7 +98,6 @@
             cursor: pointer;
             gap: 2px;
         }
-
         .nav-item.active {
             color: #3b82f6;
             font-weight: bold;
@@ -120,7 +108,7 @@
     <div class="app-container">
         <div class="top-header">
             <h2>KELLA Analytics Pro ⚽</h2>
-            <span id="connectionStar" class="status-star">🟡</span>
+            <span id="connectionStar" class="status-star">🟢</span>
         </div>
 
         <div id="mainModeToggle" class="mode-toggle">
@@ -129,7 +117,7 @@
         </div>
 
         <div id="searchContainer">
-            <input type="text" id="searchInput" class="search-box" placeholder="البحث عن فريق...">
+            <input type="text" id="searchInput" class="search-box" placeholder="البحث عن فريق..." oninput="filterMatches()">
         </div>
 
         <div id="output"></div>
@@ -152,104 +140,90 @@
 
     <script>
         let allMatches = [];
-        let currentMode = 'live'; // الافتراضي هو Live
+        let currentMode = 'live';
         let currentTab = 'popular';
 
-        // تهيئة التطبيق عند التحميل
         async function initApp() {
             try {
-                // تغيير المصدر ليقرأ مباشرة من API-FOOTBALL (v3)
-                const today = new Date().toISOString().split('T')[0];
-                const url = 'https://v3.football.api-sports.io/fixtures?date=' + today;
-                
-                const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'x-apisports-key': 'fd08394f2301a78ecb2b0a3ed0b5d3c3' // مفتاح الـ API الخاص بك هنا
-                    }
-                });
-
+                // قراءة ملف live.json المحلي من المستودع مباشرة
+                const response = await fetch('live.json?t=' + new Date().getTime());
                 if (!response.ok) throw new Error('Network error');
 
                 const data = await response.json();
                 
-                // معالجة البيانات القادمة من الـ API الجديد
-                allMatches = data.response.map(m => ({
-                    league: m.league.name,
-                    home: m.teams.home.name,
-                    away: m.teams.away.name,
-                    time: m.fixture.date.substring(11, 16), // استخراج الوقت
-                    score: `${m.goals.home} - ${m.goals.away}`,
-                    odds: '1: 1.85 | 2: 2.10'
-                })) || [];
+                // التأكد من أن البيانات مصفوفة أو استخراج الـ response
+                allMatches = Array.isArray(data) ? data : (data.response || []);
 
-                document.getElementById('connectionStar').innerHTML = '🟢'; // متصل
-
+                document.getElementById('connectionStar').innerHTML = '🟢';
             } catch (e) {
                 console.error('Error:', e);
-                document.getElementById('connectionStar').innerHTML = '🟡'; // خطأ في الاتصال
-                allMatches = []; // تعيين مصفوفة فارغة
+                document.getElementById('connectionStar').innerHTML = '🔴';
+                allMatches = [];
             }
 
-            // إعادة تصيير المحتوى في كل الحالات (نجاح أو فشل)
             renderContent();
         }
 
         function setMode(mode, btn) {
-            // تحديث الأزرار
-            const buttons = document.querySelectorAll('.mode-btn');
-            buttons.forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-
             currentMode = mode;
-            renderContent(); // تصيير المحتوى بناءً على الوضع الجديد
+            renderContent();
         }
 
         function switchTab(tab, btn) {
-            // تحديث أزرار الناف بار
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             btn.classList.add('active');
-
             currentTab = tab;
             
-            // إخفاء/إظهار مربع البحث بناءً على التبويب
-            const searchContainer = document.getElementById('searchContainer');
-            if (tab === 'popular') {
-                searchContainer.style.display = 'block';
-            } else {
-                searchContainer.style.display = 'none';
-            }
+            document.getElementById('searchContainer').style.display = (tab === 'popular') ? 'block' : 'none';
+            renderContent();
+        }
 
-            renderContent(); // تصيير المحتوى بناءً على التبويب الجديد
+        function filterMatches() {
+            renderContent();
         }
 
         function renderContent() {
             const output = document.getElementById('output');
+            const searchVal = document.getElementById('searchInput') ? document.getElementById('searchInput').value.toLowerCase() : '';
 
-            // التعامل مع حالة عدم وجود مباريات
-            if (allMatches.length === 0) {
+            // تصفية المباريات حسب البحث
+            let filtered = allMatches.filter(item => {
+                const home = (item.home || item.teams?.home?.name || '').toLowerCase();
+                const away = (item.away || item.teams?.away?.name || '').toLowerCase();
+                const league = (item.league || item.league?.name || '').toLowerCase();
+                return home.includes(searchVal) || away.includes(searchVal) || league.includes(searchVal);
+            });
+
+            if (filtered.length === 0) {
                 output.innerHTML = '<div style="text-align: center; color: #9ca3af; padding: 30px;">لا توجد مباريات في هذا القسم حالياً</div>';
                 return;
             }
 
-            // بناء الـ HTML لكل مباراة
             let html = '';
-            allMatches.forEach((item, index) => {
+            filtered.forEach(item => {
+                const leagueName = item.league || item.league?.name || 'Match';
+                const homeTeam = item.home || item.teams?.home?.name || 'Home';
+                const awayTeam = item.away || item.teams?.away?.name || 'Away';
+                const matchTime = item.time || (item.fixture?.date ? item.fixture.date.substring(11, 16) : '--:--');
+                const matchScore = item.score || `${item.goals?.home ?? '0'} - ${item.goals?.away ?? '0'}`;
+                const matchOdds = item.odds || '1: 1.85 | 2: 2.10';
+
                 html += `
                     <div class="match-card">
-                        <div style="color: #9ca3af; font-size: 11px; margin-bottom: 5px;">🏆 ${item.league}</div>
+                        <div style="color: #9ca3af; font-size: 11px; margin-bottom: 5px;">🏆 ${leagueName}</div>
                         <div style="font-size: 15px; font-weight: bold; color: #F3F4F6; margin: 5px 0;">
-                            ${item.home} VS ${item.away}
+                            ${homeTeam} VS ${awayTeam}
                         </div>
                         <div style="position: absolute; top: 15px; right: 15px; font-size: 12px; color: #3b82f6; font-weight: bold;">
-                            🕒 ${item.time}
+                            🕒 ${matchTime}
                         </div>
                         <div style="background: #0f172a; color: #F3F4F6; border-radius: 7px; padding: 5px; text-align: center; margin-top: 10px; font-weight: bold;">
-                            ${item.score}
+                            ${matchScore}
                         </div>
                         <div style="font-size: 11px; color: #9ca3af; margin-top: 5px; text-align: center;">
-                            📊 ${item.odds}
+                            📊 ${matchOdds}
                         </div>
                     </div>
                 `;
@@ -258,9 +232,7 @@
             output.innerHTML = html;
         }
 
-        // تشغيل التطبيق عند تحميل الصفحة
         window.onload = initApp;
-
     </script>
 </body>
 </html>
