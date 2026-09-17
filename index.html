@@ -75,6 +75,54 @@
             font-size: 13px;
             position: relative;
         }
+        /* تنسيق أسماء الفرق والشعارات */
+        .teams-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+        }
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            width: 40%;
+        }
+        .team-info img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+        .vs-text {
+            color: #9ca3af;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        /* النتيجة العادية والنتيجة الكبيرة المميزة */
+        .score-box {
+            background: #0f172a;
+            color: #F3F4F6;
+            border-radius: 7px;
+            padding: 6px;
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        /* لون مميز للنتيجة الكبيرة الفاصلة */
+        .score-box.big-win {
+            background: linear-gradient(135deg, #b91c1c, #7f1d1d);
+            color: #ffffff;
+            border: 1px solid #ef4444;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.85; }
+            100% { opacity: 1; }
+        }
         .ai-btn {
             background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             color: white;
@@ -91,7 +139,6 @@
             justify-content: center;
             gap: 5px;
         }
-        /* نافذة الذكاء الاصطناعي المنبثقة */
         .modal {
             display: none;
             position: fixed;
@@ -116,6 +163,8 @@
             box-sizing: border-box;
             color: #F3F4F6;
             position: relative;
+            max-height: 85vh;
+            overflow-y: auto;
         }
         .close-modal {
             position: absolute;
@@ -197,7 +246,7 @@
         <div class="modal-content">
             <button class="close-modal" onclick="closeAiModal()">&times;</button>
             <h3 style="color: #3b82f6; margin-top: 0; display: flex; align-items: center; gap: 8px;">
-                <span>🤖</span> تحليل الذكاء الاصطناعي
+                <span>📊</span> توقعات الذكاء الاصطناعي
             </h3>
             <div id="aiModalBody" style="font-size: 13px; line-height: 1.6;">
                 <!-- يتم تعبئة التحليل هنا ديناميكياً -->
@@ -219,19 +268,23 @@
                 
                 if (data.events && Array.isArray(data.events) && data.events.length > 0) {
                     allMatches = data.events.map((event, index) => {
-                        let homeScore = event.intHomeScore !== null ? event.intHomeScore : '-';
-                        let awayScore = event.intAwayScore !== null ? event.intAwayScore : '-';
+                        let homeScore = event.intHomeScore !== null ? parseInt(event.intHomeScore) : null;
+                        let awayScore = event.intAwayScore !== null ? parseInt(event.intAwayScore) : null;
                         let statusText = event.strStatus || 'LIVE';
-                        let isScheduled = statusText.includes('NS') || statusText.includes('Not Started') || statusText.includes('Scheduled') || (event.intHomeScore === null && event.intAwayScore === null);
+                        let isScheduled = homeScore === null || awayScore === null || statusText.includes('NS') || statusText.includes('Not Started');
 
                         return {
                             id: index,
                             league: event.strLeague || 'International Match',
                             home: event.strHomeTeam || 'Home Team',
                             away: event.strAwayTeam || 'Away Team',
+                            homeLogo: event.strHomeBadge || `https://api.iconify.design/fluent-emoji-flat:soccer-ball.svg`,
+                            awayLogo: event.strAwayBadge || `https://api.iconify.design/fluent-emoji-flat:soccer-ball.svg`,
+                            homeScore: homeScore,
+                            awayScore: awayScore,
                             time: event.strTime ? event.strTime.substring(0, 5) : '21:00',
-                            score: isScheduled ? 'مبكرة / لم تبدأ بعد' : `${homeScore} - ${awayScore} (${statusText})`,
                             status: isScheduled ? 'SCHEDULED' : 'IN_PLAY',
+                            statusText: statusText,
                             odds: "1: 1.95 | X: 3.40 | 2: 2.05"
                         };
                     });
@@ -248,11 +301,10 @@
 
         function loadFallbackMatches() {
             allMatches = [
-                { id: 1, league: "UEFA Champions League", home: "Real Madrid", away: "Paris Saint-Germain", time: "21:00", score: "2 - 1 (LIVE)", status: "IN_PLAY", odds: "1: 1.85 | X: 3.40 | 2: 4.10" },
-                { id: 2, league: "UEFA Champions League", home: "Manchester City", away: "Bayern Munich", time: "21:00", score: "1 - 1 (LIVE)", status: "IN_PLAY", odds: "1: 2.10 | X: 3.30 | 2: 3.20" },
-                { id: 3, league: "La Liga", home: "FC Barcelona", away: "Atletico Madrid", time: "20:00", score: "0 - 0 (LIVE)", status: "IN_PLAY", odds: "1: 1.90 | X: 3.50 | 2: 3.90" },
-                { id: 4, league: "Premier League", home: "Arsenal", away: "Liverpool", time: "22:30", score: "مبكرة / لم تبدأ بعد", status: "SCHEDULED", odds: "1: 2.30 | X: 3.20 | 2: 2.80" },
-                { id: 5, league: "Serie A", home: "Inter Milan", away: "Juventus", time: "23:45", score: "مبكرة / لم تبدأ بعد", status: "SCHEDULED", odds: "1: 2.20 | X: 3.10 | 2: 3.00" }
+                { id: 1, league: "UEFA Champions League", home: "Real Madrid", away: "Paris Saint-Germain", homeLogo: "https://www.thesportsdb.com/images/media/team/badge/ryvwpu1421422457.png", awayLogo: "https://www.thesportsdb.com/images/media/team/badge/uxuwus1446739600.png", homeScore: 4, awayScore: 1, time: "21:00", status: "IN_PLAY", statusText: "LIVE", odds: "1: 1.85 | X: 3.40 | 2: 4.10" },
+                { id: 2, league: "UEFA Champions League", home: "Manchester City", away: "Bayern Munich", homeLogo: "https://www.thesportsdb.com/images/media/team/badge/vwpvry1467464645.png", awayLogo: "https://www.thesportsdb.com/images/media/team/badge/1kylqt1554907952.png", homeScore: 1, awayScore: 1, time: "21:00", status: "IN_PLAY", statusText: "LIVE", odds: "1: 2.10 | X: 3.30 | 2: 3.20" },
+                { id: 3, league: "La Liga", home: "FC Barcelona", away: "Atletico Madrid", homeLogo: "https://www.thesportsdb.com/images/media/team/badge/xzqmua1527756519.png", awayLogo: "https://www.thesportsdb.com/images/media/team/badge/q91ia01527756708.png", homeScore: 0, awayScore: 0, time: "20:00", status: "IN_PLAY", statusText: "LIVE", odds: "1: 1.90 | X: 3.50 | 2: 3.90" },
+                { id: 4, league: "Premier League", home: "Arsenal", away: "Liverpool", homeLogo: "https://www.thesportsdb.com/images/media/team/badge/vrvtsq1448813175.png", awayLogo: "https://www.thesportsdb.com/images/media/team/badge/wytnsx1448815235.png", homeScore: null, awayScore: null, time: "22:30", status: "SCHEDULED", statusText: "NS", odds: "1: 2.30 | X: 3.20 | 2: 2.80" }
             ];
             document.getElementById('connectionStar').innerHTML = '🟢';
             renderContent();
@@ -287,7 +339,7 @@
                 output.innerHTML = `
                     <div style="background: #1f293a; border-radius: 13px; padding: 15px; margin-top: 10px;">
                         <h3 style="color: #3b82f6; margin-top: 0;">KELLA Analytics Pro</h3>
-                        <p style="color: #9ca3af; font-size: 13px;">النسخة: 2.0.0 AI Pro</p>
+                        <p style="color: #9ca3af; font-size: 13px;">النسخة: 2.3.0 AI Pro</p>
                         <p style="color: #22c55e; font-size: 13px; font-weight: bold;">الحالة: متصل بنجاح 🟢</p>
                     </div>
                 `;
@@ -298,19 +350,43 @@
             renderContent();
         }
 
-        function openAiAnalysis(home, away, status) {
+        function openAiAnalysis(home, away, homeScore, awayScore, status) {
             const modal = document.getElementById('aiModal');
             const body = document.getElementById('aiModalBody');
             
-            // توليد تحليل ذكي واقعي بناءً على حالة المباراة
+            // حساب توقع الفائز والأهداف بناءً على المعطيات
+            let winnerPrediction = home + " أو تعادل";
+            let totalGoalsPrediction = "2 إلى 3 أهداف";
+            let exactScorePrediction = "2 - 1";
+
+            if(homeScore !== null && awayScore !== null) {
+                if(homeScore > awayScore) {
+                    winnerPrediction = home + " (مرشح بقوة للحفاظ على التقدم الفارق)";
+                    totalGoalsPrediction = (homeScore + awayScore + 1) + " أهداف على الأقل";
+                } else if(awayScore > homeScore) {
+                    winnerPrediction = away + " (مرشح بقوة للسيطرة)";
+                    totalGoalsPrediction = (homeScore + awayScore + 1) + " أهداف على الأقل";
+                }
+            }
+
             let analysisHtml = `
                 <p style="color: #3b82f6; font-weight: bold; margin-bottom: 10px;">📌 تحليل اللقاء: ${home} ضد ${away}</p>
                 <hr style="border: 0; border-top: 1px solid #2d3748; margin: 8px 0;">
-                <p>⚽ <b>توقع الأهداف (xG):</b> الفريقان يمتلكان خط الهجوم بقوة عالية، والتحليل يشير بنسبة <b>78%</b> إلى تسجيل أكثر من 2.5 هدف في اللقاء.</p>
-                <p>🟥 <b>مؤشر البطاقات والخشونة:</b> توتر اللقاء متوسط إلى مرتفع، مع احتمال كبير للحصول على <b>بطاقة حمراء</b> واحدة بسبب التدخلات القوية في وسط الميدان.</p>
-                <p>📊 <b>توقع النتيجة النهائية:</b> الأفضلية طفيفة لصالح صاحب الأرض بنسبة تحكم تصل إلى 54%.</p>
-                <div style="background: #0f172a; padding: 10px; border-radius: 8px; margin-top: 10px; text-align: center; color: #22c55e; font-weight: bold;">
-                    ✨ نسبة ثقة نموذج الذكاء الاصطناعي: 89%
+                
+                <p>🏆 <b>توقع الفريق الفائز:</b><br>
+                <span style="color: #22c55e; font-weight: bold;">${winnerPrediction}</span></p>
+
+                <p>⚽ <b>توقع عدد الأهداف الإجمالي:</b><br>
+                • توقع تسجيل حوالي <b>${totalGoalsPrediction}</b> في اللقاء.</p>
+
+                <p>🎯 <b>النتيجة المتوقعة لنهاية اللقاء:</b><br>
+                • ترجيح نتيجة تقريبية: <b>${exactScorePrediction}</b></p>
+                
+                <p>📈 <b>نسبة الاستحواذ:</b><br>
+                • ${home}: <b>54%</b> | ${away}: <b>46%</b></p>
+
+                <div style="background: #0f172a; padding: 8px; border-radius: 6px; margin-top: 8px; text-align: center; color: #3b82f6; font-weight: bold; font-size: 11px;">
+                    ✨ تحديث ذكي ومباشر للتحليلات
                 </div>
             `;
             
@@ -349,23 +425,49 @@
 
             let html = '';
             filtered.forEach(item => {
+                let scoreDisplay = 'مبكرة / لم تبدأ بعد';
+                let isBigWin = false;
+
+                if (item.homeScore !== null && item.awayScore !== null) {
+                    scoreDisplay = `${item.homeScore} - ${item.awayScore} (${item.statusText})`;
+                    // فحص إذا كانت النتيجة كبيرة (فارق الأهداف >= 3 أو إجمالي الأهداف كبير) باه تلفت الانتباه بلون مختلف
+                    let diff = Math.abs(item.homeScore - item.awayScore);
+                    if (diff >= 3 || (item.homeScore + item.awayScore) >= 5) {
+                        isBigWin = true;
+                        scoreDisplay += ' 🔥 فوز ساحق';
+                    }
+                }
+
                 html += `
                     <div class="match-card">
                         <div style="color: #9ca3af; font-size: 11px; margin-bottom: 5px;">🏆 ${item.league}</div>
-                        <div style="font-size: 15px; font-weight: bold; color: #F3F4F6; margin: 5px 0;">
-                            ${item.home} VS ${item.away}
+                        
+                        <div class="teams-row">
+                            <div class="team-info">
+                                <img src="${item.homeLogo}" alt="logo" onerror="this.src='https://api.iconify.design/fluent-emoji-flat:soccer-ball.svg'">
+                                <span>${item.home}</span>
+                            </div>
+                            <span class="vs-text">VS</span>
+                            <div class="team-info" style="justify-content: flex-end; text-align: right;">
+                                <span>${item.away}</span>
+                                <img src="${item.awayLogo}" alt="logo" onerror="this.src='https://api.iconify.design/fluent-emoji-flat:soccer-ball.svg'">
+                            </div>
                         </div>
-                        <div style="position: absolute; top: 15px; right: 15px; font-size: 12px; color: #3b82f6; font-weight: bold;">
+
+                        <div style="position: absolute; top: 12px; right: 12px; font-size: 11px; color: #3b82f6; font-weight: bold;">
                             🕒 ${item.time}
                         </div>
-                        <div style="background: #0f172a; color: #F3F4F6; border-radius: 7px; padding: 5px; text-align: center; margin-top: 10px; font-weight: bold;">
-                            ${item.score}
+
+                        <div class="score-box ${isBigWin ? 'big-win' : ''}">
+                            ${scoreDisplay}
                         </div>
+
                         <div style="font-size: 11px; color: #9ca3af; margin-top: 5px; text-align: center;">
                             📊 ${item.odds}
                         </div>
-                        <button class="ai-btn" onclick="openAiAnalysis('${item.home}', '${item.away}', '${item.status}')">
-                            <span>🤖</span> تحليل وتوقعات الذكاء الاصطناعي
+
+                        <button class="ai-btn" onclick="openAiAnalysis('${item.home}', '${item.away}', ${item.homeScore}, ${item.awayScore}, '${item.status}')">
+                            <span>🤖</span> توقعات النتيجة والفائز والأهداف
                         </button>
                     </div>
                 `;
