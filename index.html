@@ -87,18 +87,19 @@
             font-size: 2rem;
         }
 
-        /* --- SOCCER BALL GRID LAYOUT --- */
-        .soccer-ball-grid {
+        /* --- SPORTS GRID LAYOUT --- */
+        .sports-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 20px;
             padding: 10px;
         }
 
         .sport-cell {
-            height: 160px;
+            height: 170px;
             border-radius: 40% 15% / 15% 40%;
-            background: linear-gradient(135deg, #222, #111);
+            background-size: cover;
+            background-position: center;
             position: relative;
             cursor: pointer;
             overflow: hidden;
@@ -108,13 +109,19 @@
             display: flex;
             align-items: flex-end;
             justify-content: center;
-            padding-bottom: 15px;
         }
 
         .sport-cell:hover {
             transform: scale(1.05);
             border-color: var(--gold-light);
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+        }
+
+        .sport-overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+            width: 100%;
+            padding: 12px;
+            text-align: center;
         }
 
         .sport-title {
@@ -133,7 +140,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            height: 160px;
+            height: 170px;
             transition: 0.3s;
         }
 
@@ -213,6 +220,24 @@
             padding-bottom: 15px;
         }
 
+        .teams-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .team-logo {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
         .badge-status {
             background: #2ecc71;
             color: white;
@@ -274,24 +299,24 @@
         </header>
 
         <!-- الرئيسية -->
-        <div id="main-dashboard" class="soccer-ball-grid">
-            <div class="sport-cell" onclick="openLeagues('football')">
-                <div class="sport-title">كرة القدم</div>
+        <div id="main-dashboard" class="sports-grid">
+            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('football')">
+                <div class="sport-overlay"><div class="sport-title">كرة القدم</div></div>
             </div>
-            <div class="sport-cell" onclick="openLeagues('basketball')">
-                <div class="sport-title">كرة السلة</div>
+            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('basketball')">
+                <div class="sport-overlay"><div class="sport-title">كرة السلة</div></div>
             </div>
-            <div class="sport-cell" onclick="openLeagues('tennis')">
-                <div class="sport-title">التنس</div>
+            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('tennis')">
+                <div class="sport-overlay"><div class="sport-title">التنس</div></div>
             </div>
-            <div class="sport-cell" onclick="openLeagues('volleyball')">
-                <div class="sport-title">الكرة الطائرة</div>
+            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1612872083202-7cb745be4713?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('volleyball')">
+                <div class="sport-overlay"><div class="sport-title">الكرة الطائرة</div></div>
             </div>
-            <div class="sport-cell" onclick="openLeagues('handball')">
-                <div class="sport-title">كرة اليد</div>
+            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('handball')">
+                <div class="sport-overlay"><div class="sport-title">كرة اليد</div></div>
             </div>
-            <div class="sport-cell" onclick="openLeagues('rugby')">
-                <div class="sport-title">الرجبي</div>
+            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1512864660442-7c3d551e067a?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('rugby')">
+                <div class="sport-overlay"><div class="sport-title">الرجبي</div></div>
             </div>
             <div class="empty-cell" onclick="alert('خلية فارغة مجهزة للتوسع المستقبلي')">
                 <span>+</span>
@@ -310,13 +335,24 @@
             <div class="leagues-grid" id="leagues-container"></div>
         </div>
 
-        <!-- التحليل العميق -->
+        <!-- التحليل العميق مع شعارات الفرق -->
         <div id="analytics-view">
             <button class="back-btn" onclick="goBackToLeagues()">← العودة للدوريات</button>
             <div class="match-header">
                 <div>
-                    <h3 id="match-teams" style="color: #fff; font-size: 1.1rem;">مواجهة تحليلية حية</h3>
-                    <p id="match-type" style="color: var(--gold-light); font-size: 0.85rem; margin-top: 3px;"></p>
+                    <div class="teams-container" id="match-teams-box" style="margin-bottom: 5px;">
+                        <!-- شعارات وأسماء الفرق -->
+                        <div class="team-info">
+                            <img src="https://assets.stickpng.com/images/5842eff3a6515b0e0ad7db7e.png" class="team-logo" alt="Real Madrid">
+                            <span style="font-weight: bold; font-size: 1.1rem;">ريال مدريد</span>
+                        </div>
+                        <span style="color: var(--gold-primary); font-weight: bold;">VS</span>
+                        <div class="team-info">
+                            <img src="https://assets.stickpng.com/images/5842e8cca6515b0e0ad7db67.png" class="team-logo" alt="PSG">
+                            <span style="font-weight: bold; font-size: 1.1rem;">باريس سان جيرمان</span>
+                        </div>
+                    </div>
+                    <p id="match-type" style="color: var(--gold-light); font-size: 0.85rem;"></p>
                 </div>
                 <div>
                     <span class="badge-status">LIVE / PRO</span>
@@ -325,28 +361,32 @@
 
             <div class="analytics-grid">
                 <div class="stat-box">
-                    <div class="stat-title">النتيجة المتوقعة</div>
+                    <div class="stat-title">النتيجة المتوقعة (Exact Score)</div>
                     <div class="stat-value">2 - 1</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-title">إجمالي الأهداف</div>
+                    <div class="stat-title">إجمالي الأهداف (Goals)</div>
                     <div class="stat-value">أكثر من 2.5 هدف</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-title">الركنيات المتوقعة</div>
+                    <div class="stat-title">الركنيات (Corners)</div>
                     <div class="stat-value">9.5 ركنية</div>
                 </div>
                 <div class="stat-box flash-highlight">
-                    <div class="stat-title" style="color: #ff9f43;">نسبة الفوز التأهيلي (> 75%)</div>
-                    <div class="stat-value" style="color: #ff4757;">الفريق المرشح (84%) 🚨</div>
+                    <div class="stat-title" style="color: #ff9f43;">نسبة الفوز والتأهل (> 75%) 🚨</div>
+                    <div class="stat-value" style="color: #ff4757;">ريال مدريد (84%)</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-title">ضربات الجزاء</div>
+                    <div class="stat-title">ضربات الجزاء (Penalties)</div>
                     <div class="stat-value">محتملة بنسبة 45%</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-title">البطاقات (صفراء / حمراء)</div>
+                    <div class="stat-title">البطاقات (Cards صفراء/حمراء)</div>
                     <div class="stat-value">4 صفراء / 0 حمراء</div>
+                </div>
+                <div class="stat-box" style="grid-column: span 2;">
+                    <div class="stat-title">حسم التأهل (خروج المغلوب / الوقت الإضافي)</div>
+                    <div class="stat-value">حسم في الوقت الأصلي (لا توجد أوقات إضافية)</div>
                 </div>
             </div>
         </div>
@@ -381,14 +421,13 @@
             }
         };
 
-        // إخفاء شاشة البداية بسلاسة بعد ثانيتين وتجنب أي خطأ
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
                 const appContainer = document.getElementById('app-container');
                 if(splash) splash.style.display = 'none';
                 if(appContainer) appContainer.style.display = 'block';
-            }, 2000);
+            }, 1500);
         });
 
         function openLeagues(sportKey) {
@@ -420,7 +459,7 @@
         function openAnalytics(leagueName) {
             document.getElementById('sub-view').style.display = 'none';
             document.getElementById('analytics-view').style.display = 'block';
-            document.getElementById('match-type').innerText = `${leagueName} - تحليل خوارزمي متقدم`;
+            document.getElementById('match-type').innerText = `${leagueName} - تحليل خوارزمي متقدم ومفصل`;
         }
 
         function goBackToLeagues() {
