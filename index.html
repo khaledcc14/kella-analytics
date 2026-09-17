@@ -75,6 +75,7 @@
             margin-bottom: 25px;
             border-bottom: 2px solid var(--gold-primary);
             padding-bottom: 15px;
+            position: relative;
         }
 
         header h1 {
@@ -82,6 +83,29 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-size: 2rem;
+        }
+
+        /* زر التحكم في الموسيقى الأنيق */
+        .music-toggle-btn {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--gold-primary);
+            color: var(--gold-light);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: 0.3s;
+        }
+
+        .music-toggle-btn:hover {
+            background: var(--gold-primary);
+            color: #000;
         }
 
         .sports-grid {
@@ -242,6 +266,11 @@
 </head>
 <body>
 
+    <!-- عنصر الصوت الخلفي (يمكن ربطه بملف mp3 محلي في مجلد التطبيق باسم background.mp3) -->
+    <audio id="bg-music" loop>
+        <source src="background.mp3" type="audio/mpeg">
+    </audio>
+
     <div id="splash-screen">
         <div class="gold-logo">KELLA Analytics Pro</div>
         <div class="splash-sub">جاري تحميل المنصة الرياضية...</div>
@@ -249,6 +278,9 @@
 
     <div id="app-container">
         <header>
+            <button id="music-btn" class="music-toggle-btn" onclick="toggleMusic()">
+                <span id="music-icon">🔇</span> <span id="music-text">تشغيل الموسيقى</span>
+            </button>
             <h1>KELLA Analytics Pro</h1>
             <p style="color: var(--gold-light); font-size: 0.9rem; margin-top: 5px;">التحليل الرياضي الخوارزمي المتقدم</p>
         </header>
@@ -292,11 +324,11 @@
                 <div>
                     <div class="teams-container" style="margin-bottom: 5px;">
                         <div class="team-info">
-                            <span id="home-name" style="font-weight: bold; font-size: 1.1rem; color: #fff;">التريق...</span>
+                            <span id="home-name" style="font-weight: bold; font-size: 1.1rem; color: #fff;">ريال مدريد</span>
                         </div>
                         <span style="color: var(--gold-primary); font-weight: bold; padding: 0 5px;">VS</span>
                         <div class="team-info">
-                            <span id="away-name" style="font-weight: bold; font-size: 1.1rem; color: #fff;">التريق...</span>
+                            <span id="away-name" style="font-weight: bold; font-size: 1.1rem; color: #fff;">برشلونة</span>
                         </div>
                     </div>
                     <p id="match-type" style="color: var(--gold-light); font-size: 0.85rem;"></p>
@@ -309,7 +341,7 @@
             <div class="analytics-grid">
                 <div class="stat-box">
                     <div class="stat-title">النتيجة المتوقعة (Score)</div>
-                    <div class="stat-value" id="stat-score">1 - 2</div>
+                    <div class="stat-value" id="stat-score">2 - 1</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-title">إجمالي الأهداف (Goals)</div>
@@ -373,6 +405,29 @@
             }, 1000);
         });
 
+        // دالة التحكم في تشغيل وإيقاف الموسيقى حسب رغبة المستخدم
+        let isMusicPlaying = false;
+        function toggleMusic() {
+            const music = document.getElementById('bg-music');
+            const musicIcon = document.getElementById('music-icon');
+            const musicText = document.getElementById('music-text');
+
+            if (isMusicPlaying) {
+                music.pause();
+                isMusicPlaying = false;
+                musicIcon.innerText = "🔇";
+                musicText.innerText = "تشغيل الموسيقى";
+            } else {
+                music.play().then(() => {
+                    isMusicPlaying = true;
+                    musicIcon.innerText = "🎵";
+                    musicText.innerText = "إيقاف الموسيقى";
+                }).catch(e => {
+                    console.log("Audio play error: ", e);
+                });
+            }
+        }
+
         function openLeagues(sportKey) {
             const sportInfo = sportLeaguesData[sportKey];
             if (!sportInfo) return;
@@ -403,9 +458,6 @@
             document.getElementById('sub-view').style.display = 'none';
             document.getElementById('analytics-view').style.display = 'block';
             document.getElementById('match-type').innerText = `${sportName} - ${leagueName} (تحليل خوارزمي متقدم)`;
-            
-            document.getElementById('home-name').innerText = "ريال مدريد";
-            document.getElementById('away-name').innerText = "برشلونة";
         }
 
         function goBackToLeagues() {
