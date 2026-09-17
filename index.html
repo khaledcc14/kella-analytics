@@ -121,7 +121,7 @@
         </div>
 
         <div id="output">
-            <div style="text-align: center; color: #9ca3af; padding: 30px;">جاري جلب المباريات الحقيقية...</div>
+            <div style="text-align: center; color: #9ca3af; padding: 30px;">جاري جلب المباريات الحقيقية من API...</div>
         </div>
 
         <div class="bottom-nav">
@@ -148,31 +148,44 @@
 
         async function initApp() {
             try {
-                // الاتصال بـ football-data.org مباشرة
-                const response = await fetch('https://api.football-data.org/v4/matches', {
+                // استعملنا بروكسي لتجاوز قيود CORS الخاصة بالمتصفحات
+                const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                const targetUrl = encodeURIComponent('https://api.football-data.org/v4/matches');
+                
+                const response = await fetch(proxyUrl + targetUrl, {
                     headers: {
                         'X-Auth-Token': AUTH_TOKEN
                     }
                 });
                 
-                if (!response.ok) throw new Error('Network response was not ok');
+                if (!response.ok) throw new Error('Network response failed');
 
                 const data = await response.json();
                 
                 if (data.matches && Array.isArray(data.matches)) {
-                    allMatches = data.matches.map(match => ({
-                        league: match.competition?.name || 'Football Match',
-                        home: match.homeTeam?.name || 'Home Team',
-                        away: match.awayTeam?.name || 'Away Team',
-                        time: match.utcDate ? match.utcDate.substring(11, 16) : '--:--',
-                        score: match.score?.fullTime?.home !== null ? `${match.score.fullTime.home} - ${match.score.fullTime.away}` : (match.status || 'SCHEDULED'),
-                        odds: "1: 1.90 | 2: 2.10"
-                    }));
+                    allMatches = data.matches.map(match => {
+                        let scoreText = match.status;
+                        if (match.score && match.score.fullTime && match.score.fullTime.home !== null) {
+                            scoreText = `${match.score.fullTime.home} - ${match.score.fullTime.away} (${match.status})`;
+                        } else {
+                            scoreText = match.status === 'SCHEDULED' ? 'مبكرة / لم تبدأ بعد' : match.status;
+                        }
+
+                        return {
+                            league: match.competition?.name || 'Football Match',
+                            home: match.homeTeam?.name || 'Home Team',
+                            away: match.awayTeam?.name || 'Away Team',
+                            time: match.utcDate ? match.utcDate.substring(11, 16) : '--:--',
+                            score: scoreText,
+                            status: match.status,
+                            odds: "1: 1.90 | X: 3.40 | 2: 2.10"
+                        };
+                    });
+                    document.getElementById('connectionStar').innerHTML = '🟢';
                 } else {
                     allMatches = [];
+                    document.getElementById('connectionStar').innerHTML = '🟡';
                 }
-
-                document.getElementById('connectionStar').innerHTML = '🟢';
             } catch (e) {
                 console.error('Error fetching matches:', e);
                 document.getElementById('connectionStar').innerHTML = '🔴';
@@ -210,11 +223,21 @@
                 const home = (item.home || '').toLowerCase();
                 const away = (item.away || '').toLowerCase();
                 const league = (item.league || '').toLowerCase();
+                
+                // فلترة حسب الوضع (مباشر ولا مباريات قادمة)
+                if (currentMode === 'live') {
+                    // المباريات الجارية أو المكتملة حديثاً
+                    if (item.status === 'SCHEDULED') return false;
+                } else {
+                    // المباريات المجدولة/القادمة
+                    if (item.status !== 'SCHEDULED') return false;
+                }
+
                 return home.includes(searchVal) || away.includes(searchVal) || league.includes(searchVal);
             });
 
             if (filtered.length === 0) {
-                output.innerHTML = '<div style="text-align: center; color: #9ca3af; padding: 30px;">لا توجد مباريات متاحة حالياً</div>';
+                output.innerHTML = `<div style="text-align: center; color: #9ca3af; padding: 30px;">لا توجد مباريات مطابقة حالياً في وضع (${currentMode === 'live' ? 'المباشر' : 'Avant-match'})</div>`;
                 return;
             }
 
