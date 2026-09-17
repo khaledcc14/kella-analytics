@@ -10,7 +10,7 @@
             --gold-light: #f3e5ab;
             --gold-dark: #aa8c2c;
             --bg-dark: #0a0a0a;
-            --card-bg: rgba(20, 20, 20, 0.85);
+            --card-bg: #141414;
         }
 
         * {
@@ -23,7 +23,6 @@
         body {
             background-color: var(--bg-dark);
             color: #ffffff;
-            overflow-x: hidden;
             min-height: 100vh;
         }
 
@@ -40,28 +39,18 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
+            transition: opacity 0.5s ease;
         }
 
         .gold-logo {
-            font-size: 3rem;
+            font-size: 2.8rem;
             font-weight: bold;
             background: linear-gradient(135deg, var(--gold-light), var(--gold-primary), var(--gold-dark));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-align: center;
             position: relative;
-            text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
             animation: zoomInPulse 2s infinite alternate;
-        }
-
-        .shimmer {
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            animation: shimmerEffect 2s infinite;
         }
 
         @keyframes zoomInPulse {
@@ -69,23 +58,18 @@
             100% { transform: scale(1.05); }
         }
 
-        @keyframes shimmerEffect {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
         .splash-sub {
             margin-top: 15px;
             color: var(--gold-light);
-            font-size: 1.1rem;
-            letter-spacing: 2px;
+            font-size: 1rem;
+            letter-spacing: 1px;
         }
 
         /* --- MAIN APP CONTAINER --- */
         #app-container {
             display: none;
             padding: 20px;
-            max-width: 1000px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
@@ -100,44 +84,37 @@
             background: linear-gradient(135deg, var(--gold-light), var(--gold-primary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-size: 2.2rem;
+            font-size: 2rem;
         }
 
         /* --- SOCCER BALL GRID LAYOUT --- */
         .soccer-ball-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
             padding: 10px;
         }
 
         .sport-cell {
-            height: 180px;
-            border-radius: 50% 20% / 20% 50%;
-            background-size: cover;
-            background-position: center;
+            height: 160px;
+            border-radius: 40% 15% / 15% 40%;
+            background: linear-gradient(135deg, #222, #111);
             position: relative;
             cursor: pointer;
             overflow: hidden;
             border: 3px solid var(--gold-primary);
-            transition: all 0.4s ease;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             display: flex;
             align-items: flex-end;
             justify-content: center;
+            padding-bottom: 15px;
         }
 
         .sport-cell:hover {
-            transform: scale(1.08);
+            transform: scale(1.05);
             border-color: var(--gold-light);
-            box-shadow: 0 0 25px rgba(212, 175, 55, 0.7);
-        }
-
-        .sport-overlay {
-            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-            width: 100%;
-            padding: 12px;
-            text-align: center;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
         }
 
         .sport-title {
@@ -149,31 +126,30 @@
 
         .empty-cell {
             border: 2px dashed var(--gold-dark);
-            background: rgba(212, 175, 55, 0.05);
-            border-radius: 50% 20% / 20% 50%;
+            background: rgba(212, 175, 55, 0.03);
+            border-radius: 40% 15% / 15% 40%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            height: 160px;
             transition: 0.3s;
-            height: 180px;
         }
 
         .empty-cell:hover {
-            background: rgba(212, 175, 55, 0.15);
-            border-color: var(--gold-primary);
+            background: rgba(212, 175, 55, 0.1);
         }
 
         .empty-cell span {
             color: var(--gold-primary);
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: bold;
         }
 
         .empty-cell p {
             color: #888;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin-top: 5px;
         }
 
@@ -200,7 +176,7 @@
 
         .leagues-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
         }
 
@@ -216,7 +192,7 @@
 
         .league-card:hover {
             border-color: var(--gold-primary);
-            transform: translateY(-3px);
+            transform: translateY(-2px);
         }
 
         /* --- ANALYTICS VIEW --- */
@@ -225,7 +201,7 @@
             background: var(--card-bg);
             border: 2px solid var(--gold-primary);
             border-radius: 15px;
-            padding: 25px;
+            padding: 20px;
         }
 
         .match-header {
@@ -240,28 +216,20 @@
         .badge-status {
             background: #2ecc71;
             color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
             font-weight: bold;
-            animation: pulseLive 1.5s infinite;
-        }
-
-        @keyframes pulseLive {
-            0% { opacity: 1; }
-            50% { opacity: 0.4; }
-            100% { opacity: 1; }
         }
 
         .analytics-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
-            margin-top: 15px;
         }
 
         .stat-box {
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.4);
             border: 1px solid #333;
             padding: 15px;
             border-radius: 10px;
@@ -274,18 +242,18 @@
 
         @keyframes flashAlert {
             0% { box-shadow: 0 0 5px rgba(255, 56, 56, 0.4); border-color: #ff3838; }
-            100% { box-shadow: 0 0 25px rgba(255, 56, 56, 1); border-color: #ff5252; background: rgba(255, 56, 56, 0.15); }
+            100% { box-shadow: 0 0 20px rgba(255, 56, 56, 1); background: rgba(255, 56, 56, 0.15); }
         }
 
         .stat-title {
             color: #aaa;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin-bottom: 5px;
         }
 
         .stat-value {
             color: var(--gold-light);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: bold;
         }
     </style>
@@ -294,75 +262,64 @@
 
     <!-- SPLASH SCREEN -->
     <div id="splash-screen">
-        <div class="gold-logo">
-            KELLA Analytics Pro
-            <div class="shimmer"></div>
-        </div>
-        <div class="splash-sub">جارِ تحميل المنصة الرياضية الذكية...</div>
-        <audio id="ucl-anthem" src="https://upload.wikimedia.org/wikipedia/commons/b/b5/UEFA_Champions_League_Anthem_%28Chorus%29.ogg" preload="auto"></audio>
+        <div class="gold-logo">KELLA Analytics Pro</div>
+        <div class="splash-sub">جارِ تحميل المنصة الرياضية...</div>
     </div>
 
     <!-- MAIN APP CONTAINER -->
     <div id="app-container">
         <header>
             <h1>KELLA Analytics Pro</h1>
-            <p style="color: var(--gold-light); font-size: 0.95rem; margin-top: 5px;">التحليل الرياضي الخوارزمي المتقدم</p>
+            <p style="color: var(--gold-light); font-size: 0.9rem; margin-top: 5px;">التحليل الرياضي الخوارزمي المتقدم</p>
         </header>
 
-        <!-- الرئيسية: كرة القدم الخلوية للأقسام والرياضات -->
+        <!-- الرئيسية -->
         <div id="main-dashboard" class="soccer-ball-grid">
-            <!-- كرة القدم -->
-            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('football')">
-                <div class="sport-overlay"><div class="sport-title">كرة القدم</div></div>
+            <div class="sport-cell" onclick="openLeagues('football')">
+                <div class="sport-title">كرة القدم</div>
             </div>
-            <!-- كرة السلة -->
-            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('basketball')">
-                <div class="sport-overlay"><div class="sport-title">كرة السلة</div></div>
+            <div class="sport-cell" onclick="openLeagues('basketball')">
+                <div class="sport-title">كرة السلة</div>
             </div>
-            <!-- التنس -->
-            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('tennis')">
-                <div class="sport-overlay"><div class="sport-title">التنس</div></div>
+            <div class="sport-cell" onclick="openLeagues('tennis')">
+                <div class="sport-title">التنس</div>
             </div>
-            <!-- الكرة الطائرة -->
-            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1612872083202-7cb745be4713?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('volleyball')">
-                <div class="sport-overlay"><div class="sport-title">الكرة الطائرة</div></div>
+            <div class="sport-cell" onclick="openLeagues('volleyball')">
+                <div class="sport-title">الكرة الطائرة</div>
             </div>
-            <!-- كرة اليد -->
-            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('handball')">
-                <div class="sport-overlay"><div class="sport-title">كرة اليد</div></div>
+            <div class="sport-cell" onclick="openLeagues('handball')">
+                <div class="sport-title">كرة اليد</div>
             </div>
-            <!-- الرجبي -->
-            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1512864660442-7c3d551e067a?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('rugby')">
-                <div class="sport-overlay"><div class="sport-title">الرجبي</div></div>
+            <div class="sport-cell" onclick="openLeagues('rugby')">
+                <div class="sport-title">الرجبي</div>
             </div>
-            <!-- خلايا فارغة مجهزة للتوسع المستقبلي -->
-            <div class="empty-cell" onclick="alert('خلية فارغة مجهزة لإضافة رياضة جديدة مستقبلاً يا سي خالد!')">
+            <div class="empty-cell" onclick="alert('خلية فارغة مجهزة للتوسع المستقبلي')">
                 <span>+</span>
                 <p>إضافة رياضة</p>
             </div>
-            <div class="empty-cell" onclick="alert('خلية فارغة مجهزة لإضافة رياضة جديدة مستقبلاً يا سي خالد!')">
+            <div class="empty-cell" onclick="alert('خلية فارغة مجهزة للتوسع المستقبلي')">
                 <span>+</span>
                 <p>إضافة رياضة</p>
             </div>
         </div>
 
-        <!-- الطبقة الثانية: دوريات العالم الخاصة بكل رياضة -->
+        <!-- دوريات العالم -->
         <div id="sub-view">
             <button class="back-btn" onclick="goBackToMain()">← العودة للرئيسية</button>
-            <h2 id="selected-sport-title" style="color: var(--gold-primary); margin-bottom: 20px;"></h2>
+            <h2 id="selected-sport-title" style="color: var(--gold-primary); margin-bottom: 20px; font-size: 1.3rem;"></h2>
             <div class="leagues-grid" id="leagues-container"></div>
         </div>
 
-        <!-- الطبقة الثالثة: التحليل العميق (Avant-match & En direct) -->
+        <!-- التحليل العميق -->
         <div id="analytics-view">
             <button class="back-btn" onclick="goBackToLeagues()">← العودة للدوريات</button>
             <div class="match-header">
                 <div>
-                    <h3 id="match-teams" style="color: #fff; font-size: 1.3rem;">مواجهة تحليلية حية</h3>
-                    <p id="match-type" style="color: var(--gold-light); font-size: 0.9rem; margin-top: 3px;"></p>
+                    <h3 id="match-teams" style="color: #fff; font-size: 1.1rem;">مواجهة تحليلية حية</h3>
+                    <p id="match-type" style="color: var(--gold-light); font-size: 0.85rem; margin-top: 3px;"></p>
                 </div>
                 <div>
-                    <span class="badge-status">EN DIRECT / AVANT-MATCH</span>
+                    <span class="badge-status">LIVE / PRO</span>
                 </div>
             </div>
 
@@ -372,29 +329,24 @@
                     <div class="stat-value">2 - 1</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-title">إجمالي الأهداف (Over/Under)</div>
+                    <div class="stat-title">إجمالي الأهداف</div>
                     <div class="stat-value">أكثر من 2.5 هدف</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-title">الركنيات المتوقعة</div>
                     <div class="stat-value">9.5 ركنية</div>
                 </div>
-                <!-- توقع فائق (> 75%) يشتعل بالضوء الفلاشي -->
                 <div class="stat-box flash-highlight">
-                    <div class="stat-title" style="color: #ff9f43;">نسبة الفوز التأهيلي (الرهان الذهبي > 75%)</div>
-                    <div class="stat-value" style="color: #ff4757;">الفريق المستهدف (84%) 🚨</div>
+                    <div class="stat-title" style="color: #ff9f43;">نسبة الفوز التأهيلي (> 75%)</div>
+                    <div class="stat-value" style="color: #ff4757;">الفريق المرشح (84%) 🚨</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-title">ضربات الجزاء المحتملة</div>
+                    <div class="stat-title">ضربات الجزاء</div>
                     <div class="stat-value">محتملة بنسبة 45%</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-title">البطاقات الصفراء / الحمراء</div>
+                    <div class="stat-title">البطاقات (صفراء / حمراء)</div>
                     <div class="stat-value">4 صفراء / 0 حمراء</div>
-                </div>
-                <div class="stat-box" style="grid-column: span 2;">
-                    <div class="stat-title">حسم التأهل (مباراة خروج المغلوب)</div>
-                    <div class="stat-value">تأهل مباشر في الوقت الأصلي</div>
                 </div>
             </div>
         </div>
@@ -402,82 +354,41 @@
     </div>
 
     <script>
-        // قاعدة بيانات الدوريات الخاصة بكل رياضة لمنع أي تداخل
         const sportLeaguesData = {
             'football': {
                 name: 'كرة القدم',
-                leagues: [
-                    "دوري أبطال أوروبا (Champions League)",
-                    "الدوري الإنجليزي الممتاز (Premier League)",
-                    "الدوري الإسباني (La Liga)",
-                    "الدوري الإيطالي (Serie A)",
-                    "الدوري الألماني (Bundesliga)",
-                    "الدوري الفرنسي (Ligue 1)"
-                ]
+                leagues: ["دوري أبطال أوروبا", "الدوري الإنجليزي", "الدوري الإسباني", "الدوري الإيطالي", "الدوري الألماني", "الدوري الفرنسي"]
             },
             'basketball': {
                 name: 'كرة السلة',
-                leagues: [
-                    "الدوري الأمريكي للمحترفين (NBA)",
-                    "الدوري الأوروبي لكرة السلة (EuroLeague)",
-                    "بطولة العالم لكرة السلة (FIBA World Cup)",
-                    "دوري السلة الإسباني (ACB)"
-                ]
+                leagues: ["الدوري الأمريكي NBA", "الدوري الأوروبي EuroLeague", "بطولة العالم FIBA", "الدوري الإسباني ACB"]
             },
             'tennis': {
                 name: 'التنس',
-                leagues: [
-                    "بطولة ويمبلدون (Wimbledon)",
-                    "بطولة أمريكا المفتوحة (US Open)",
-                    "بطولة رولان غاروس (Roland Garros)",
-                    "بطولة أستراليا المفتوحة (Australian Open)"
-                ]
+                leagues: ["ويمبلدون", "أمريكا المفتوحة", "رولان غاروس", "أستراليا المفتوحة"]
             },
             'volleyball': {
-                name: 'الكرة الطائرة',
-                leagues: [
-                    "دوري أبطال أوروبا للكرة الطائرة",
-                    "بطولة العالم للأندية",
-                    "الدوري العالمي للكرة الطائرة"
-                ]
+                name: 'كرة الطائرة',
+                leagues: ["دوري أبطال أوروبا للطيارة", "بطولة العالم للأندية", "الدوري العالمي"]
             },
             'handball': {
                 name: 'كرة اليد',
-                leagues: [
-                    "دوري أبطال أوروبا لكرة اليد",
-                    "الدوري الألماني لكرة اليد (HBL)",
-                    "بطولة العالم لكرة اليد"
-                ]
+                leagues: ["دوري أبطال أوروبا لليد", "الدوري الألماني HBL", "بطولة العالم"]
             },
             'rugby': {
                 name: 'الرجبي',
-                leagues: [
-                    "بطولة الست الأمم (Six Nations)",
-                    "بطولة العالم للرجبي (Rugby World Cup)",
-                    "الدوري الإنجليزي الممتاز للرجبي"
-                ]
+                leagues: ["بطولة الست الأمم", "بطولة العالم للرجبي", "الدوري الإنجليزي للرجبي"]
             }
         };
 
-        window.addEventListener('load', () => {
-            const audio = document.getElementById('ucl-anthem');
-            audio.volume = 0.6;
-            let playPromise = audio.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(() => {
-                    document.body.addEventListener('click', () => { audio.play(); }, { once: true });
-                });
-            }
-
+        // إخفاء شاشة البداية بسلاسة بعد ثانيتين وتجنب أي خطأ
+        window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
                 const appContainer = document.getElementById('app-container');
-                splash.style.opacity = '0';
-                setTimeout(() => {
-                    splash.style.display = 'none';
-                    appContainer.style.display = 'block';
-                }, 800);
-            }, 3500);
+                if(splash) splash.style.display = 'none';
+                if(appContainer) appContainer.style.display = 'block';
+            }, 2000);
         });
 
         function openLeagues(sportKey) {
@@ -495,7 +406,7 @@
             sportInfo.leagues.forEach(league => {
                 const card = document.createElement('div');
                 card.className = 'league-card';
-                card.innerHTML = `<h3 style="color: var(--gold-light); font-size: 1.05rem;">${league}</h3><p style="color: #888; font-size: 0.8rem; margin-top: 5px;">تحليل Avant-match & En direct متاح</p>`;
+                card.innerHTML = `<h3 style="color: var(--gold-light); font-size: 1rem;">${league}</h3><p style="color: #888; font-size: 0.75rem; margin-top: 5px;">تحليل Avant-match & En direct</p>`;
                 card.onclick = () => openAnalytics(league);
                 leaguesContainer.appendChild(card);
             });
