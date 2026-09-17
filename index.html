@@ -24,7 +24,7 @@
             background-color: var(--bg-dark);
             color: #ffffff;
             overflow-x: hidden;
-            height: 100vh;
+            min-height: 100vh;
         }
 
         /* --- SPLASH SCREEN --- */
@@ -85,8 +85,8 @@
         #app-container {
             display: none;
             padding: 20px;
-            height: 100vh;
-            overflow-y: auto;
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
         header {
@@ -106,10 +106,8 @@
         /* --- SOCCER BALL GRID LAYOUT --- */
         .soccer-ball-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
             gap: 20px;
-            max-width: 900px;
-            margin: 0 auto;
             padding: 10px;
         }
 
@@ -179,11 +177,9 @@
             margin-top: 5px;
         }
 
-        /* --- SUB VIEW / LEAGUES & MATCHES --- */
+        /* --- SUB VIEW / LEAGUES --- */
         #sub-view {
             display: none;
-            max-width: 900px;
-            margin: 0 auto;
         }
 
         .back-btn {
@@ -204,7 +200,7 @@
 
         .leagues-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 15px;
         }
 
@@ -223,11 +219,9 @@
             transform: translateY(-3px);
         }
 
-        /* --- ANALYTICS / PREDICTION CARD --- */
+        /* --- ANALYTICS VIEW --- */
         #analytics-view {
             display: none;
-            max-width: 900px;
-            margin: 0 auto;
             background: var(--card-bg);
             border: 2px solid var(--gold-primary);
             border-radius: 15px;
@@ -244,16 +238,12 @@
         }
 
         .badge-status {
-            background: #e74c3c;
+            background: #2ecc71;
             color: white;
             padding: 5px 12px;
             border-radius: 20px;
             font-size: 0.85rem;
             font-weight: bold;
-        }
-
-        .badge-live {
-            background: #2ecc71;
             animation: pulseLive 1.5s infinite;
         }
 
@@ -275,7 +265,6 @@
             border: 1px solid #333;
             padding: 15px;
             border-radius: 10px;
-            position: relative;
         }
 
         .stat-box.flash-highlight {
@@ -310,69 +299,72 @@
             <div class="shimmer"></div>
         </div>
         <div class="splash-sub">جارِ تحميل المنصة الرياضية الذكية...</div>
-        <!-- صوت نشيد دوري أبطال أوروبا (مضمن افتراضياً أو رابط صوتي نظيف) -->
         <audio id="ucl-anthem" src="https://upload.wikimedia.org/wikipedia/commons/b/b5/UEFA_Champions_League_Anthem_%28Chorus%29.ogg" preload="auto"></audio>
     </div>
 
-    <!-- MAIN DASHBOARD -->
+    <!-- MAIN APP CONTAINER -->
     <div id="app-container">
         <header>
             <h1>KELLA Analytics Pro</h1>
             <p style="color: var(--gold-light); font-size: 0.95rem; margin-top: 5px;">التحليل الرياضي الخوارزمي المتقدم</p>
         </header>
 
-        <!-- الرئيسية: كرة القدم الخلوية للأقسام -->
+        <!-- الرئيسية: كرة القدم الخلوية للأقسام والرياضات -->
         <div id="main-dashboard" class="soccer-ball-grid">
             <!-- كرة القدم -->
-            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('كرة القدم')">
+            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('football')">
                 <div class="sport-overlay"><div class="sport-title">كرة القدم</div></div>
             </div>
             <!-- كرة السلة -->
-            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('كرة السلة')">
+            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('basketball')">
                 <div class="sport-overlay"><div class="sport-title">كرة السلة</div></div>
             </div>
             <!-- التنس -->
-            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('التنس')">
+            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('tennis')">
                 <div class="sport-overlay"><div class="sport-title">التنس</div></div>
             </div>
             <!-- الكرة الطائرة -->
-            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1612872083202-7cb745be4713?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('الكرة الطائرة')">
+            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1612872083202-7cb745be4713?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('volleyball')">
                 <div class="sport-overlay"><div class="sport-title">الكرة الطائرة</div></div>
             </div>
-            <!-- خلية فارغة للتوسع المستقبلي -->
-            <div class="empty-cell" onclick="alert('هذه الخلية فارغة ومجهزة لإضافة رياضة جديدة مستقبلاً يا سي خالد!')">
+            <!-- كرة اليد -->
+            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('handball')">
+                <div class="sport-overlay"><div class="sport-title">كرة اليد</div></div>
+            </div>
+            <!-- الرجبي -->
+            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1512864660442-7c3d551e067a?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('rugby')">
+                <div class="sport-overlay"><div class="sport-title">الرجبي</div></div>
+            </div>
+            <!-- خلايا فارغة مجهزة للتوسع المستقبلي -->
+            <div class="empty-cell" onclick="alert('خلية فارغة مجهزة لإضافة رياضة جديدة مستقبلاً يا سي خالد!')">
                 <span>+</span>
                 <p>إضافة رياضة</p>
             </div>
-            <div class="empty-cell" onclick="alert('هذه الخلية فارغة ومجهزة لإضافة رياضة جديدة مستقبلاً يا سي خالد!')">
+            <div class="empty-cell" onclick="alert('خلية فارغة مجهزة لإضافة رياضة جديدة مستقبلاً يا سي خالد!')">
                 <span>+</span>
                 <p>إضافة رياضة</p>
             </div>
         </div>
 
-        <!-- الطبقة الثانية: دوريات العالم -->
+        <!-- الطبقة الثانية: دوريات العالم الخاصة بكل رياضة -->
         <div id="sub-view">
             <button class="back-btn" onclick="goBackToMain()">← العودة للرئيسية</button>
             <h2 id="selected-sport-title" style="color: var(--gold-primary); margin-bottom: 20px;"></h2>
-            <div class="leagues-grid" id="leagues-container">
-                <!-- يتم تعبئتها ديناميكياً -->
-            </div>
+            <div class="leagues-grid" id="leagues-container"></div>
         </div>
 
-        <!-- الطبقة الثالثة: التحليل المعمّق (Avant-match & En direct) -->
+        <!-- الطبقة الثالثة: التحليل العميق (Avant-match & En direct) -->
         <div id="analytics-view">
             <button class="back-btn" onclick="goBackToLeagues()">← العودة للدوريات</button>
             <div class="match-header">
                 <div>
-                    <h3 id="match-teams" style="color: #fff; font-size: 1.3rem;">ريال مدريد VS باريس سان جيرمان</h3>
-                    <p id="match-type" style="color: var(--gold-light); font-size: 0.9rem; margin-top: 3px;">دور المجموعات - دوري أبطال أوروبا</p>
+                    <h3 id="match-teams" style="color: #fff; font-size: 1.3rem;">مواجهة تحليلية حية</h3>
+                    <p id="match-type" style="color: var(--gold-light); font-size: 0.9rem; margin-top: 3px;"></p>
                 </div>
                 <div>
-                    <span id="match-status-badge" class="badge-status badge-live">EN DIRECT (مباشر)</span>
+                    <span class="badge-status">EN DIRECT / AVANT-MATCH</span>
                 </div>
             </div>
-
-            <p style="color: #ccc; font-size: 0.95rem; margin-bottom: 10px;">بطاقة التحليل الخوارزمي المتقدم (توقعات دقيقة):</p>
 
             <div class="analytics-grid">
                 <div class="stat-box">
@@ -390,7 +382,7 @@
                 <!-- توقع فائق (> 75%) يشتعل بالضوء الفلاشي -->
                 <div class="stat-box flash-highlight">
                     <div class="stat-title" style="color: #ff9f43;">نسبة الفوز التأهيلي (الرهان الذهبي > 75%)</div>
-                    <div class="stat-value" style="color: #ff4757;">ريال مدريد (84%) 🚨</div>
+                    <div class="stat-value" style="color: #ff4757;">الفريق المستهدف (84%) 🚨</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-title">ضربات الجزاء المحتملة</div>
@@ -402,7 +394,7 @@
                 </div>
                 <div class="stat-box" style="grid-column: span 2;">
                     <div class="stat-title">حسم التأهل (مباراة خروج المغلوب)</div>
-                    <div class="stat-value">تأهل مباشر في الوقت الأصلي (لا أوقات إضافية)</div>
+                    <div class="stat-value">تأهل مباشر في الوقت الأصلي</div>
                 </div>
             </div>
         </div>
@@ -410,21 +402,73 @@
     </div>
 
     <script>
-        // إشغال شاشة البداية وتشغيل نشيد دوري أبطال أوروبا وتجاوز الحماية التفاعلية للمتصفح
+        // قاعدة بيانات الدوريات الخاصة بكل رياضة لمنع أي تداخل
+        const sportLeaguesData = {
+            'football': {
+                name: 'كرة القدم',
+                leagues: [
+                    "دوري أبطال أوروبا (Champions League)",
+                    "الدوري الإنجليزي الممتاز (Premier League)",
+                    "الدوري الإسباني (La Liga)",
+                    "الدوري الإيطالي (Serie A)",
+                    "الدوري الألماني (Bundesliga)",
+                    "الدوري الفرنسي (Ligue 1)"
+                ]
+            },
+            'basketball': {
+                name: 'كرة السلة',
+                leagues: [
+                    "الدوري الأمريكي للمحترفين (NBA)",
+                    "الدوري الأوروبي لكرة السلة (EuroLeague)",
+                    "بطولة العالم لكرة السلة (FIBA World Cup)",
+                    "دوري السلة الإسباني (ACB)"
+                ]
+            },
+            'tennis': {
+                name: 'التنس',
+                leagues: [
+                    "بطولة ويمبلدون (Wimbledon)",
+                    "بطولة أمريكا المفتوحة (US Open)",
+                    "بطولة رولان غاروس (Roland Garros)",
+                    "بطولة أستراليا المفتوحة (Australian Open)"
+                ]
+            },
+            'volleyball': {
+                name: 'الكرة الطائرة',
+                leagues: [
+                    "دوري أبطال أوروبا للكرة الطائرة",
+                    "بطولة العالم للأندية",
+                    "الدوري العالمي للكرة الطائرة"
+                ]
+            },
+            'handball': {
+                name: 'كرة اليد',
+                leagues: [
+                    "دوري أبطال أوروبا لكرة اليد",
+                    "الدوري الألماني لكرة اليد (HBL)",
+                    "بطولة العالم لكرة اليد"
+                ]
+            },
+            'rugby': {
+                name: 'الرجبي',
+                leagues: [
+                    "بطولة الست الأمم (Six Nations)",
+                    "بطولة العالم للرجبي (Rugby World Cup)",
+                    "الدوري الإنجليزي الممتاز للرجبي"
+                ]
+            }
+        };
+
         window.addEventListener('load', () => {
             const audio = document.getElementById('ucl-anthem');
             audio.volume = 0.6;
-            
-            // محاولة تشغيل الصوت فوراً
             let playPromise = audio.play();
             if (playPromise !== undefined) {
                 playPromise.catch(() => {
-                    // إذا منع المتصفح التشغيل التلقائي، سيعمل مع أول تفاعل للمستخدم بسلاسة
                     document.body.addEventListener('click', () => { audio.play(); }, { once: true });
                 });
             }
 
-            // إخفاء الـ Splash Screen بعد 3.5 ثانية وإظهار التطبيق الفخم
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
                 const appContainer = document.getElementById('app-container');
@@ -436,27 +480,19 @@
             }, 3500);
         });
 
-        // الانتقال لاختيار دوريات الرياضة المعينة
-        function openLeagues(sportName) {
+        function openLeagues(sportKey) {
+            const sportInfo = sportLeaguesData[sportKey];
+            if (!sportInfo) return;
+
             document.getElementById('main-dashboard').style.display = 'none';
             const subView = document.getElementById('sub-view');
             subView.style.display = 'block';
-            document.getElementById('selected-sport-title').innerText = `دوريات العالم لـ: ${sportName}`;
+            document.getElementById('selected-sport-title').innerText = `دوريات العالم لـ: ${sportInfo.name}`;
 
             const leaguesContainer = document.getElementById('leagues-container');
             leaguesContainer.innerHTML = '';
 
-            // محاكاة جلب كل دوريات العالم لهذه الرياضة
-            const sampleLeagues = [
-                "الدوري الإنجليزي الممتاز (Premier League)",
-                "دوري أبطال أوروبا (UEFA Champions League)",
-                "الدوري الإسباني (La Liga)",
-                "الدوري الإيطالي (Serie A)",
-                "الدوري الألماني (Bundesliga)",
-                "الدوري الفرنسي (Ligue 1)"
-            ];
-
-            sampleLeagues.forEach(league => {
+            sportInfo.leagues.forEach(league => {
                 const card = document.createElement('div');
                 card.className = 'league-card';
                 card.innerHTML = `<h3 style="color: var(--gold-light); font-size: 1.05rem;">${league}</h3><p style="color: #888; font-size: 0.8rem; margin-top: 5px;">تحليل Avant-match & En direct متاح</p>`;
