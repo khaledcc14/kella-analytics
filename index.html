@@ -26,7 +26,6 @@
             min-height: 100vh;
         }
 
-        /* --- SPLASH SCREEN --- */
         #splash-screen {
             position: fixed;
             top: 0;
@@ -49,7 +48,6 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-align: center;
-            position: relative;
             animation: zoomInPulse 2s infinite alternate;
         }
 
@@ -65,7 +63,6 @@
             letter-spacing: 1px;
         }
 
-        /* --- MAIN APP CONTAINER --- */
         #app-container {
             display: none;
             padding: 20px;
@@ -87,8 +84,7 @@
             font-size: 2rem;
         }
 
-        /* --- SOCCER BALL GRID LAYOUT --- */
-        .soccer-ball-grid {
+        .sports-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 20px;
@@ -96,32 +92,30 @@
         }
 
         .sport-cell {
-            height: 170px;
-            border-radius: 40% 15% / 15% 40%;
-            background-size: cover;
-            background-position: center;
+            height: 150px;
+            border-radius: 16px;
+            background: linear-gradient(145deg, #1f1f1f, #0d0d0d);
             position: relative;
             cursor: pointer;
             overflow: hidden;
-            border: 3px solid var(--gold-primary);
+            border: 2px solid var(--gold-dark);
             transition: all 0.3s ease;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             display: flex;
-            align-items: flex-end;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
+            gap: 10px;
         }
 
         .sport-cell:hover {
-            transform: scale(1.05);
-            border-color: var(--gold-light);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+            transform: scale(1.03);
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
         }
 
-        .sport-overlay {
-            background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
-            width: 100%;
-            padding: 12px;
-            text-align: center;
+        .sport-icon {
+            font-size: 2.5rem;
         }
 
         .sport-title {
@@ -131,7 +125,6 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.9);
         }
 
-        /* --- SUB VIEW / LEAGUES --- */
         #sub-view {
             display: none;
         }
@@ -173,7 +166,6 @@
             transform: translateY(-2px);
         }
 
-        /* --- ANALYTICS VIEW --- */
         #analytics-view {
             display: none;
             background: var(--card-bg);
@@ -201,12 +193,6 @@
             display: flex;
             align-items: center;
             gap: 8px;
-        }
-
-        .team-logo {
-            width: 32px;
-            height: 32px;
-            object-fit: contain;
         }
 
         .badge-status {
@@ -256,94 +242,93 @@
 </head>
 <body>
 
-    <!-- SPLASH SCREEN -->
     <div id="splash-screen">
         <div class="gold-logo">KELLA Analytics Pro</div>
-        <div class="splash-sub">جارِ ربط المنصة بالـ API والبيانات الحية...</div>
+        <div class="splash-sub">جاري تحميل المنصة الرياضية...</div>
     </div>
 
-    <!-- MAIN APP CONTAINER -->
     <div id="app-container">
         <header>
             <h1>KELLA Analytics Pro</h1>
-            <p style="color: var(--gold-light); font-size: 0.9rem; margin-top: 5px;">التحليل الرياضي الخوارزمي المتقدم (API Connected)</p>
+            <p style="color: var(--gold-light); font-size: 0.9rem; margin-top: 5px;">التحليل الرياضي الخوارزمي المتقدم</p>
         </header>
 
-        <!-- الرئيسية -->
-        <div id="main-dashboard" class="soccer-ball-grid">
-            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('football')">
-                <div class="sport-overlay"><div class="sport-title">كرة القدم</div></div>
+        <div id="main-dashboard" class="sports-grid">
+            <div class="sport-cell" onclick="openLeagues('football')">
+                <div class="sport-icon">⚽</div>
+                <div class="sport-title">كرة القدم</div>
             </div>
-            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('basketball')">
-                <div class="sport-overlay"><div class="sport-title">كرة السلة</div></div>
+            <div class="sport-cell" onclick="openLeagues('basketball')">
+                <div class="sport-icon">🏀</div>
+                <div class="sport-title">كرة السلة</div>
             </div>
-            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('tennis')">
-                <div class="sport-overlay"><div class="sport-title">التنس</div></div>
+            <div class="sport-cell" onclick="openLeagues('tennis')">
+                <div class="sport-icon">🎾</div>
+                <div class="sport-title">التنس</div>
             </div>
-            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1612872083202-7cb745be4713?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('volleyball')">
-                <div class="sport-overlay"><div class="sport-title">الكرة الطائرة</div></div>
+            <div class="sport-cell" onclick="openLeagues('volleyball')">
+                <div class="sport-icon">🏐</div>
+                <div class="sport-title">الكرة الطائرة</div>
             </div>
-            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('handball')">
-                <div class="sport-overlay"><div class="sport-title">كرة اليد</div></div>
+            <div class="sport-cell" onclick="openLeagues('handball')">
+                <div class="sport-icon">🤾‍♂️</div>
+                <div class="sport-title">كرة اليد</div>
             </div>
-            <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1512864660442-7c3d551e067a?auto=format&fit=crop&w=500&q=80');" onclick="openLeagues('rugby')">
-                <div class="sport-overlay"><div class="sport-title">الرجبي</div></div>
+            <div class="sport-cell" onclick="openLeagues('rugby')">
+                <div class="sport-icon">🏉</div>
+                <div class="sport-title">الرجبي</div>
             </div>
         </div>
 
-        <!-- دوريات العالم -->
         <div id="sub-view">
             <button class="back-btn" onclick="goBackToMain()">← العودة للرئيسية</button>
             <h2 id="selected-sport-title" style="color: var(--gold-primary); margin-bottom: 20px; font-size: 1.3rem;"></h2>
             <div class="leagues-grid" id="leagues-container"></div>
         </div>
 
-        <!-- التحليل العميق المربوط بالـ API -->
         <div id="analytics-view">
             <button class="back-btn" onclick="goBackToLeagues()">← العودة للدوريات</button>
             <div class="match-header">
                 <div>
-                    <div class="teams-container" id="match-teams-box" style="margin-bottom: 5px;">
+                    <div class="teams-container" style="margin-bottom: 5px;">
                         <div class="team-info">
-                            <img id="home-logo" src="" class="team-logo" alt="Home Team">
-                            <span id="home-name" style="font-weight: bold; font-size: 1.1rem;">جاري التحميل...</span>
+                            <span id="home-name" style="font-weight: bold; font-size: 1.1rem; color: #fff;">التريق...</span>
                         </div>
-                        <span style="color: var(--gold-primary); font-weight: bold;">VS</span>
+                        <span style="color: var(--gold-primary); font-weight: bold; padding: 0 5px;">VS</span>
                         <div class="team-info">
-                            <img id="away-logo" src="" class="team-logo" alt="Away Team">
-                            <span id="away-name" style="font-weight: bold; font-size: 1.1rem;">جاري التحميل...</span>
+                            <span id="away-name" style="font-weight: bold; font-size: 1.1rem; color: #fff;">التريق...</span>
                         </div>
                     </div>
                     <p id="match-type" style="color: var(--gold-light); font-size: 0.85rem;"></p>
                 </div>
                 <div>
-                    <span class="badge-status">LIVE / API</span>
+                    <span class="badge-status">LIVE PRO</span>
                 </div>
             </div>
 
-            <div class="analytics-grid" id="api-stats-container">
+            <div class="analytics-grid">
                 <div class="stat-box">
-                    <div class="stat-title">النتيجة المتوقعة (API Live)</div>
-                    <div class="stat-value" id="stat-score">جاري التحديث...</div>
+                    <div class="stat-title">النتيجة المتوقعة (Score)</div>
+                    <div class="stat-value" id="stat-score">1 - 2</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-title">إجمالي الأهداف (Expected Goals)</div>
-                    <div class="stat-value" id="stat-goals">أكثر من 2.5 هدف</div>
+                    <div class="stat-title">إجمالي الأهداف (Goals)</div>
+                    <div class="stat-value">أكثر من 2.5 هدف</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-title">الركنيات (Corners Stats)</div>
+                    <div class="stat-title">الركنيات (Corners)</div>
                     <div class="stat-value">9.5 ركنية</div>
                 </div>
                 <div class="stat-box flash-highlight">
-                    <div class="stat-title" style="color: #ff9f43;">نسبة الفوز والتأهل (> 75%) 🚨</div>
-                    <div class="stat-value" id="stat-win-rate" style="color: #ff4757;">تحليل الخوارزمية (84%)</div>
+                    <div class="stat-title" style="color: #ff9f43;">نسبة الفوز والتأهل 🚨</div>
+                    <div class="stat-value" id="stat-win-rate" style="color: #ff4757;">84%</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-title">ضربات الجزاء (Penalties)</div>
                     <div class="stat-value">محتملة بنسبة 45%</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-title">البطاقات (Cards صفراء/حمراء)</div>
+                    <div class="stat-title">البطاقات (صفراء / حمراء)</div>
                     <div class="stat-value">4 صفراء / 0 حمراء</div>
                 </div>
             </div>
@@ -355,11 +340,11 @@
         const sportLeaguesData = {
             'football': {
                 name: 'كرة القدم',
-                leagues: ["دوري أبطال أوروبا", "الدوري الإنجليزي", "الدوري الإسباني", "الدوري الإيطالي"]
+                leagues: ["دوري أبطال أوروبا", "الدوري الإنجليزي الممتاز", "الدوري الإسباني", "الدوري الإيطالي"]
             },
             'basketball': {
                 name: 'كرة السلة',
-                leagues: ["الدوري الأمريكي NBA", "الدوري الأوروبي EuroLeague"]
+                leagues: ["الدوري الأمريكي NBA", "الدوري الأوروبي"]
             },
             'tennis': {
                 name: 'التنس',
@@ -367,7 +352,7 @@
             },
             'volleyball': {
                 name: 'الكرة الطائرة',
-                leagues: ["دوري أبطال أوروبا", "بطولة العالم"]
+                leagues: ["دوري أبطال أوروبا للطائرة", "بطولة العالم"]
             },
             'handball': {
                 name: 'كرة اليد',
@@ -385,7 +370,7 @@
                 const appContainer = document.getElementById('app-container');
                 if(splash) splash.style.display = 'none';
                 if(appContainer) appContainer.style.display = 'block';
-            }, 1500);
+            }, 1000);
         });
 
         function openLeagues(sportKey) {
@@ -403,8 +388,8 @@
             sportInfo.leagues.forEach(league => {
                 const card = document.createElement('div');
                 card.className = 'league-card';
-                card.innerHTML = `<h3 style="color: var(--gold-light); font-size: 1rem;">${league}</h3><p style="color: #888; font-size: 0.75rem; margin-top: 5px;">تحليل Avant-match & En direct (API)</p>`;
-                card.onclick = () => openAnalytics(league);
+                card.innerHTML = `<h3 style="color: var(--gold-light); font-size: 1rem;">${league}</h3><p style="color: #888; font-size: 0.75rem; margin-top: 5px;">Avant-match & En direct</p>`;
+                card.onclick = () => openAnalytics(sportInfo.name, league);
                 leaguesContainer.appendChild(card);
             });
         }
@@ -414,33 +399,18 @@
             document.getElementById('main-dashboard').style.display = 'grid';
         }
 
-        function openAnalytics(leagueName) {
+        function openAnalytics(sportName, leagueName) {
             document.getElementById('sub-view').style.display = 'none';
             document.getElementById('analytics-view').style.display = 'block';
-            document.getElementById('match-type').innerText = `${leagueName} - تحليل خوارزمي متزامن عبر الـ API`;
+            document.getElementById('match-type').innerText = `${sportName} - ${leagueName} (تحليل خوارزمي متقدم)`;
             
-            // جلب البيانات الديناميكية من الـ API العام المتاح
-            fetchLiveApiData(leagueName);
+            document.getElementById('home-name').innerText = "ريال مدريد";
+            document.getElementById('away-name').innerText = "برشلونة";
         }
 
         function goBackToLeagues() {
             document.getElementById('analytics-view').style.display = 'none';
             document.getElementById('sub-view').style.display = 'block';
-        }
-
-        // دالة الاتصال بالـ API المجاني وجلب البيانات الحقيقية
-        async function fetchLiveApiData(league) {
-            try {
-                // محاكاة طلب API حقيقي للبيانات الرياضية المفتوحة
-                document.getElementById('home-name').innerText = "ريال مدريد";
-                document.getElementById('away-name').innerText = "باريس سان جيرمان";
-                document.getElementById('home-logo').src = "https://assets.stickpng.com/images/5842eff3a6515b0e0ad7db7e.png";
-                document.getElementById('away-logo').src = "https://assets.stickpng.com/images/5842e8cca6515b0e0ad7db67.png";
-                document.getElementById('stat-score').innerText = "2 - 1 (مباشر)";
-                document.getElementById('stat-win-rate').innerText = "نسبة الثقة (84% مدعومة بالـ API)";
-            } catch (error) {
-                console.error("API Fetch Error:", error);
-            }
         }
     </script>
 </body>
