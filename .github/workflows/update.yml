@@ -1,76 +1,32 @@
-name: Update Football Data On-Demand
+name: Update Live Matches
 
 on:
+  schedule:
+    - cron: '0 * * * *' # يتم التحديث كل ساعة تلقائياً
   workflow_dispatch:
-
-permissions:
-  contents: write
 
 jobs:
   update-data:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: '3.10'
 
-      - name: Run smart fetch script for fixtures
-        run: |
-          python -c "
-          import urllib.request
-          import json
-          from datetime import datetime, timedelta
+      - name: Run script
+        run: python update_matches.py
 
-          api_key = 'fd08394f2301a78ecb2b0a3ed0b5d3c3'
-          headers = {'x-apisports-key': api_key}
-
-          def fetch_api(url):
-              try:
-                  req = urllib.request.Request(url, headers=headers)
-                  with urllib.request.urlopen(req) as response:
-                      return json.loads(response.read().decode())
-              except Exception as e:
-                  print('API Error:', e)
-                  return None
-
-          algeria_time = datetime.utcnow() + timedelta(hours=1)
-          today_str = algeria_time.strftime('%Y-%m-%d')
-          print(f'Target Date: {today_str}')
-
-          data = fetch_api(f'https://v3.football.api-sports.io/fixtures?date={today_str}')
-
-          matches_list = []
-          if data and 'response' in data:
-              print(f'Total matches found: {len(data[\"response\"])}')
-              for m in data['response']:
-                  league_info = m.get('league', {})
-                  teams_info = m.get('teams', {})
-                  goals_info = m.get('goals', {})
-                  fixture_info = m.get('fixture', {})
-                  
-                  matches_list.append({
-                      'league': league_info.get('name', 'General League'),
-                      'home': teams_info.get('home', {}).get('name', 'Home'),
-                      'away': teams_info.get('away', {}).get('name', 'Away'),
-                      'time': fixture_info.get('date', '20:00')[11:16],
-                      'score': f\"{goals_info.get('home', 0)} - {goals_info.get('away', 0)}\",
-                      'odds': '1: 1.85 | 2: 2.10'
-                  })
-
-          final_output = {'matches': matches_list}
-          with open('live.json', 'w', encoding='utf-8') as f:
-              json.dump(final_output, f, ensure_ascii=False, indent=4)
-          print('live.json updated successfully.')
-          "
-
-      - name: Commit and push changes safely
+      - name: Commit and push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add live.json
-          git diff --quiet && git diff --staged --quiet || git commit -m "Update live.json [skip ci]"
-          git push || echo "Push skipped or no changes"
+          git commit -m "Auto-update live.json matches" || exit 0
+          git push
+          
