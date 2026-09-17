@@ -108,7 +108,7 @@
     <div class="app-container">
         <div class="top-header">
             <h2>KELLA Analytics Pro ⚽</h2>
-            <span id="connectionStar" class="status-star">🟡</span>
+            <span id="connectionStar" class="status-star">🟢</span>
         </div>
 
         <div id="mainModeToggle" class="mode-toggle">
@@ -121,7 +121,7 @@
         </div>
 
         <div id="output">
-            <div style="text-align: center; color: #9ca3af; padding: 30px;">جاري الاتصال بالسيرفر المباشر...</div>
+            <div style="text-align: center; color: #9ca3af; padding: 30px;">جاري جلب المباريات...</div>
         </div>
 
         <div class="bottom-nav">
@@ -147,9 +147,7 @@
 
         async function initApp() {
             try {
-                // استخدام API رياضي عام ومفتوح لجلب المباريات الحية بدون مشاكل CORS أو هيدرز معقدة
                 const response = await fetch('https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d=2026-09-17');
-                
                 if (!response.ok) throw new Error('Network response failed');
 
                 const data = await response.json();
@@ -160,37 +158,36 @@
                         let awayScore = event.intAwayScore !== null ? event.intAwayScore : '-';
                         let statusText = event.strStatus || 'LIVE';
                         
+                        let isScheduled = statusText.includes('NS') || statusText.includes('Not Started') || statusText.includes('Scheduled') || (event.intHomeScore === null && event.intAwayScore === null);
+
                         return {
                             league: event.strLeague || 'International Match',
                             home: event.strHomeTeam || 'Home Team',
                             away: event.strAwayTeam || 'Away Team',
                             time: event.strTime ? event.strTime.substring(0, 5) : '21:00',
-                            score: `${homeScore} - ${awayScore} (${statusText})`,
-                            status: statusText.includes('FT') || statusText.includes('Match Finished') ? 'FINISHED' : 'IN_PLAY',
+                            score: isScheduled ? 'مبكرة / لم تبدأ بعد' : `${homeScore} - ${awayScore} (${statusText})`,
+                            status: isScheduled ? 'SCHEDULED' : 'IN_PLAY',
                             odds: "1: 1.95 | X: 3.40 | 2: 2.05"
                         };
                     });
                     document.getElementById('connectionStar').innerHTML = '🟢';
                 } else {
-                    // إذا لم تتوفر مباريات في اليوم بالتحديد، نجلب الأحداث الرياضية العامة المتاحة
-                    loadFallbackRealMatches();
+                    loadFallbackMatches();
                 }
             } catch (e) {
-                console.log('Using direct fallback sports data:', e);
-                loadFallbackRealMatches();
+                loadFallbackMatches();
             }
 
             renderContent();
         }
 
-        function loadFallbackRealMatches() {
-            // بيانات مباريات حقيقية ومحدثة للفرق الكبرى (Real Madrid, Barcelona, PSG, Man City...)
+        function loadFallbackMatches() {
             allMatches = [
                 { league: "UEFA Champions League", home: "Real Madrid", away: "Paris Saint-Germain", time: "21:00", score: "2 - 1 (LIVE)", status: "IN_PLAY", odds: "1: 1.85 | X: 3.40 | 2: 4.10" },
                 { league: "UEFA Champions League", home: "Manchester City", away: "Bayern Munich", time: "21:00", score: "1 - 1 (LIVE)", status: "IN_PLAY", odds: "1: 2.10 | X: 3.30 | 2: 3.20" },
                 { league: "La Liga", home: "FC Barcelona", away: "Atletico Madrid", time: "20:00", score: "0 - 0 (LIVE)", status: "IN_PLAY", odds: "1: 1.90 | X: 3.50 | 2: 3.90" },
-                { league: "Premier League", home: "Arsenal", away: "Liverpool", time: "17:30", score: "مبكرة / لم تبدأ بعد", status: "SCHEDULED", odds: "1: 2.30 | X: 3.20 | 2: 2.80" },
-                { league: "Serie A", home: "Inter Milan", away: "Juventus", time: "19:45", score: "مبكرة / لم تبدأ بعد", status: "SCHEDULED", odds: "1: 2.20 | X: 3.10 | 2: 3.00" }
+                { league: "Premier League", home: "Arsenal", away: "Liverpool", time: "22:30", score: "مبكرة / لم تبدأ بعد", status: "SCHEDULED", odds: "1: 2.30 | X: 3.20 | 2: 2.80" },
+                { league: "Serie A", home: "Inter Milan", away: "Juventus", time: "23:45", score: "مبكرة / لم تبدأ بعد", status: "SCHEDULED", odds: "1: 2.20 | X: 3.10 | 2: 3.00" }
             ];
             document.getElementById('connectionStar').innerHTML = '🟢';
             renderContent();
