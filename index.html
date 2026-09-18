@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLA Analytics Pro - منصة التحليل الرياضي الذكي</title>
+    <title>KELLA Analytics Pro - التحليل الرياضي الذكي</title>
     <style>
         :root {
             --bg-color: #0d1117;
@@ -11,6 +11,7 @@
             --gold-primary: #d4af37;
             --text-color: #f0f6fc;
             --text-muted: #8b949e;
+            --border-color: #30363d;
         }
         body {
             margin: 0;
@@ -23,7 +24,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 25px;
+            padding: 15px 20px;
             background-color: var(--card-bg);
             border-bottom: 2px solid var(--gold-primary);
         }
@@ -32,11 +33,6 @@
             font-size: 20px;
             color: var(--gold-primary);
         }
-        .logo-area span {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-        /* زر الموسيقى الاحترافي */
         .sound-btn {
             background: rgba(212, 175, 55, 0.1);
             border: 1px solid var(--gold-primary);
@@ -46,71 +42,135 @@
             cursor: pointer;
             font-size: 14px;
             transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
         }
         .sound-btn:hover {
             background: var(--gold-primary);
             color: var(--bg-color);
         }
         .main-container {
-            padding: 25px;
-            max-width: 1000px;
+            padding: 20px;
+            max-width: 900px;
             margin: auto;
         }
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid #30363d;
-            border-radius: 10px;
-            padding: 20px;
+        /* قسم الرياضات والخلايا */
+        .sports-nav {
+            display: flex;
+            gap: 10px;
             margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
         }
-        .card h3 {
-            margin-top: 0;
+        .sport-chip {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+            transition: 0.2s;
+        }
+        .sport-chip.active, .sport-chip:hover {
+            border-color: var(--gold-primary);
             color: var(--gold-primary);
+        }
+        .cells-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+        .cell-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        .cell-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        .match-teams {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: var(--text-color);
+        }
+        .analysis-box {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            border-right: 3px solid var(--gold-primary);
         }
     </style>
 </head>
 <body>
 
-    <!-- الهيدر الخاص بالتطبيق -->
+    <!-- الهيدر الأصلي مع زر الموسيقى المدمج -->
     <header>
         <div class="logo-area">
             <h1>KELLA Analytics Pro ⚽</h1>
-            <span>أداة منطقية للتحليل الرياضي وتقليل المخاطر</span>
         </div>
-        
-        <!-- زر التحكم في الموسيقى -->
         <button id="sound-toggle-btn" class="sound-btn" onclick="toggleMusic()">
-            🔇 <span>تشغيل الموسيقى</span>
+            🔇 تشغيل الموسيقى
         </button>
     </header>
 
-    <!-- محتوى التطبيق الأساسي -->
+    <!-- محتوى التطبيق والخلايا الرياضية الأصلية -->
     <div class="main-container">
         
-        <!-- قسم التنبيه التوعوي والأخلاقي -->
-        <div class="card" style="border-color: var(--gold-primary);">
-            <h3>🎯 الهدف من المنصة</h3>
-            <p>توفير قراءات رياضية دقيقة، مبنية على الأرقام والاحتمالات المنطقية البحتة، بعيداً عن العشوائية لترسيخ الوعي الرشيد.</p>
+        <!-- قائمة الرياضات -->
+        <div class="sports-nav">
+            <div class="sport-chip active">⚽ كرة القدم</div>
+            <div class="sport-chip">🏀 كرة السلة</div>
+            <div class="sport-chip">🎾 التنس</div>
         </div>
 
-        <!-- قسم لوحة المباريات والتحليلات -->
-        <div class="card">
-            <h3>📊 لوحة التحليلات الحية والمباريات</h3>
-            <p id="matches-status">جاري مزامنة البيانات الرياضية وتحميل الاحتمالات...</p>
+        <!-- خلايا المباريات والتحليلات -->
+        <div class="cells-grid">
+            
+            <!-- الخلية الأولى -->
+            <div class="cell-card">
+                <div class="cell-header">
+                    <span>الدوري الأوروبي</span>
+                    <span style="color: #2ea043;">● مباشر</span>
+                </div>
+                <div class="match-teams">Real Madrid vs Barcelona</div>
+                <div class="analysis-box">
+                    نسبة الاحتمالية للفوز: <strong>65%</strong><br>
+                    قراءة المخاطر: منخفضة
+                </div>
+            </div>
+
+            <!-- الخلية الثانية -->
+            <div class="cell-card">
+                <div class="cell-header">
+                    <span>دوري أبطال أوروبا</span>
+                    <span style="color: #8b949e;">مترقبة</span>
+                </div>
+                <div class="match-teams">PSG vs Bayern Munich</div>
+                <div class="analysis-box">
+                    نسبة الاحتمالية للفوز: <strong>50%</strong><br>
+                    قراءة المخاطر: متوسطة
+                </div>
+            </div>
+
         </div>
 
     </div>
 
-    <!-- عنصر الصوت المباشر (الملف خارج المجلد في الواجهة الرئيسية) -->
+    <!-- عنصر الصوت في الخلفية (يقرأ من background.mp3 الخارجي) -->
     <audio id="bg-music" loop preload="auto">
         <source src="background.mp3" type="audio/mpeg">
         متصفحك لا يدعم تشغيل الملفات الصوتية.
     </audio>
 
-    <!-- سكربت التحكم في الصوت وتشغيل الأيقونات -->
+    <!-- سكريبت تشغيل الموسيقى -->
     <script>
         function toggleMusic() {
             const music = document.getElementById('bg-music');
@@ -118,14 +178,13 @@
             
             if (music.paused) {
                 music.play().then(() => {
-                    btn.innerHTML = '🎵 <span>إيقاف الموسيقى</span>';
+                    btn.innerHTML = '🎵 إيقاف الموسيقى';
                 }).catch(error => {
-                    console.log("خطأ في التشغيل:", error);
-                    alert("يرجى النقر مرة أخرى لتشغيل الصوت.");
+                    console.log("التشغيل يتطلب تفاعل المستخدم:", error);
                 });
             } else {
                 music.pause();
-                btn.innerHTML = '🔇 <span>تشغيل الموسيقى</span>';
+                btn.innerHTML = '🔇 تشغيل الموسيقى';
             }
         }
     </script>
