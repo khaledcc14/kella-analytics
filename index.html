@@ -20,17 +20,22 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
+        /* خلفية التطبيق المتحركة ديناميكياً */
         body {
             background-color: var(--bg-dark);
-            /* خلفية عامة احترافية للمنصة مع تدرج داكن وواقعي */
-            background-image: linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.95)), 
-                              url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1600&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             color: #ffffff;
             min-height: 100vh;
-            transition: background-image 0.5s ease-in-out;
+            transition: background-image 1s ease-in-out;
+        }
+
+        /* طبقة عتمة لتحسين قراءة النصوص فوق الخلفية المتحركة */
+        .overlay {
+            min-height: 100vh;
+            background: linear-gradient(rgba(10, 10, 10, 0.82), rgba(10, 10, 10, 0.92));
+            padding: 20px;
         }
 
         #splash-screen {
@@ -72,7 +77,6 @@
 
         #app-container {
             display: none;
-            padding: 20px;
             max-width: 900px;
             margin: 0 auto;
         }
@@ -82,7 +86,6 @@
             margin-bottom: 25px;
             border-bottom: 2px solid var(--gold-primary);
             padding-bottom: 20px;
-            position: relative;
             padding-top: 10px;
         }
 
@@ -91,12 +94,11 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-size: 2rem;
-            margin-top: 10px;
+            margin-bottom: 5px;
         }
 
-        /* زر الموسيقى مهبط ومنظم بعيد عن الكتابة */
+        /* زر الموسيقى مرتب ومهبط تحت العنوان */
         .sound-btn {
-            position: static;
             display: inline-flex;
             align-items: center;
             gap: 6px;
@@ -108,7 +110,8 @@
             cursor: pointer;
             font-size: 0.9rem;
             transition: 0.3s;
-            margin-bottom: 12px;
+            margin-top: 12px;
+            margin-bottom: 15px;
         }
 
         .sound-btn:hover {
@@ -123,10 +126,10 @@
             padding: 10px;
         }
 
+        /* خلايا الرياضات بصور خلفية واقعية احترافية */
         .sport-cell {
-            height: 150px;
+            height: 160px;
             border-radius: 16px;
-            background: linear-gradient(145deg, rgba(31, 31, 31, 0.9), rgba(13, 13, 13, 0.95));
             position: relative;
             cursor: pointer;
             overflow: hidden;
@@ -134,10 +137,22 @@
             transition: all 0.3s ease;
             box-shadow: 0 5px 15px rgba(0,0,0,0.6);
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            align-items: flex-end;
             justify-content: center;
-            gap: 12px;
+            padding-bottom: 15px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .sport-cell::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.85) 20%, rgba(0,0,0,0.3) 100%);
+            transition: 0.3s;
         }
 
         .sport-cell:hover {
@@ -146,17 +161,17 @@
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
         }
 
-        /* تعديل الأيقونات لتكون واقعية واحترافية (باستخدام رموز عالية الجودة / تصميم واضح) */
-        .sport-icon {
-            font-size: 2.2rem;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
+        .sport-cell:hover::before {
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 20%, rgba(0,0,0,0.1) 100%);
         }
 
         .sport-title {
             color: var(--gold-light);
             font-weight: bold;
-            font-size: 1.1rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+            font-size: 1.15rem;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.9);
         }
 
         #sub-view {
@@ -283,140 +298,155 @@
         <div class="splash-sub">جاري تحميل المنصة الرياضية...</div>
     </div>
 
-    <div id="app-container">
-        <header>
-            <!-- زر الموسيقى مهبط ومرتب تحت الشعار مباشرة -->
-            <button id="sound-toggle-btn" class="sound-btn" onclick="toggleMusic()">
-                🔇 <span>تشغيل الموسيقى</span>
-            </button>
-            <h1>KELLA Analytics Pro</h1>
-            <p style="color: var(--gold-light); font-size: 0.9rem; margin-top: 5px;">التحليل الرياضي الخوارزمي المتقدم</p>
-        </header>
+    <div class="overlay">
+        <div id="app-container">
+            <header>
+                <h1>KELLA Analytics Pro</h1>
+                <p style="color: var(--gold-light); font-size: 0.9rem;">التحليل الرياضي الخوارزمي المتقدم</p>
+                <!-- زر الموسيقى مهبط تحت الوصف تماماً -->
+                <button id="sound-toggle-btn" class="sound-btn" onclick="toggleMusic()">
+                    🔇 <span>تشغيل الموسيقى</span>
+                </button>
+            </header>
 
-        <div id="main-dashboard" class="sports-grid">
-            <div class="sport-cell" onclick="openLeagues('football')">
-                <div class="sport-icon">⚽ 🏆</div>
-                <div class="sport-title">كرة القدم</div>
+            <div id="main-dashboard" class="sports-grid">
+                <!-- خلايا بصور واقعية لكل رياضة -->
+                <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=600&auto=format&fit=crop');" onclick="openLeagues('football')">
+                    <div class="sport-title">كرة القدم</div>
+                </div>
+                <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=600&auto=format&fit=crop');" onclick="openLeagues('basketball')">
+                    <div class="sport-title">كرة السلة</div>
+                </div>
+                <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1622163642998-1ea32b1ab639?q=80&w=600&auto=format&fit=crop');" onclick="openLeagues('tennis')">
+                    <div class="sport-title">التنس</div>
+                </div>
+                <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=600&auto=format&fit=crop');" onclick="openLeagues('volleyball')">
+                    <div class="sport-title">الكرة الطائرة</div>
+                </div>
+                <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=600&auto=format&fit=crop');" onclick="openLeagues('handball')">
+                    <div class="sport-title">كرة اليد</div>
+                </div>
+                <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1512716933556-5688544c9b3d?q=80&w=600&auto=format&fit=crop');" onclick="openLeagues('rugby')">
+                    <div class="sport-title">الرجبي</div>
+                </div>
             </div>
-            <div class="sport-cell" onclick="openLeagues('basketball')">
-                <div class="sport-icon">🏀 ⚡</div>
-                <div class="sport-title">كرة السلة</div>
-            </div>
-            <div class="sport-cell" onclick="openLeagues('tennis')">
-                <div class="sport-icon">🎾 🎯</div>
-                <div class="sport-title">التنس</div>
-            </div>
-            <div class="sport-cell" onclick="openLeagues('volleyball')">
-                <div class="sport-icon">🏐 🌐</div>
-                <div class="sport-title">الكرة الطائرة</div>
-            </div>
-            <div class="sport-cell" onclick="openLeagues('handball')">
-                <div class="sport-icon">🤾‍♂️ 🔥</div>
-                <div class="sport-title">كرة اليد</div>
-            </div>
-            <div class="sport-cell" onclick="openLeagues('rugby')">
-                <div class="sport-icon">🏉 🛡️</div>
-                <div class="sport-title">الرجبي</div>
-            </div>
-        </div>
 
-        <div id="sub-view">
-            <button class="back-btn" onclick="goBackToMain()">← العودة للرئيسية</button>
-            <h2 id="selected-sport-title" style="color: var(--gold-primary); margin-bottom: 20px; font-size: 1.3rem;"></h2>
-            <div class="leagues-grid" id="leagues-container"></div>
-        </div>
+            <div id="sub-view">
+                <button class="back-btn" onclick="goBackToMain()">← العودة للرئيسية</button>
+                <h2 id="selected-sport-title" style="color: var(--gold-primary); margin-bottom: 20px; font-size: 1.3rem;"></h2>
+                <div class="leagues-grid" id="leagues-container"></div>
+            </div>
 
-        <div id="analytics-view">
-            <button class="back-btn" onclick="goBackToLeagues()">← العودة للدوريات</button>
-            <div class="match-header">
-                <div>
-                    <div class="teams-container" style="margin-bottom: 5px;">
-                        <div class="team-info">
-                            <span id="home-name" style="font-weight: bold; font-size: 1.1rem; color: #fff;">التريق...</span>
+            <div id="analytics-view">
+                <button class="back-btn" onclick="goBackToLeagues()">← العودة للدوريات</button>
+                <div class="match-header">
+                    <div>
+                        <div class="teams-container" style="margin-bottom: 5px;">
+                            <div class="team-info">
+                                <span id="home-name" style="font-weight: bold; font-size: 1.1rem; color: #fff;">التريق...</span>
+                            </div>
+                            <span style="color: var(--gold-primary); font-weight: bold; padding: 0 5px;">VS</span>
+                            <div class="team-info">
+                                <span id="away-name" style="font-weight: bold; font-size: 1.1rem; color: #fff;">التريق...</span>
+                            </div>
                         </div>
-                        <span style="color: var(--gold-primary); font-weight: bold; padding: 0 5px;">VS</span>
-                        <div class="team-info">
-                            <span id="away-name" style="font-weight: bold; font-size: 1.1rem; color: #fff;">التريق...</span>
-                        </div>
+                        <p id="match-type" style="color: var(--gold-light); font-size: 0.85rem;"></p>
                     </div>
-                    <p id="match-type" style="color: var(--gold-light); font-size: 0.85rem;"></p>
+                    <div>
+                        <span class="badge-status">LIVE PRO</span>
+                    </div>
                 </div>
-                <div>
-                    <span class="badge-status">LIVE PRO</span>
+
+                <div class="analytics-grid">
+                    <div class="stat-box">
+                        <div class="stat-title">النتيجة المتوقعة (Score)</div>
+                        <div class="stat-value" id="stat-score">1 - 2</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-title">إجمالي الأهداف (Goals)</div>
+                        <div class="stat-value">أكثر من 2.5 هدف</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-title">الركنيات (Corners)</div>
+                        <div class="stat-value">9.5 ركنية</div>
+                    </div>
+                    <div class="stat-box flash-highlight">
+                        <div class="stat-title" style="color: #ff9f43;">نسبة الفوز والتأهل 🚨</div>
+                        <div class="stat-value" id="stat-win-rate" style="color: #ff4757;">84%</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-title">ضربات الجزاء (Penalties)</div>
+                        <div class="stat-value">محتملة بنسبة 45%</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-title">البطاقات (صفراء / حمراء)</div>
+                        <div class="stat-value">4 صفراء / 0 حمراء</div>
+                    </div>
                 </div>
             </div>
 
-            <div class="analytics-grid">
-                <div class="stat-box">
-                    <div class="stat-title">النتيجة المتوقعة (Score)</div>
-                    <div class="stat-value" id="stat-score">1 - 2</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-title">إجمالي الأهداف (Goals)</div>
-                    <div class="stat-value">أكثر من 2.5 هدف</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-title">الركنيات (Corners)</div>
-                    <div class="stat-value">9.5 ركنية</div>
-                </div>
-                <div class="stat-box flash-highlight">
-                    <div class="stat-title" style="color: #ff9f43;">نسبة الفوز والتأهل 🚨</div>
-                    <div class="stat-value" id="stat-win-rate" style="color: #ff4757;">84%</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-title">ضربات الجزاء (Penalties)</div>
-                    <div class="stat-value">محتملة بنسبة 45%</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-title">البطاقات (صفراء / حمراء)</div>
-                    <div class="stat-value">4 صفراء / 0 حمراء</div>
-                </div>
-            </div>
         </div>
-
     </div>
 
-    <!-- عنصر الصوت الخارجي background.mp3 -->
+    <!-- ملف الصوت الخارجي -->
     <audio id="bg-music" loop preload="auto">
         <source src="background.mp3" type="audio/mpeg">
         متصفحك لا يدعم تشغيل الملفات الصوتية.
     </audio>
 
     <script>
-        // روابط الخلفيات الديناميكية الحقيقية حسب الرياضة
-        const sportBackgrounds = {
-            'football': 'url("https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1600&auto=format&fit=crop")',
-            'basketball': 'url("https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=1600&auto=format&fit=crop")',
-            'tennis': 'url("https://images.unsplash.com/photo-1622163642998-1ea32b1ab639?q=80&w=1600&auto=format&fit=crop")',
-            'volleyball': 'url("https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=1600&auto=format&fit=crop")',
-            'handball': 'url("https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1600&auto=format&fit=crop")',
-            'rugby': 'url("https://images.unsplash.com/photo-1512716933556-5688544c9b3d?q=80&w=1600&auto=format&fit=crop")',
-            'default': 'url("https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1600&auto=format&fit=crop")'
-        };
+        // قائمة الخلفيات المتحركة (Slideshow) الخاصة بالصورة الرئيسية للتطبيق
+        const backgroundList = [
+            'url("https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1600&auto=format&fit=crop")', // أبطال أوروبا / قدم
+            'url("https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=1600&auto=format&fit=crop")', // كرة السلة
+            'url("https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=1600&auto=format&fit=crop")', // طائرة
+            'url("https://images.unsplash.com/photo-1512716933556-5688544c9b3d?q=80&w=1600&auto=format&fit=crop")', // رجبي
+            'url("https://images.unsplash.com/photo-1622163642998-1ea32b1ab639?q=80&w=1600&auto=format&fit=crop")'  // تنس
+        ];
+        
+        let currentBgIndex = 0;
+        let isUserInSubView = false;
+
+        // تغيير الخلفية تلقائياً كل 5 ثواني بشكل متحرك واحترافي
+        setInterval(() => {
+            if (!isUserInSubView) {
+                currentBgIndex = (currentBgIndex + 1) % backgroundList.length;
+                document.body.style.backgroundImage = backgroundList[currentBgIndex];
+            }
+        }, 5000);
+
+        // تعيين الخلفية الأولى عند الفتح
+        document.body.style.backgroundImage = backgroundList[0];
 
         const sportLeaguesData = {
             'football': {
                 name: 'كرة القدم',
+                bg: 'url("https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1600&auto=format&fit=crop")',
                 leagues: ["دوري أبطال أوروبا", "الدوري الإنجليزي الممتاز", "الدوري الإسباني", "الدوري الإيطالي"]
             },
             'basketball': {
                 name: 'كرة السلة',
+                bg: 'url("https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=1600&auto=format&fit=crop")',
                 leagues: ["الدوري الأمريكي NBA", "الدوري الأوروبي"]
             },
             'tennis': {
                 name: 'التنس',
+                bg: 'url("https://images.unsplash.com/photo-1622163642998-1ea32b1ab639?q=80&w=1600&auto=format&fit=crop")',
                 leagues: ["ويمبلدون", "أمريكا المفتوحة"]
             },
             'volleyball': {
                 name: 'الكرة الطائرة',
+                bg: 'url("https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=1600&auto=format&fit=crop")',
                 leagues: ["دوري أبطال أوروبا للطائرة", "بطولة العالم"]
             },
             'handball': {
                 name: 'كرة اليد',
+                bg: 'url("https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1600&auto=format&fit=crop")',
                 leagues: ["دوري أبطال أوروبا", "الدوري الألماني"]
             },
             'rugby': {
                 name: 'الرجبي',
+                bg: 'url("https://images.unsplash.com/photo-1512716933556-5688544c9b3d?q=80&w=1600&auto=format&fit=crop")',
                 leagues: ["بطولة الست الأمم", "الدوري الإنجليزي"]
             }
         };
@@ -434,10 +464,9 @@
             const sportInfo = sportLeaguesData[sportKey];
             if (!sportInfo) return;
 
-            // تغيير الخلفية ديناميكياً حسب الرياضة المختارة
-            if (sportBackgrounds[sportKey]) {
-                document.body.style.backgroundImage = `linear-gradient(rgba(10, 10, 10, 0.88), rgba(10, 10, 10, 0.94)), ${sportBackgrounds[sportKey]}`;
-            }
+            isUserInSubView = true;
+            // تثبيت خلفية الرياضة المختارة
+            document.body.style.backgroundImage = sportInfo.bg;
 
             document.getElementById('main-dashboard').style.display = 'none';
             const subView = document.getElementById('sub-view');
@@ -457,8 +486,8 @@
         }
 
         function goBackToMain() {
-            // العودة للخلفية الافتراضية
-            document.body.style.backgroundImage = `linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.95)), ${sportBackgrounds['default']}`;
+            isUserInSubView = false;
+            document.body.style.backgroundImage = backgroundList[currentBgIndex];
             document.getElementById('sub-view').style.display = 'none';
             document.getElementById('main-dashboard').style.display = 'grid';
         }
