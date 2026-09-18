@@ -10,7 +10,7 @@
             --gold-light: #f3e5ab;
             --gold-dark: #aa8c2c;
             --bg-dark: #0a0a0a;
-            --card-bg: #141414;
+            --card-bg: rgba(20, 20, 20, 0.85);
         }
 
         * {
@@ -22,8 +22,15 @@
 
         body {
             background-color: var(--bg-dark);
+            /* خلفية عامة احترافية للمنصة مع تدرج داكن وواقعي */
+            background-image: linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.95)), 
+                              url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1600&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             color: #ffffff;
             min-height: 100vh;
+            transition: background-image 0.5s ease-in-out;
         }
 
         #splash-screen {
@@ -74,8 +81,9 @@
             text-align: center;
             margin-bottom: 25px;
             border-bottom: 2px solid var(--gold-primary);
-            padding-bottom: 15px;
+            padding-bottom: 20px;
             position: relative;
+            padding-top: 10px;
         }
 
         header h1 {
@@ -83,24 +91,24 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-size: 2rem;
+            margin-top: 10px;
         }
 
-        /* زر الموسيقى الاحترافي المصمم ليتماشى مع الستايل الذهبي */
+        /* زر الموسيقى مهبط ومنظم بعيد عن الكتابة */
         .sound-btn {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: rgba(212, 175, 55, 0.1);
+            position: static;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(212, 175, 55, 0.15);
             border: 1px solid var(--gold-primary);
             color: var(--gold-light);
-            padding: 6px 12px;
+            padding: 8px 16px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            margin-bottom: 12px;
         }
 
         .sound-btn:hover {
@@ -118,18 +126,18 @@
         .sport-cell {
             height: 150px;
             border-radius: 16px;
-            background: linear-gradient(145deg, #1f1f1f, #0d0d0d);
+            background: linear-gradient(145deg, rgba(31, 31, 31, 0.9), rgba(13, 13, 13, 0.95));
             position: relative;
             cursor: pointer;
             overflow: hidden;
             border: 2px solid var(--gold-dark);
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.6);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .sport-cell:hover {
@@ -138,8 +146,10 @@
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
         }
 
+        /* تعديل الأيقونات لتكون واقعية واحترافية (باستخدام رموز عالية الجودة / تصميم واضح) */
         .sport-icon {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
         }
 
         .sport-title {
@@ -183,6 +193,7 @@
             text-align: center;
             cursor: pointer;
             transition: 0.3s;
+            backdrop-filter: blur(5px);
         }
 
         .league-card:hover {
@@ -196,6 +207,7 @@
             border: 2px solid var(--gold-primary);
             border-radius: 15px;
             padding: 20px;
+            backdrop-filter: blur(10px);
         }
 
         .match-header {
@@ -235,7 +247,7 @@
         }
 
         .stat-box {
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.6);
             border: 1px solid #333;
             padding: 15px;
             border-radius: 10px;
@@ -273,9 +285,9 @@
 
     <div id="app-container">
         <header>
-            <!-- زر الموسيقى في الهيدر بدون ما يخرب التصميم -->
+            <!-- زر الموسيقى مهبط ومرتب تحت الشعار مباشرة -->
             <button id="sound-toggle-btn" class="sound-btn" onclick="toggleMusic()">
-                🔇 <span>الموسيقى</span>
+                🔇 <span>تشغيل الموسيقى</span>
             </button>
             <h1>KELLA Analytics Pro</h1>
             <p style="color: var(--gold-light); font-size: 0.9rem; margin-top: 5px;">التحليل الرياضي الخوارزمي المتقدم</p>
@@ -283,27 +295,27 @@
 
         <div id="main-dashboard" class="sports-grid">
             <div class="sport-cell" onclick="openLeagues('football')">
-                <div class="sport-icon">⚽</div>
+                <div class="sport-icon">⚽ 🏆</div>
                 <div class="sport-title">كرة القدم</div>
             </div>
             <div class="sport-cell" onclick="openLeagues('basketball')">
-                <div class="sport-icon">🏀</div>
+                <div class="sport-icon">🏀 ⚡</div>
                 <div class="sport-title">كرة السلة</div>
             </div>
             <div class="sport-cell" onclick="openLeagues('tennis')">
-                <div class="sport-icon">🎾</div>
+                <div class="sport-icon">🎾 🎯</div>
                 <div class="sport-title">التنس</div>
             </div>
             <div class="sport-cell" onclick="openLeagues('volleyball')">
-                <div class="sport-icon">🏐</div>
+                <div class="sport-icon">🏐 🌐</div>
                 <div class="sport-title">الكرة الطائرة</div>
             </div>
             <div class="sport-cell" onclick="openLeagues('handball')">
-                <div class="sport-icon">🤾‍♂️</div>
+                <div class="sport-icon">🤾‍♂️ 🔥</div>
                 <div class="sport-title">كرة اليد</div>
             </div>
             <div class="sport-cell" onclick="openLeagues('rugby')">
-                <div class="sport-icon">🏉</div>
+                <div class="sport-icon">🏉 🛡️</div>
                 <div class="sport-title">الرجبي</div>
             </div>
         </div>
@@ -371,6 +383,17 @@
     </audio>
 
     <script>
+        // روابط الخلفيات الديناميكية الحقيقية حسب الرياضة
+        const sportBackgrounds = {
+            'football': 'url("https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1600&auto=format&fit=crop")',
+            'basketball': 'url("https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=1600&auto=format&fit=crop")',
+            'tennis': 'url("https://images.unsplash.com/photo-1622163642998-1ea32b1ab639?q=80&w=1600&auto=format&fit=crop")',
+            'volleyball': 'url("https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=1600&auto=format&fit=crop")',
+            'handball': 'url("https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1600&auto=format&fit=crop")',
+            'rugby': 'url("https://images.unsplash.com/photo-1512716933556-5688544c9b3d?q=80&w=1600&auto=format&fit=crop")',
+            'default': 'url("https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1600&auto=format&fit=crop")'
+        };
+
         const sportLeaguesData = {
             'football': {
                 name: 'كرة القدم',
@@ -411,6 +434,11 @@
             const sportInfo = sportLeaguesData[sportKey];
             if (!sportInfo) return;
 
+            // تغيير الخلفية ديناميكياً حسب الرياضة المختارة
+            if (sportBackgrounds[sportKey]) {
+                document.body.style.backgroundImage = `linear-gradient(rgba(10, 10, 10, 0.88), rgba(10, 10, 10, 0.94)), ${sportBackgrounds[sportKey]}`;
+            }
+
             document.getElementById('main-dashboard').style.display = 'none';
             const subView = document.getElementById('sub-view');
             subView.style.display = 'block';
@@ -422,13 +450,15 @@
             sportInfo.leagues.forEach(league => {
                 const card = document.createElement('div');
                 card.className = 'league-card';
-                card.innerHTML = `<h3 style="color: var(--gold-light); font-size: 1rem;">${league}</h3><p style="color: #888; font-size: 0.75rem; margin-top: 5px;">Avant-match & En direct</p>`;
+                card.innerHTML = `<h3 style="color: var(--gold-light); font-size: 1rem;">${league}</h3><p style="color: #bbb; font-size: 0.75rem; margin-top: 5px;">Avant-match & En direct</p>`;
                 card.onclick = () => openAnalytics(sportInfo.name, league);
                 leaguesContainer.appendChild(card);
             });
         }
 
         function goBackToMain() {
+            // العودة للخلفية الافتراضية
+            document.body.style.backgroundImage = `linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.95)), ${sportBackgrounds['default']}`;
             document.getElementById('sub-view').style.display = 'none';
             document.getElementById('main-dashboard').style.display = 'grid';
         }
@@ -454,13 +484,13 @@
             
             if (music.paused) {
                 music.play().then(() => {
-                    btn.innerHTML = '🎵 <span>إيقاف</span>';
+                    btn.innerHTML = '🎵 <span>إيقاف الموسيقى</span>';
                 }).catch(error => {
                     console.log("خطأ في تشغيل الصوت:", error);
                 });
             } else {
                 music.pause();
-                btn.innerHTML = '🔇 <span>الموسيقى</span>';
+                btn.innerHTML = '🔇 <span>تشغيل الموسيقى</span>';
             }
         }
     </script>
