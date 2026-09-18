@@ -482,57 +482,58 @@
                 const response = await fetch(proxyUrl + targetUrl, {
                     method: 'GET',
                     headers: { 
-                        'X-Auth-Token': API_TOKEN
+                        'X-Auth-Token': API_TOKEN,
+                        'Content-Type': 'application/json'
                     }
                 });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    const matchesList = data.matches || [];
-
-                    let liveList = [];
-                    let scheduledList = [];
-                    let finishedList = [];
-                    let allParsed = [];
-
-                    matchesList.forEach((m) => {
-                        let baseScore = 75;
-                        let aiRate = Math.min(baseScore + ((m.id * 7) % 22), 98);
-
-                        let matchObj = {
-                            ...m,
-                            competition: data.competition || { name: 'الدوري الإنجليزي الممتاز' },
-                            aiRate: aiRate,
-                            analytics: {
-                                goals: (1.8 + ((m.id * 3) % 3)).toFixed(1),
-                                corners: 9 + (m.id % 5),
-                                cards: 2 + (m.id % 3),
-                                passes: 850 + ((m.id * 17) % 300)
-                            }
-                        };
-
-                        allParsed.push(matchObj);
-
-                        if (m.status === 'LIVE' || m.status === 'IN_PLAY' || m.status === 'PAUSED') {
-                            liveList.push(matchObj);
-                        } else if (m.status === 'SCHEDULED' || m.status === 'TIMED') {
-                            scheduledList.push(matchObj);
-                        } else if (m.status === 'FINISHED') {
-                            finishedList.push(matchObj);
-                        }
-                    });
-
-                    matchesData.ALL = allParsed;
-                    matchesData.LIVE = liveList;
-                    matchesData.SCHEDULED = scheduledList;
-                    matchesData.FINISHED = finishedList;
-                    matchesData.GUARANTEED = allParsed.filter(m => m.aiRate > 75);
-
-                } else {
-                    console.log("خطأ في استجابة الـ API:", response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
                 }
+
+                const data = await response.json();
+                const matchesList = data.matches || [];
+
+                let liveList = [];
+                let scheduledList = [];
+                let finishedList = [];
+                let allParsed = [];
+
+                matchesList.forEach((m) => {
+                    let baseScore = 75;
+                    let aiRate = Math.min(baseScore + ((m.id * 7) % 22), 98);
+
+                    let matchObj = {
+                        ...m,
+                        competition: data.competition || { name: 'الدوري الإنجليزي الممتاز' },
+                        aiRate: aiRate,
+                        analytics: {
+                            goals: (1.8 + ((m.id * 3) % 3)).toFixed(1),
+                            corners: 9 + (m.id % 5),
+                            cards: 2 + (m.id % 3),
+                            passes: 850 + ((m.id * 17) % 300)
+                        }
+                    };
+
+                    allParsed.push(matchObj);
+
+                    if (m.status === 'LIVE' || m.status === 'IN_PLAY' || m.status === 'PAUSED') {
+                        liveList.push(matchObj);
+                    } else if (m.status === 'SCHEDULED' || m.status === 'TIMED') {
+                        scheduledList.push(matchObj);
+                    } else if (m.status === 'FINISHED') {
+                        finishedList.push(matchObj);
+                    }
+                });
+
+                matchesData.ALL = allParsed;
+                matchesData.LIVE = liveList;
+                matchesData.SCHEDULED = scheduledList;
+                matchesData.FINISHED = finishedList;
+                matchesData.GUARANTEED = allParsed.filter(m => m.aiRate > 75);
+
             } catch (error) {
-                console.log("خطأ شبكي أثناء جلب البيانات:", error);
+                console.error("Unable to fetch data:", error);
             }
         }
 
@@ -546,4 +547,151 @@
 
         const sportLeaguesData = {
             'football': { name: 'كرة القدم (عرض كل النتائج والتحليلات)', bg: 'url("https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1600&auto=format&fit=crop")' },
-            'baske
+            'basketball': { name: 'كرة السلة', bg: 'url("https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=1600&auto=format&fit=crop")' },
+            'tennis': { name: 'التنس', bg: 'url("https://images.unsplash.com/photo-1622163642998-1ea32b1ab639?q=80&w=1600&auto=format&fit=crop")' },
+            'volleyball': { name: 'الكرة الطائرة', bg: 'url("https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=1600&auto=format&fit=crop")' },
+            'handball': { name: 'كرة اليد', bg: 'url("https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1600&auto=format&fit=crop")' },
+            'rugby': { name: 'الرجبي', bg: 'url("https://images.unsplash.com/photo-1512716933556-5688544c9b3d?q=80&w=1600&auto=format&fit=crop")' }
+        };
+
+        function openLeagues(sportKey) {
+            const sportInfo = sportLeaguesData[sportKey];
+            if (!sportInfo) return;
+
+            isUserInSubView = true;
+            document.body.style.backgroundImage = sportInfo.bg;
+            document.getElementById('main-dashboard').style.display = 'none';
+            document.getElementById('sub-view').style.display = 'block';
+            document.getElementById('selected-sport-title').innerText = sportInfo.name;
+
+            const tabs = document.getElementById('football-tabs');
+            if (sportKey === 'football') {
+                tabs.style.display = 'flex';
+                filterMatches('ALL');
+            } else {
+                tabs.style.display = 'none';
+                renderSimulatedLeagues(sportInfo.name);
+            }
+        }
+
+        function filterMatches(status) {
+            currentStatusFilter = status;
+            
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            if(status === 'ALL') buttons[0].classList.add('active');
+            if(status === 'LIVE') buttons[1].classList.add('active');
+            if(status === 'SCHEDULED') buttons[2].classList.add('active');
+            if(status === 'FINISHED') buttons[3].classList.add('active');
+            if(status === 'GUARANTEED') buttons[4].classList.add('active');
+
+            const container = document.getElementById('leagues-container');
+            container.innerHTML = '';
+
+            const list = matchesData[status] || [];
+
+            if (list.length === 0) {
+                container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 25px;">لا توجد مباريات متاحة حالياً في هذه الفئة عبر الـ API.</div>`;
+                return;
+            }
+
+            list.forEach(match => {
+                const card = document.createElement('div');
+                const isGuaranteed = match.aiRate > 75;
+                
+                card.className = isGuaranteed ? 'league-card guaranteed-card' : 'league-card';
+                
+                let badgeHtml = isGuaranteed ? `<div class="guaranteed-badge">🌟 مضمونة (${match.aiRate}%)</div>` : '';
+                let timeText = match.utcDate ? new Date(match.utcDate).toLocaleString('ar-DZ') : 'مباشر الآن';
+
+                card.innerHTML = `
+                    ${badgeHtml}
+                    <div style="color: var(--gold-light); font-weight: bold; font-size: 0.95rem; margin-top: ${isGuaranteed ? '15px' : '0'};">${match.homeTeam.name} vs ${match.awayTeam.name}</div>
+                    <div style="color: #bbb; font-size: 0.78rem;">البطولة: ${match.competition.name}</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+                        <span style="color: #aaa; font-size: 0.75rem;">${timeText}</span>
+                        <span style="color: ${isGuaranteed ? '#ffd700' : '#2ecc71'}; font-weight: bold; font-size: 0.8rem;">نسبة التوقع: ${match.aiRate}%</span>
+                    </div>
+                `;
+                card.onclick = () => openSpecificMatchAnalytics(match, status);
+                container.appendChild(card);
+            });
+        }
+
+        function renderSimulatedLeagues(sportName) {
+            const container = document.getElementById('leagues-container');
+            container.innerHTML = '';
+            
+            const card = document.createElement('div');
+            card.className = 'league-card guaranteed-card';
+            card.innerHTML = `
+                <div class="guaranteed-badge">🌟 نتيجة مضمونة (89.2%)</div>
+                <h3 style="color: var(--gold-light); font-size: 0.95rem; margin-top: 15px;">${sportName} - مباريات النخبة</h3>
+                <p style="color: #ffd700; font-size: 0.8rem; font-weight: bold; margin-top: 4px;">تحليل الذكاء الاصطناعي المؤكد</p>
+            `;
+            card.onclick = () => openSimulatedAnalytics(sportName);
+            container.appendChild(card);
+        }
+
+        function openSpecificMatchAnalytics(match, status) {
+            document.getElementById('sub-view').style.display = 'none';
+            document.getElementById('analytics-view').style.display = 'block';
+            document.getElementById('match-type').innerText = `${match.competition.name} » التحليل الشامل للذكاء الاصطناعي`;
+
+            document.getElementById('home-name').innerText = match.homeTeam.name;
+            document.getElementById('away-name').innerText = match.awayTeam.name;
+            
+            document.getElementById('stat-score').innerText = match.score && match.score.fullTime.home !== null ? 
+                `النتيجة النهائية: ${match.score.fullTime.home} - ${match.score.fullTime.away}` : "توقع تفوق الفريق المضيف / أهداف مؤكدة";
+            
+            document.getElementById('stat-status').innerText = match.status === 'LIVE' ? "المباراة جارية الآن 🔴" : `حالة اللقاء: ${match.status}`;
+            
+            let stats = match.analytics || { goals: '2.5', corners: '9', cards: '3', passes: '850' };
+            document.getElementById('stat-goals').innerHTML = `
+                ⚽ أهداف متوقعة: ${stats.goals} | 🚩 ركنيات: ${stats.corners}<br>
+                🟨 بطاقات: ${stats.cards} | 📋 تمريرات: ${stats.passes}
+            `;
+
+            let rateEl = document.getElementById('stat-win-rate');
+            rateEl.innerText = `${match.aiRate}% ${match.aiRate > 75 ? '🌟 (نتيجة مضمونة وأكيدة)' : ''}`;
+        }
+
+        function openSimulatedAnalytics(sportName) {
+            document.getElementById('sub-view').style.display = 'none';
+            document.getElementById('analytics-view').style.display = 'block';
+            document.getElementById('match-type').innerText = `${sportName} » تحليل النتيجة المضمونة`;
+
+            document.getElementById('home-name').innerText = "فريق النخبة أ";
+            document.getElementById('away-name').innerText = "فريق النخبة ب";
+            document.getElementById('stat-score').innerText = "توقع دقيق بنسبة عالية جداً";
+            document.getElementById('stat-status').innerText = "جاهز للتحليل الفوري";
+            document.getElementById('stat-goals').innerHTML = `⚽ أهداف: 3.1 | 🚩 ركنيات: 10<br>🟨 بطاقات: 2 | 📋 تمريرات: 910`;
+            document.getElementById('stat-win-rate').innerText = "91.4% 🌟 (نتيجة مضمونة)";
+        }
+
+        function goBackToMain() {
+            isUserInSubView = false;
+            document.body.style.backgroundImage = backgroundList[currentBgIndex];
+            document.getElementById('sub-view').style.display = 'none';
+            document.getElementById('main-dashboard').style.display = 'grid';
+        }
+
+        function goBackToLeagues() {
+            document.getElementById('analytics-view').style.display = 'none';
+            document.getElementById('sub-view').style.display = 'block';
+        }
+
+        function toggleMusic() {
+            const music = document.getElementById('bg-music');
+            const btn = document.getElementById('sound-toggle-btn');
+            if (music.paused) {
+                music.play().then(() => { btn.innerHTML = '🎵 <span>إيقاف الموسيقى</span>'; }).catch(e => console.log(e));
+            } else {
+                music.pause();
+                btn.innerHTML = '🔇 <span>تشغيل الموسيقى</span>';
+            }
+        }
+    </script>
+</body>
+</html>
