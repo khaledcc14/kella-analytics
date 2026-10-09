@@ -1,52 +1,82 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KELLA Analytics Pro - الفحص الخام للـ API</title>
-<style>
-:root {
---gold-primary: #d4af37;
---gold-light: #f3e5ab;
---bg-dark: #0a0a0a;
---card-bg: rgba(20, 20, 20, 0.95);
-}
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
-body { background-color: var(--bg-dark); color: #ffffff; min-height: 100vh; padding: 15px; }
-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--gold-primary); padding-bottom: 12px; }
-header h1 { color: var(--gold-primary); font-size: 1.4rem; }
-.box { background: var(--card-bg); border: 1px solid var(--gold-primary); padding: 15px; border-radius: 10px; margin-top: 15px; }
-pre { color: #00ffcc; font-size: 0.75rem; white-space: pre-wrap; word-break: break-all; max-height: 70vh; overflow-y: auto; text-align: left; direction: ltr; background: #000; padding: 10px; border-radius: 5px; }
-.back-btn { background: var(--gold-primary); color: #000; border: none; padding: 8px 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 12px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KELLA Analytics Pro - جدول المباريات المبرمجة</title>
+    <style>
+        :root {
+            --gold-primary: #d4af37;
+            --gold-light: #f3e5ab;
+            --bg-dark: #0a0a0a;
+            --card-bg: rgba(20, 20, 20, 0.95);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background-color: var(--bg-dark); color: #ffffff; min-height: 100vh; padding: 15px; }
+        header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--gold-primary); padding-bottom: 12px; }
+        header h1 { color: var(--gold-primary); font-size: 1.4rem; }
+        .match-card { background: var(--card-bg); border: 1px solid var(--gold-primary); padding: 15px; border-radius: 10px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .team { font-weight: bold; color: var(--gold-light); width: 40%; text-align: center; }
+        .match-info { text-align: center; font-size: 0.85rem; color: #00ffcc; }
+        .back-btn { background: var(--gold-primary); color: #000; border: none; padding: 8px 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 12px; }
+        .no-data { text-align: center; color: var(--gold-light); margin-top: 30px; font-size: 0.9rem; }
+    </style>
 </head>
 <body>
-<header>
-<h1>KELLA Analytics Pro - العرض الخام لـ SportMonks API</h1>
-<p style="color: var(--gold-light); font-size: 0.8rem;">رصد كامل محتوى ملف live.json كما يرد من السيرفر تماماً</p>
-</header>
-<div style="max-width: 900px; margin: 0 auto;">
-<button class="back-btn" onclick="location.reload()">🔄 تحديث البيانات الحية</button>
-<div class="box">
-<h3 style="color: var(--gold-primary); margin-bottom: 10px;">📄 محتوى ملف live.json الحالي:</h3>
-<div id="raw-json-output" style="color: var(--gold-light);">جاري جلب البيانات...</div>
-</div>
-</div>
-<script>
-async function fetchLiveJson() {
-const output = document.getElementById('raw-json-output');
-try {
-// استخدام الرابط المباشر للملف من جيت هاب لضمان عدم حدوث خطأ في المسارات الفرعية
-const jsonUrl = 'https://raw.githubusercontent.com/khaledcc14/kella-analytics/main/live.json?' + new Date().getTime();
-const response = await fetch(jsonUrl);
-if (!response.ok) throw new Error('تعذر الوصول إلى ملف live.json (HTTP ' + response.status + ')');
-const data = await response.json();
-output.innerHTML = <pre>${JSON.stringify(data, null, 2)}</pre>;
-} catch (err) {
-output.innerHTML = <span style="color: #ff4444;">خطأ في قراءة الملف: ${err.message}</span>;
-}
-}
-fetchLiveJson();
-</script>
+    <header>
+        <h1>KELLA Analytics Pro - جدول مباريات اليوم</h1>
+        <p style="color: var(--gold-light); font-size: 0.8rem;">مباريات اليوم مبرمجة مع التوقيت الحقيقي عبر SportMonks API</p>
+    </header>
+
+    <div style="max-width: 900px; margin: 0 auto;">
+        <button class="back-btn" onclick="location.reload()">🔄 تحديث جدول المباريات</button>
+        <div id="matches-container">
+            <div class="no-data">جاري جلب جدول المباريات...</div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchMatches() {
+            const container = document.getElementById('matches-container');
+            try {
+                const jsonUrl = 'live.json?' + new Date().getTime();
+                const response = await fetch(jsonUrl);
+                if (!response.ok) throw new Error('تعذر الوصول إلى بيانات المباريات');
+                
+                const data = await response.json();
+                const matches = data.data || [];
+
+                if (matches.length === 0) {
+                    container.innerHTML = '<div class="no-data">لا توجد مباريات مبرمجة في ملف live.json حالياً. جرب تشغيل الـ Action لتحديث البيان.</div>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                matches.forEach(match => {
+                    const participants = match.participants || [];
+                    const homeTeam = participants.find(p => p.meta && p.meta.location === 'home') || participants[0] || { name: 'الفريق الأول' };
+                    const awayTeam = participants.find(p => p.meta && p.meta.location === 'away') || participants[1] || { name: 'الفريق الثاني' };
+                    
+                    const startTime = match.starting_at || 'التوقيت غير محدد';
+
+                    const card = document.createElement('div');
+                    card.className = 'match-card';
+                    card.innerHTML = `
+                        <div class="team">${homeTeam.name || 'مضيف'}</div>
+                        <div class="match-info">
+                            <div>🆚</div>
+                            <div style="margin-top: 5px; font-weight: bold;">${startTime}</div>
+                        </div>
+                        <div class="team">${awayTeam.name || 'ضيف'}</div>
+                    `;
+                    container.appendChild(card);
+                });
+
+            } catch (err) {
+                container.innerHTML = `<div class="no-data" style="color: #ff4444;">خطأ في تحميل البيانات: ${err.message}</div>`;
+            }
+        }
+        fetchMatches();
+    </script>
 </body>
 </html>
