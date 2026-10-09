@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KELLA Analytics Pro - فحص مباشر</title>
+<title>KELLA Analytics Pro - الفحص الخام للـ API</title>
 <style>
 :root {
 --gold-primary: #d4af37;
@@ -14,37 +14,39 @@
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
 body { background-color: var(--bg-dark); color: #ffffff; min-height: 100vh; padding: 15px; }
 header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--gold-primary); padding-bottom: 12px; }
-header h1 { color: var(--gold-primary); font-size: 1.5rem; }
+header h1 { color: var(--gold-primary); font-size: 1.4rem; }
 .box { background: var(--card-bg); border: 1px solid var(--gold-primary); padding: 15px; border-radius: 10px; margin-top: 15px; }
-pre { color: #00ffcc; font-size: 0.8rem; white-space: pre-wrap; word-break: break-all; max-height: 60vh; overflow-y: auto; text-align: left; direction: ltr; }
+pre { color: #00ffcc; font-size: 0.75rem; white-space: pre-wrap; word-break: break-all; max-height: 70vh; overflow-y: auto; text-align: left; direction: ltr; background: #000; padding: 10px; border-radius: 5px; }
 .back-btn { background: var(--gold-primary); color: #000; border: none; padding: 8px 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 12px; }
 </style>
 </head>
 <body>
 <header>
-<h1>KELLA Analytics Pro - فحص البيانات الحية</h1>
-<p style="color: var(--gold-light); font-size: 0.8rem;">رصد محتوى live.json الخام القادم من SportMonks API</p>
+<h1>KELLA Analytics Pro - العرض الخام لـ SportMonks API</h1>
+<p style="color: var(--gold-light); font-size: 0.8rem;">رصد كامل محتوى ملف live.json كما يرد من السيرفر تماماً</p>
 </header>
-<div style="max-width: 800px; margin: 0 auto;">
-<button class="back-btn" onclick="location.reload()">🔄 تحديث الصفحة وفحص live.json</button>
+<div style="max-width: 900px; margin: 0 auto;">
+<button class="back-btn" onclick="location.reload()">🔄 تحديث البيانات الحية</button>
 <div class="box">
 <h3 style="color: var(--gold-primary); margin-bottom: 10px;">📄 محتوى ملف live.json الحالي:</h3>
-<div id="raw-output" style="color: var(--gold-light);">جاري فحص الملف...</div>
+<div id="raw-json-output" style="color: var(--gold-light);">جاري جلب البيانات...</div>
 </div>
 </div>
 <script>
-async function checkLiveJson() {
-const output = document.getElementById('raw-output');
+async function fetchLiveJson() {
+const output = document.getElementById('raw-json-output');
 try {
-const response = await fetch('live.json?' + new Date().getTime());
-if (!response.ok) throw new Error('الملف غير موجود أو تعذر الوصول إليه (HTTP ' + response.status + ')');
+// استخدام الرابط المباشر للملف من جيت هاب لضمان عدم حدوث خطأ في المسارات الفرعية
+const jsonUrl = 'https://raw.githubusercontent.com/khaledcc14/kella-analytics/main/live.json?' + new Date().getTime();
+const response = await fetch(jsonUrl);
+if (!response.ok) throw new Error('تعذر الوصول إلى ملف live.json (HTTP ' + response.status + ')');
 const data = await response.json();
 output.innerHTML = <pre>${JSON.stringify(data, null, 2)}</pre>;
 } catch (err) {
-output.innerHTML = <span style="color: #ff4444;">خطأ: ${err.message}</span>;
+output.innerHTML = <span style="color: #ff4444;">خطأ في قراءة الملف: ${err.message}</span>;
 }
 }
-checkLiveJson();
+fetchLiveJson();
 </script>
 </body>
 </html>
