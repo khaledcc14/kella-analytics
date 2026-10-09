@@ -3,85 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLA Analytics Pro - العرض الحي والذكي</title>
+    <title>KELLA Analytics Pro - لوحة تحليلات الرياضة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root {
-            --gold-primary: #d4af37;
-            --gold-light: #f3e5ab;
-            --bg-dark: #0a0a0a;
-            --card-bg: rgba(20, 20, 20, 0.95);
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body { background-color: var(--bg-dark); color: #ffffff; min-height: 100vh; padding: 15px; }
-        header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--gold-primary); padding-bottom: 12px; }
-        header h1 { color: var(--gold-primary); font-size: 1.3rem; }
-        .match-card { background: var(--card-bg); border: 1px solid var(--gold-primary); padding: 15px; border-radius: 10px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .team { font-weight: bold; color: var(--gold-light); width: 35%; text-align: center; font-size: 0.9rem; }
-        .match-info { text-align: center; font-size: 0.8rem; color: #00ffcc; }
-        .action-btn { background: var(--gold-primary); color: #000; border: none; padding: 8px 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 12px; }
-        .raw-box { background: #111; border: 1px dashed var(--gold-primary); padding: 15px; border-radius: 8px; margin-top: 15px; text-align: left; direction: ltr; font-family: monospace; font-size: 0.8rem; color: #00ffcc; white-space: pre-wrap; word-break: break-all; max-height: 400px; overflow-y: auto; }
-        .status-msg { text-align: center; color: var(--gold-light); margin-top: 20px; font-size: 0.9rem; }
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+        body { font-family: 'Cairo', sans-serif; background-color: #0b0f19; color: #f3f4f6; }
     </style>
 </head>
-<body>
-    <header>
-        <h1>KELLA Analytics Pro - النظام الذكي</h1>
-        <p style="color: var(--gold-light); font-size: 0.75rem;">عرض المباريات المبرمجة أو الرد الخام لـ SportMonks تلقائياً</p>
+<body class="min-h-screen p-4 sm:p-6">
+    <header class="max-w-3xl mx-auto text-center border-b border-amber-500/30 pb-4 mb-6">
+        <h1 class="text-xl sm:text-2xl font-bold text-amber-400 flex items-center justify-center gap-2">
+            <span>⚽</span> KELLA Analytics Pro - النظام الذكي
+        </h1>
+        <p class="text-xs sm:text-sm text-gray-400 mt-1">تتبع الاتصال بـ SportMonks API وعرض استجابات السيرفر لحظياً</p>
     </header>
 
-    <div style="max-width: 900px; margin: 0 auto;">
-        <button class="action-btn" onclick="fetchData()">🔄 تحديث وفحص البيانات الآن</button>
-        <div id="content-container">
-            <div class="status-msg">جاري الاتصال وسحب البيانات من live.json...</div>
+    <main class="max-w-3xl mx-auto space-y-4">
+        <div class="flex justify-between items-center bg-gray-900/80 p-4 rounded-xl border border-amber-500/20 backdrop-blur-sm">
+            <div>
+                <h2 class="text-sm font-semibold text-amber-300">حالة البيانات الحالية</h2>
+                <p id="status-text" class="text-xs text-gray-400">جاري الاتصال بملف live.json...</p>
+            </div>
+            <button onclick="fetchData()" class="bg-amber-500 hover:bg-amber-400 text-gray-950 px-4 py-2 text-xs sm:text-sm font-bold rounded-lg shadow-lg transition duration-200 flex items-center gap-2 cursor-pointer">
+                <span>🔄</span> تحديث وفحص البيانات
+            </button>
         </div>
-    </div>
+
+        <div id="content-container" class="bg-gray-900/90 border border-gray-800 rounded-xl p-4 sm:p-6 shadow-xl min-h-[300px] flex flex-col justify-center items-center text-center">
+            <div class="animate-pulse text-amber-400 text-sm">جاري قراءة البيانات المحدثة...</div>
+        </div>
+    </main>
 
     <script>
         async function fetchData() {
             const container = document.getElementById('content-container');
-            container.innerHTML = '<div class="status-msg">جاري تحميل البيانات...</div>';
+            const statusText = document.getElementById('status-text');
             
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-center space-y-2 py-10">
+                    <div class="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+                    <p class="text-sm text-amber-300">جاري فحص الاستجابة من السيرفر...</p>
+                </div>
+            `;
+            statusText.textContent = "جاري الفحص...";
+
             try {
                 const response = await fetch('live.json?t=' + new Date().getTime());
-                if (!response.ok) throw new Error('تعذر الوصول إلى ملف live.json (رمز الاستجابة: ' + response.status + ')');
+                if (!response.ok) throw new Error('تعذر الوصول إلى ملف live.json (رمز الخطأ: ' + response.status + ')');
                 
                 const data = await response.json();
                 const matches = data.data || [];
 
                 if (Array.isArray(matches) && matches.length > 0) {
-                    // إذا وجدنا مباريات، نعرضها كبطاقات مرتبة
-                    let html = '<h3 style="color: var(--gold-primary); margin-top: 15px; font-size: 1rem;">📅 المباريات المتاحة حالياً:</h3>';
-                    matches.forEach(match => {
-                        const participants = match.participants || [];
-                        const homeTeam = participants.find(p => p.meta && p.meta.location === 'home') || participants[0] || { name: 'مضيف' };
-                        const awayTeam = participants.find(p => p.meta && p.meta.location === 'away') || participants[1] || { name: 'ضيف' };
-                        const startTime = match.starting_at || 'التوقيت غير محدد';
-
+                    statusText.textContent = `تم العثور على ${matches.length} عنصر بنجاح`;
+                    let html = '<div class="w-full space-y-3 text-right"><h3 class="text-sm font-bold text-amber-400 mb-2">📋 المباريات / البيانات المتاحة:</h3>';
+                    
+                    matches.forEach((match, index) => {
                         html += `
-                            <div class="match-card">
-                                <div class="team">${homeTeam.name || 'الفريق الأول'}</div>
-                                <div class="match-info">
-                                    <div>🆚</div>
-                                    <div style="margin-top: 4px; font-weight: bold;">${startTime}</div>
-                                </div>
-                                <div class="team">${awayTeam.name || 'الفريق الثاني'}</div>
+                            <div class="bg-gray-800/80 border border-amber-500/30 p-3 rounded-lg flex justify-between items-center text-xs sm:text-sm">
+                                <span class="font-semibold text-amber-200">عنصر رقم #${index + 1}</span>
+                                <span class="text-gray-400 font-mono">ID: ${match.id || 'غير متوفر'}</span>
                             </div>
                         `;
                     });
+                    html += '</div>';
                     container.innerHTML = html;
                 } else {
-                    // إن لم تكن هناك مباريات، نعرض الرد الخام القادم من الـ API كاملاً لكي نرى كل شي بوضوح
+                    statusText.textContent = "تم استلام الرد الخام من SportMonks بنجاح";
+                    // عرض رسالة توضيحية مع الرد الخام لتكون الواجهة شفافة واحترافية
                     container.innerHTML = `
-                        <div class="status-msg" style="color: #ffcc00;">⚠️ لا توجد مباريات مبرمجة في القائمة حالياً. إليك الرد الخام القادم من SportMonks API:</div>
-                        <div class="raw-box">${JSON.stringify(data, null, 4)}</div>
+                        <div class="w-full text-right space-y-3">
+                            <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-lg text-xs flex items-start gap-2">
+                                <span class="text-base">ℹ️</span>
+                                <div>
+                                    <p class="font-bold">تنبيه الباقة المجانية:</p>
+                                    <p class="text-gray-300 mt-0.5">الباقة المجانية الحالية لا تحتوي على مباريات نشطة في الوقت الحالي. إليك الرد الخام القادم من سيرفر SportMonks حرفياً:</p>
+                                </div>
+                            </div>
+                            <pre class="bg-gray-950 border border-gray-800 p-4 rounded-lg text-left text-emerald-400 font-mono text-xs overflow-x-auto max-h-96" dir="ltr">${JSON.stringify(data, null, 4)}</pre>
+                        </div>
                     `;
                 }
 
             } catch (err) {
-                container.innerHTML = `<div class="status-msg" style="color: #ff4444;">❌ خطأ في تحميل البيانات: ${err.message}</div>`;
+                statusText.textContent = "حدث خطأ في جلب الملف";
+                container.innerHTML = `
+                    <div class="text-red-400 text-xs sm:text-sm p-4 bg-red-950/30 border border-red-500/30 rounded-lg">
+                        ❌ خطأ في تحميل البيانات: ${err.message}<br>
+                        <span class="text-gray-400 text-xs mt-1 block">تأكد من تشغيل الـ Action لإنشاء ملف live.json في المستودع أولاً.</span>
+                    </div>
+                `;
             }
         }
-        
+
+        // تشغيل الجلب تلقائياً عند تحميل الصفحة
         fetchData();
     </script>
 </body>
