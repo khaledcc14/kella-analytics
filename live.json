@@ -1,28 +1,29 @@
-import requests
-import json
-
-# استخدام رابط بديل موثوق ومباشر لملف JSON جاهز للمباريات لضمان نجاح الحفظ دائماً
-URL = "https://raw.githubusercontent.com/openfootball/football.json/master/2023-24/en.1.json"
-
-def fetch_and_save():
-    print("جاري جلب البيانات...")
-    try:
-        response = requests.get(URL, timeout=30)
-        if response.status_code == 200:
-            data = response.json()
-        else:
-            data = {"error": "Failed to fetch, status code: " + str(response.status_code)}
-
-        # حفظ البيانات في ملف live.json بالشكل الصحيح
-        with open('live.json', 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
-            
-        print("تم الحفظ بنجاح!")
-    except Exception as e:
-        print(f"حدث خطأ: {str(e)}")
-        # حفظ رسالة الخطأ كـ JSON صحيح وليست نص بايثون
-        with open('live.json', 'w', encoding='utf-8') as f:
-            json.dump({"error": str(e)}, f, ensure_ascii=False, indent=4)
-
-if __name__ == "__main__":
-    fetch_and_save()
+{
+    "data": [],
+    "message": "No result(s) found matching your request. Either the query did not return any results or you don't have access to it via your current subscription.",
+    "subscription": [
+        {
+            "meta": [],
+            "plans": [
+                {
+                    "plan": "Cricket Free Plan",
+                    "sport": "Cricket",
+                    "category": "Standard"
+                },
+                {
+                    "plan": "Football Free Plan",
+                    "sport": "Football",
+                    "category": "Standard"
+                }
+            ],
+            "add_ons": [],
+            "widgets": []
+        }
+    ],
+    "rate_limit": {
+        "resets_in_seconds": 3358,
+        "remaining": 178,
+        "requested_entity": "Fixture"
+    },
+    "timezone": "UTC"
+}
