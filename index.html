@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLA Analytics Pro - التحليل والتوقعات المباشرة بالذكاء الاصطناعي</title>
+    <title>KELLA Analytics Pro - التحليل والتوقعات الحية 24/24 بالذكاء الاصطناعي</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
@@ -21,7 +21,7 @@
     <main class="max-w-3xl mx-auto space-y-4">
         <div class="flex justify-between items-center bg-gray-900/80 p-4 rounded-xl border border-amber-500/20 backdrop-blur-sm">
             <div>
-                <h2 class="text-sm font-semibold text-amber-300">حالة الاتصال المباشر</h2>
+                <h2 class="text-sm font-semibold text-amber-300">حالة الاتصال المباشر بالذكاء الاصطناعي</h2>
                 <p id="status-text" class="text-xs text-gray-400">جاهز لجلب المباريات الحية وتحليلها الآن...</p>
             </div>
             <button onclick="fetchLiveMatchesWithGemini()" class="bg-amber-500 hover:bg-amber-400 text-gray-950 px-4 py-2 text-xs sm:text-sm font-bold rounded-lg shadow-lg transition duration-200 flex items-center gap-2 cursor-pointer">
@@ -42,14 +42,14 @@
             container.innerHTML = `
                 <div class="flex flex-col items-center justify-center space-y-2 py-10">
                     <div class="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
-                    <p class="text-sm text-amber-300">جاري البحث في الويب عن مباريات اليوم وجلب التحليلات الحية عبر Gemini...</p>
+                    <p class="text-sm text-amber-300">جاري البحث في الويب عن مباريات اليوم الحقيقية وجلب التحليلات الحية عبر Gemini...</p>
                 </div>
             `;
             statusText.textContent = "جاري الاتصال بقاعدة بيانات الويب الفورية...";
 
             try {
-                const systemPrompt = "أنت محلل رياضي محترف. قم بالبحث الفوري عن أهم مباريات كرة القدم التي تُلعب اليوم (أو أقرب مباريات قادمة هامة)، واذكر أسماء الفريقين، النتيجة الحية أو التوقيت، ونسبة الفوز لكل فريق مع تحليل فصير وتوقع دقيق. أجب حصرياً بصيغة JSON متوافقة مع الهيكل التالي: [{\"team1\": \"اسم الفريق الأول\", \"team2\": \"اسم الفريق الثاني\", \"time_or_score\": \"النتيجة أو التوقيت\", \"league\": \"اسم البطولة\", \"prob1\": نسبة_فوز_الأول_رقم, \"prob2\": نسبة_فوز_الثاني_رقم, \"draw\": نسبة_التعادل_رقم, \"analysis\": \"تحليل قصير وتوصية للمباراة\"}]";
-                const userQuery = "ما هي مباريات كرة القدم المقررة اليوم أو الحالية مع تحليلها وتوقع نتيجتها بدقة؟";
+                const systemPrompt = "أنت محلل رياضي محترف. قم بالبحث الفوري عن أهم مباريات كرة القدم التي تُلعب اليوم (أو أقرب مباريات قادمة هامة)، واذكر أسماء الفريقين الحقيقية، النتيجة الحية أو التوقيت، اسم البطولة، ونسبة الفوز لكل فريق مع تحليل قصير وتوقع دقيق. أجب حصرياً بصيغة JSON متوافقة مع الهيكل التالي بدون أي نصوص إضافية خارجه: [{\"team1\": \"اسم الفريق الأول\", \"team2\": \"اسم الفريق الثاني\", \"time_or_score\": \"النتيجة أو التوقيت\", \"league\": \"اسم البطولة\", \"prob1\": نسبة_فوز_الأول_رقم, \"prob2\": نسبة_فوز_الثاني_رقم, \"draw\": نسبة_التعادل_رقم, \"analysis\": \"تحليل قصير وتوصية للمباراة\"}]";
+                const userQuery = "ما هي مباريات كرة القدم الحقيقية المقررة اليوم أو الحالية مع تحليلها وتوقع نتيجتها بدقة؟";
                 
                 const apiKey = "";
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
@@ -64,7 +64,6 @@
                 };
 
                 let response = null;
-                // تطبيق تكرار ذكي في حال التباطؤ المؤقت
                 for (let i = 0; i < 3; i++) {
                     try {
                         response = await fetch(apiUrl, {
@@ -92,7 +91,6 @@
                 try {
                     matchesData = JSON.parse(rawText);
                 } catch (e) {
-                    // محاولة استخراج الـ JSON إذا وجد نص إضافي
                     const jsonMatch = rawText.match(/\[[\s\S]*\]/);
                     if (jsonMatch) {
                         matchesData = JSON.parse(jsonMatch[0]);
@@ -138,7 +136,7 @@
                 container.innerHTML = `
                     <div class="p-6 text-center text-red-400 text-xs sm:text-sm space-y-2">
                         <p>عذراً، حدث خطأ أثناء جلب المباريات الحية: ${err.message}</p>
-                        <button onclick="fetchLiveMatchesWithGemini()" class="mt-2 bg-amber-500 text-gray-950 px-3 py-1 rounded text-xs font-bold">إعادة المحاولة</button>
+                        <button onclick="fetchLiveMatchesWithGemini()" class="mt-2 bg-amber-500 text-gray-950 px-3 py-1 rounded text-xs font-bold cursor-pointer">إعادة المحاولة</button>
                     </div>
                 `;
             }
