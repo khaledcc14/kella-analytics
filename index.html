@@ -22,9 +22,6 @@
 
         body {
             background-color: var(--bg-dark);
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
             color: #ffffff;
             min-height: 100vh;
         }
@@ -41,7 +38,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, #1a1a1a 0%, #000000 100%);
+            background: #000;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -63,7 +60,6 @@
             margin-top: 15px;
             color: var(--gold-light);
             font-size: 0.95rem;
-            letter-spacing: 1px;
             text-align: center;
         }
 
@@ -78,7 +74,6 @@
             margin-bottom: 25px;
             border-bottom: 2px solid var(--gold-primary);
             padding-bottom: 15px;
-            padding-top: 10px;
         }
 
         header h1 {
@@ -87,20 +82,6 @@
             -webkit-text-fill-color: transparent;
             font-size: 1.9rem;
             margin-bottom: 5px;
-        }
-
-        .sound-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(212, 175, 55, 0.15);
-            border: 1px solid var(--gold-primary);
-            color: var(--gold-light);
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            margin-top: 10px;
         }
 
         .sports-grid {
@@ -128,10 +109,7 @@
         .sport-cell::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(to top, rgba(0,0,0,0.85) 20%, rgba(0,0,0,0.3) 100%);
         }
 
@@ -143,10 +121,7 @@
             z-index: 2;
         }
 
-        #sub-view {
-            display: none;
-        }
-
+        #sub-view { display: none; }
         .back-btn {
             background: var(--gold-primary);
             color: #000;
@@ -209,47 +184,13 @@
             border-radius: 14px;
             padding: 18px;
         }
-
-        .match-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 18px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 12px;
-        }
-
-        .analytics-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-
-        .stat-box {
-            background: rgba(0,0,0,0.6);
-            border: 1px solid #333;
-            padding: 14px;
-            border-radius: 10px;
-        }
-
-        .stat-title {
-            color: #aaa;
-            font-size: 0.8rem;
-            margin-bottom: 5px;
-        }
-
-        .stat-value {
-            color: var(--gold-light);
-            font-size: 1.05rem;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
 
     <div id="splash-screen">
         <div class="gold-logo">KELLA Analytics Pro</div>
-        <div class="splash-sub" id="loading-text">جاري تهيئة الاتصال... (0%)</div>
+        <div class="splash-sub" id="loading-text">جاري الاتصال بالسحابة...</div>
     </div>
 
     <div class="overlay">
@@ -257,20 +198,11 @@
             <header>
                 <h1>KELLA Analytics Pro</h1>
                 <p style="color: var(--gold-light); font-size: 0.85rem;">منصة التحليل والذكاء الاصطناعي الرياضي</p>
-                <button id="sound-toggle-btn" class="sound-btn" onclick="toggleMusic()">
-                    🔇 <span>تشغيل الموسيقى</span>
-                </button>
             </header>
 
             <div id="main-dashboard" class="sports-grid">
                 <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=600&auto=format&fit=crop');" onclick="openLeagues('football')">
                     <div class="sport-title">كرة القدم (التحليل الذكي)</div>
-                </div>
-                <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=600&auto=format&fit=crop');" onclick="openLeagues('basketball')">
-                    <div class="sport-title">كرة السلة</div>
-                </div>
-                <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1622163642998-1ea32b1ab639?q=80&w=600&auto=format&fit=crop');" onclick="openLeagues('tennis')">
-                    <div class="sport-title">التنس</div>
                 </div>
             </div>
 
@@ -278,12 +210,9 @@
                 <button class="back-btn" onclick="goBackToMain()">← العودة للرئيسية</button>
                 <h2 id="selected-sport-title" style="color: var(--gold-primary); margin-bottom: 10px; font-size: 1.2rem;"></h2>
                 
-                <div class="status-tabs" id="football-tabs" style="display: none;">
+                <div class="status-tabs" id="football-tabs">
                     <button class="tab-btn active" onclick="filterMatches('ALL')">📋 كل النتائج</button>
                     <button class="tab-btn" onclick="filterMatches('LIVE')">🔴 المباشرة</button>
-                    <button class="tab-btn" onclick="filterMatches('SCHEDULED')">⏳ المجدولة</button>
-                    <button class="tab-btn" onclick="filterMatches('FINISHED')">✅ السابقة</button>
-                    <button class="tab-btn" onclick="filterMatches('GUARANTEED')">🌟 المضمونة (>75%)</button>
                 </div>
 
                 <div class="leagues-grid" id="leagues-container"></div>
@@ -291,173 +220,88 @@
 
             <div id="analytics-view">
                 <button class="back-btn" onclick="goBackToLeagues()">← العودة للقائمة</button>
-                <div class="match-header">
-                    <div>
-                        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 5px;">
-                            <span id="home-name" style="font-weight: bold; font-size: 1rem; color: #fff;">--</span>
-                            <span style="color: var(--gold-primary); font-weight: bold;">VS</span>
-                            <span id="away-name" style="font-weight: bold; font-size: 1rem; color: #fff;">--</span>
-                        </div>
-                        <p id="match-type" style="color: var(--gold-light); font-size: 0.8rem;"></p>
-                    </div>
-                </div>
-
-                <div class="analytics-grid">
-                    <div class="stat-box">
-                        <div class="stat-title">النتيجة والملخص المقترح</div>
-                        <div class="stat-value" id="stat-score">--</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-title">حالة اللقاء الحالية</div>
-                        <div class="stat-value" id="stat-status">--</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-title">مؤشر الأهداف والركنيات</div>
-                        <div class="stat-value" id="stat-goals" style="font-size: 0.9rem;">--</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-title" style="color: #ffd700;">نسبة دقة التوقع 🌟</div>
-                        <div class="stat-value" id="stat-win-rate" style="color: #ffd700;">--</div>
-                    </div>
-                </div>
+                <div id="match-details-content" style="color: #fff; padding: 10px;"></div>
             </div>
-
         </div>
     </div>
 
-    <audio id="bg-music" loop preload="auto">
-        <source src="background.mp3" type="audio/mpeg">
-    </audio>
-
     <script>
-        let matchesData = {
-            ALL: [],
-            LIVE: [],
-            SCHEDULED: [],
-            FINISHED: [],
-            GUARANTEED: []
-        };
-        let isUserInSubView = false;
+        let matchesData = { ALL: [], LIVE: [] };
 
-        function updateProgress(text, percent) {
-            const loadingText = document.getElementById('loading-text');
-            if (loadingText) {
-                loadingText.innerText = `${text} (${percent}%)`;
-            }
-        }
-
-        async function fetchAllMatchStates() {
+        async function fetchMatches() {
             try {
-                updateProgress("جاري تهيئة النظام والبيانات", 30);
-                await new Promise(resolve => setTimeout(resolve, 800));
+                // جلب البيانات من live.json مع منع التخزين المؤقت نهائياً
+                const res = await fetch('https://raw.githubusercontent.com/khaledcc14/kella-analytics/main/live.json?t=' + Date.now(), {
+                    cache: 'no-store'
+                });
                 
-                updateProgress("جاري تحميل مباريات التحليلات الرياضية", 70);
-                await new Promise(resolve => setTimeout(resolve, 800));
+                const data = await res.json();
+                const rawList = Array.isArray(data) ? data : (data.matches || []);
 
-                // بيانات تجريبية مضمونة ومتكاملة لضمان عمل الواجهة بسلاسة على الهاتف
-                const sampleMatches = [
-                    { id: 1, homeTeam: { name: 'ريال مدريد' }, awayTeam: { name: 'برشلونة' }, status: 'LIVE', aiRate: 88, competition: { name: 'الدوري الإسباني - كلاسيكو' }, score: { fullTime: { home: 2, away: 2 } }, analytics: { goals: '3.5', corners: 11, cards: 4 } },
-                    { id: 2, homeTeam: { name: 'مانشستر سيتي' }, awayTeam: { name: 'آرسنال' }, status: 'SCHEDULED', aiRate: 81, competition: { name: 'الدوري الإنجليزي الممتاز' }, score: { fullTime: { home: 0, away: 0 } }, analytics: { goals: '2.8', corners: 9, cards: 2 } },
-                    { id: 3, homeTeam: { name: 'باريس سان جيرمان' }, awayTeam: { name: 'بايرن ميونخ' }, status: 'FINISHED', aiRate: 79, competition: { name: 'دوري أبطال أوروبا' }, score: { fullTime: { home: 1, away: 3 } }, analytics: { goals: '4.0', corners: 10, cards: 5 } }
-                ];
+                let allParsed = [];
+                rawList.forEach((m, idx) => {
+                    allParsed.push({
+                        id: m.id || idx,
+                        homeTeam: { name: m.home || m.homeTeam || 'الفريق الأول' },
+                        awayTeam: { name: m.away || m.awayTeam || 'الفريق الثاني' },
+                        status: m.status || 'LIVE',
+                        competition: { name: m.league || 'الدوري العام' },
+                        aiRate: m.aiRate || 80
+                    });
+                });
 
-                matchesData.ALL = sampleMatches;
-                matchesData.LIVE = sampleMatches.filter(m => m.status === 'LIVE');
-                matchesData.SCHEDULED = sampleMatches.filter(m => m.status === 'SCHEDULED');
-                matchesData.FINISHED = sampleMatches.filter(m => m.status === 'FINISHED');
-                matchesData.GUARANTEED = sampleMatches.filter(m => m.aiRate > 75);
+                matchesData.ALL = allParsed;
+                matchesData.LIVE = allParsed.filter(m => String(m.status).toUpperCase().includes('LIVE'));
 
-                updateProgress("تم الاتصال بنجاح", 100);
+                // إخفاء شاشة التحميل وإظهار التطبيق
+                document.getElementById('splash-screen').style.display = 'none';
+                document.getElementById('app-container').style.display = 'block';
 
-                setTimeout(() => {
-                    const splash = document.getElementById('splash-screen');
-                    if (splash) {
-                        splash.style.opacity = '0';
-                        setTimeout(() => splash.style.display = 'none', 400);
-                    }
-                    document.getElementById('app-container').style.display = 'block';
-                }, 500);
-
-            } catch (error) {
-                console.error("خطأ:", error);
-                updateProgress("تم تخطي الاتصال بنجاح", 100);
-                setTimeout(() => {
-                    document.getElementById('splash-screen').style.display = 'none';
-                    document.getElementById('app-container').style.display = 'block';
-                }, 500);
+            } catch (err) {
+                console.error("خطأ في الجلب:", err);
+                document.getElementById('splash-screen').style.display = 'none';
+                document.getElementById('app-container').style.display = 'block';
             }
         }
 
-        window.onload = function() {
-            fetchAllMatchStates();
-        };
+        window.onload = fetchMatches;
 
         function openLeagues(sportType) {
-            isUserInSubView = true;
             document.getElementById('main-dashboard').style.display = 'none';
             document.getElementById('sub-view').style.display = 'block';
-            
-            if (sportType === 'football') {
-                document.getElementById('football-tabs').style.display = 'flex';
-                document.getElementById('selected-sport-title').innerText = 'تحليلات كرة القدم الذكية';
-                renderMatchesList(matchesData.ALL);
-            } else {
-                document.getElementById('football-tabs').style.display = 'none';
-                document.getElementById('selected-sport-title').innerText = 'المنافسات الرياضية';
-                document.getElementById('leagues-container').innerHTML = '<p style="color: #aaa; text-align: center;">لا توجد مباريات متاحة حالياً لهذا القسم.</p>';
-            }
+            document.getElementById('selected-sport-title').innerText = 'تحليلات كرة القدم الحية';
+            renderList(matchesData.ALL);
         }
 
-        function filterMatches(status) {
-            const targetList = matchesData[status] || [];
-            renderMatchesList(targetList);
+        function filterMatches(type) {
+            if (type === 'LIVE') renderList(matchesData.LIVE);
+            else renderList(matchesData.ALL);
         }
 
-        function renderMatchesList(list) {
+        function renderList(list) {
             const container = document.getElementById('leagues-container');
             container.innerHTML = '';
-
+            
             if (!list || list.length === 0) {
-                container.innerHTML = '<p style="color: #aaa; text-align: center; grid-column: span 2;">لا توجد مباريات في هذا التصنيف حالياً.</p>';
+                container.innerHTML = '<p style="color: #aaa; text-align: center; grid-column: span 2; padding: 20px;">لا توجد أي مباريات حالياً في ملف السحابة (live.json فارغ).</p>';
                 return;
             }
 
             list.forEach(m => {
-                const isGuaranteed = m.aiRate > 75;
                 const card = document.createElement('div');
                 card.className = 'league-card';
-                card.onclick = () => openAnalyticsDetail(m);
-
                 card.innerHTML = `
-                    <div style="font-size: 0.75rem; color: var(--gold-light);">${m.competition?.name || 'مباراة رسمية'}</div>
+                    <div style="font-size: 0.75rem; color: var(--gold-light);">${m.competition.name}</div>
                     <div style="font-weight: bold; font-size: 0.95rem; margin: 5px 0;">
-                        ${m.homeTeam?.name || ''} <span style="color: var(--gold-primary);">VS</span> ${m.awayTeam?.name || ''}
+                        ${m.homeTeam.name} <span style="color: var(--gold-primary);">VS</span> ${m.awayTeam.name}
                     </div>
-                    <div style="font-size: 0.75rem; color: #aaa; display: flex; justify-content: space-between;">
-                        <span>الحالة: ${m.status}</span>
-                        <span style="color: #ffd700; font-weight: bold;">دقة التوقع: ${m.aiRate}%</span>
-                    </div>
+                    <div style="font-size: 0.75rem; color: #aaa;">الحالة: ${m.status}</div>
                 `;
                 container.appendChild(card);
             });
         }
 
-        function openAnalyticsDetail(match) {
-            document.getElementById('sub-view').style.display = 'none';
-            document.getElementById('analytics-view').style.display = 'block';
-
-            document.getElementById('home-name').innerText = match.homeTeam?.name || '';
-            document.getElementById('away-name').innerText = match.awayTeam?.name || '';
-            document.getElementById('match-type').innerText = match.competition?.name || '';
-            
-            document.getElementById('stat-score').innerText = match.score ? `${match.score.fullTime?.home ?? 0} - ${match.score.fullTime?.away ?? 0}` : 'قيد المتابعة';
-            document.getElementById('stat-status').innerText = match.status === 'LIVE' ? 'مباراة جارية الان 🔴' : 'مجدولة / منتهية';
-            document.getElementById('stat-goals').innerText = `أهداف متوقعة: ${match.analytics.goals} | ركنيات: ${match.analytics.corners}`;
-            document.getElementById('stat-win-rate').innerText = `${match.aiRate}% نسبة دقة الذكاء الاصطناعي`;
-        }
-
         function goBackToMain() {
-            isUserInSubView = false;
             document.getElementById('sub-view').style.display = 'none';
             document.getElementById('main-dashboard').style.display = 'grid';
         }
@@ -465,18 +309,6 @@
         function goBackToLeagues() {
             document.getElementById('analytics-view').style.display = 'none';
             document.getElementById('sub-view').style.display = 'block';
-        }
-
-        function toggleMusic() {
-            const audio = document.getElementById('bg-music');
-            const btn = document.getElementById('sound-toggle-btn');
-            if (audio.paused) {
-                audio.play();
-                btn.innerHTML = '🔊 <span>إيقاف الموسيقى</span>';
-            } else {
-                audio.pause();
-                btn.innerHTML = '🔇 <span>تشغيل الموسيقى</span>';
-            }
         }
     </script>
 </body>
