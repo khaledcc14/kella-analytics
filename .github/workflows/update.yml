@@ -1,35 +1,267 @@
-name: Update Live Matches
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KELLA Analytics Pro - عرض جميع النتائج</title>
+    <style>
+        :root {
+            --gold-primary: #d4af37;
+            --gold-light: #f3e5ab;
+            --gold-dark: #aa8c2c;
+            --bg-dark: #0a0a0a;
+            --card-bg: rgba(20, 20, 20, 0.92);
+        }
 
-on:
-  schedule:
-    - cron: '0 * * * *'
-  workflow_dispatch:
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-jobs:
-  update-data:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+        body {
+            background-color: var(--bg-dark);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #ffffff;
+            min-height: 100vh;
+        }
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
+        .overlay {
+            min-height: 100vh;
+            background: linear-gradient(rgba(10, 10, 10, 0.88), rgba(10, 10, 10, 0.96));
+            padding: 20px;
+        }
 
-      - name: Install dependencies
-        run: pip install requests
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #1a1a1a 0%, #000000 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
 
-      - name: Run script
-        run: python update_matches.py
+        .gold-logo {
+            font-size: 2.6rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--gold-light), var(--gold-primary), var(--gold-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
 
-      - name: Commit and push changes
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add live.json
-          git commit -m "Auto-update live.json matches" || exit 0
-          git push
-          
+        .splash-sub {
+            margin-top: 15px;
+            color: var(--gold-light);
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        #app-container {
+            display: none;
+            max-width: 950px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--gold-primary);
+            padding-bottom: 15px;
+            padding-top: 10px;
+        }
+
+        header h1 {
+            background: linear-gradient(135deg, var(--gold-light), var(--gold-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.9rem;
+            margin-bottom: 5px;
+        }
+
+        .sound-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid var(--gold-primary);
+            color: var(--gold-light);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .sports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            padding: 10px;
+        }
+
+        .sport-cell {
+            height: 150px;
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            border: 2px solid var(--gold-dark);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 15px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .sport-cell::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.85) 20%, rgba(0,0,0,0.3) 100%);
+        }
+
+        .sport-title {
+            color: var(--gold-light);
+            font-weight: bold;
+            font-size: 1.1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        #sub-view {
+            display: none;
+        }
+
+        .back-btn {
+            background: var(--gold-primary);
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .status-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--gold-dark);
+            color: #aaa;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .tab-btn.active {
+            background: var(--gold-primary);
+            color: #000;
+        }
+
+        .leagues-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 12px;
+            max-height: 55vh;
+            overflow-y: auto;
+            padding: 5px;
+        }
+
+        .league-card {
+            background: var(--card-bg);
+            border: 1px solid var(--gold-dark);
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        #analytics-view {
+            display: none;
+            background: var(--card-bg);
+            border: 2px solid var(--gold-primary);
+            border-radius: 14px;
+            padding: 18px;
+        }
+
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 12px;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .stat-box {
+            background: rgba(0,0,0,0.6);
+            border: 1px solid #333;
+            padding: 14px;
+            border-radius: 10px;
+        }
+
+        .stat-title {
+            color: #aaa;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            color: var(--gold-light);
+            font-size: 1.05rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="splash-screen">
+        <div class="gold-logo">KELLA Analytics Pro</div>
+        <div class="splash-sub" id="loading-text">جاري الاتصال بالسحابة... (0%)</div>
+    </div>
+
+    <div class="overlay">
+        <div id="app-container">
+            <header>
+                <h1>KELLA Analytics Pro</h1>
+                <p style="color: var(--gold-light); font-size: 0.85rem;">منصة التحليل والذكاء الاصطناعي الرياضي</p>
+                <button id="sound-toggle-btn" class="sound-btn" onclick="toggleMusic()">
+                    🔇 <span>تشغيل الموسيقى</span>
+                </button>
+            </header>
+
+            <div id="main-dashboard" class="sports-grid">
+                <div class="sport-cell" style
+                
