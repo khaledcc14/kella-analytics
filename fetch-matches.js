@@ -1,8 +1,9 @@
-fetch('https://api.football-data.org/v4/matches', {
-  headers: {
-    'X-Auth-Token': 'e5e40f39fcd24b3d9f5cb78f521d0803'
-  }
+// جلب البيانات الحية مباشرة من ملف live.json على مستودعك في GitHub
+fetch('https://raw.githubusercontent.com/khaledcc14/kella-analytics/main/live.json', {
+    cache: 'no-store'
 })
 .then(response => response.json())
-.then(data => console.log(data))
-.catch(error => console.error('Error:', error));
+.then(data => {
+    console.log("تم جلب المباريات الحية بنجاح:", data);
+})
+.catch(error => console.error('خطأ في جلب البيانات:', error));
