@@ -21,8 +21,8 @@
         }
     ],
     "rate_limit": {
-        "resets_in_seconds": 1523,
-        "remaining": 171,
+        "resets_in_seconds": 616,
+        "remaining": 170,
         "requested_entity": "Fixture"
     },
     "timezone": "UTC"
