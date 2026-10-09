@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLA Analytics Pro - جدول المباريات المبرمجة</title>
+    <title>KELLA Analytics Pro - العرض الحي والذكي</title>
     <style>
         :root {
             --gold-primary: #d4af37;
@@ -14,69 +14,75 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
         body { background-color: var(--bg-dark); color: #ffffff; min-height: 100vh; padding: 15px; }
         header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--gold-primary); padding-bottom: 12px; }
-        header h1 { color: var(--gold-primary); font-size: 1.4rem; }
+        header h1 { color: var(--gold-primary); font-size: 1.3rem; }
         .match-card { background: var(--card-bg); border: 1px solid var(--gold-primary); padding: 15px; border-radius: 10px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .team { font-weight: bold; color: var(--gold-light); width: 40%; text-align: center; }
-        .match-info { text-align: center; font-size: 0.85rem; color: #00ffcc; }
-        .back-btn { background: var(--gold-primary); color: #000; border: none; padding: 8px 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 12px; }
-        .no-data { text-align: center; color: var(--gold-light); margin-top: 30px; font-size: 0.9rem; }
+        .team { font-weight: bold; color: var(--gold-light); width: 35%; text-align: center; font-size: 0.9rem; }
+        .match-info { text-align: center; font-size: 0.8rem; color: #00ffcc; }
+        .action-btn { background: var(--gold-primary); color: #000; border: none; padding: 8px 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 12px; }
+        .raw-box { background: #111; border: 1px dashed var(--gold-primary); padding: 15px; border-radius: 8px; margin-top: 15px; text-align: left; direction: ltr; font-family: monospace; font-size: 0.8rem; color: #00ffcc; white-space: pre-wrap; word-break: break-all; max-height: 400px; overflow-y: auto; }
+        .status-msg { text-align: center; color: var(--gold-light); margin-top: 20px; font-size: 0.9rem; }
     </style>
 </head>
 <body>
     <header>
-        <h1>KELLA Analytics Pro - جدول مباريات اليوم</h1>
-        <p style="color: var(--gold-light); font-size: 0.8rem;">مباريات اليوم مبرمجة مع التوقيت الحقيقي عبر SportMonks API</p>
+        <h1>KELLA Analytics Pro - النظام الذكي</h1>
+        <p style="color: var(--gold-light); font-size: 0.75rem;">عرض المباريات المبرمجة أو الرد الخام لـ SportMonks تلقائياً</p>
     </header>
 
     <div style="max-width: 900px; margin: 0 auto;">
-        <button class="back-btn" onclick="location.reload()">🔄 تحديث جدول المباريات</button>
-        <div id="matches-container">
-            <div class="no-data">جاري جلب جدول المباريات...</div>
+        <button class="action-btn" onclick="fetchData()">🔄 تحديث وفحص البيانات الآن</button>
+        <div id="content-container">
+            <div class="status-msg">جاري الاتصال وسحب البيانات من live.json...</div>
         </div>
     </div>
 
     <script>
-        async function fetchMatches() {
-            const container = document.getElementById('matches-container');
+        async function fetchData() {
+            const container = document.getElementById('content-container');
+            container.innerHTML = '<div class="status-msg">جاري تحميل البيانات...</div>';
+            
             try {
-                const jsonUrl = 'live.json?' + new Date().getTime();
-                const response = await fetch(jsonUrl);
-                if (!response.ok) throw new Error('تعذر الوصول إلى بيانات المباريات');
+                const response = await fetch('live.json?t=' + new Date().getTime());
+                if (!response.ok) throw new Error('تعذر الوصول إلى ملف live.json (رمز الاستجابة: ' + response.status + ')');
                 
                 const data = await response.json();
                 const matches = data.data || [];
 
-                if (matches.length === 0) {
-                    container.innerHTML = '<div class="no-data">لا توجد مباريات مبرمجة في ملف live.json حالياً. جرب تشغيل الـ Action لتحديث البيان.</div>';
-                    return;
+                if (Array.isArray(matches) && matches.length > 0) {
+                    // إذا وجدنا مباريات، نعرضها كبطاقات مرتبة
+                    let html = '<h3 style="color: var(--gold-primary); margin-top: 15px; font-size: 1rem;">📅 المباريات المتاحة حالياً:</h3>';
+                    matches.forEach(match => {
+                        const participants = match.participants || [];
+                        const homeTeam = participants.find(p => p.meta && p.meta.location === 'home') || participants[0] || { name: 'مضيف' };
+                        const awayTeam = participants.find(p => p.meta && p.meta.location === 'away') || participants[1] || { name: 'ضيف' };
+                        const startTime = match.starting_at || 'التوقيت غير محدد';
+
+                        html += `
+                            <div class="match-card">
+                                <div class="team">${homeTeam.name || 'الفريق الأول'}</div>
+                                <div class="match-info">
+                                    <div>🆚</div>
+                                    <div style="margin-top: 4px; font-weight: bold;">${startTime}</div>
+                                </div>
+                                <div class="team">${awayTeam.name || 'الفريق الثاني'}</div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                } else {
+                    // إن لم تكن هناك مباريات، نعرض الرد الخام القادم من الـ API كاملاً لكي نرى كل شي بوضوح
+                    container.innerHTML = `
+                        <div class="status-msg" style="color: #ffcc00;">⚠️ لا توجد مباريات مبرمجة في القائمة حالياً. إليك الرد الخام القادم من SportMonks API:</div>
+                        <div class="raw-box">${JSON.stringify(data, null, 4)}</div>
+                    `;
                 }
 
-                container.innerHTML = '';
-                matches.forEach(match => {
-                    const participants = match.participants || [];
-                    const homeTeam = participants.find(p => p.meta && p.meta.location === 'home') || participants[0] || { name: 'الفريق الأول' };
-                    const awayTeam = participants.find(p => p.meta && p.meta.location === 'away') || participants[1] || { name: 'الفريق الثاني' };
-                    
-                    const startTime = match.starting_at || 'التوقيت غير محدد';
-
-                    const card = document.createElement('div');
-                    card.className = 'match-card';
-                    card.innerHTML = `
-                        <div class="team">${homeTeam.name || 'مضيف'}</div>
-                        <div class="match-info">
-                            <div>🆚</div>
-                            <div style="margin-top: 5px; font-weight: bold;">${startTime}</div>
-                        </div>
-                        <div class="team">${awayTeam.name || 'ضيف'}</div>
-                    `;
-                    container.appendChild(card);
-                });
-
             } catch (err) {
-                container.innerHTML = `<div class="no-data" style="color: #ff4444;">خطأ في تحميل البيانات: ${err.message}</div>`;
+                container.innerHTML = `<div class="status-msg" style="color: #ff4444;">❌ خطأ في تحميل البيانات: ${err.message}</div>`;
             }
         }
-        fetchMatches();
+        
+        fetchData();
     </script>
 </body>
 </html>
