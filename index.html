@@ -1,380 +1,50 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLA Analytics Pro - API الحقيقي</title>
-    <style>
-        :root {
-            --gold-primary: #d4af37;
-            --gold-light: #f3e5ab;
-            --gold-dark: #aa8c2c;
-            --bg-dark: #0a0a0a;
-            --card-bg: rgba(20, 20, 20, 0.95);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-dark);
-            color: #ffffff;
-            min-height: 100vh;
-        }
-
-        .overlay {
-            min-height: 100vh;
-            background: linear-gradient(rgba(10, 10, 10, 0.88), rgba(10, 10, 10, 0.96));
-            padding: 15px;
-        }
-
-        #splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.4s ease;
-        }
-
-        .gold-logo {
-            font-size: 2.3rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, var(--gold-light), var(--gold-primary), var(--gold-dark));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-align: center;
-        }
-
-        .splash-sub {
-            margin-top: 15px;
-            color: var(--gold-light);
-            font-size: 0.9rem;
-            text-align: center;
-        }
-
-        #app-container {
-            display: none;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid var(--gold-primary);
-            padding-bottom: 12px;
-        }
-
-        header h1 {
-            background: linear-gradient(135deg, var(--gold-light), var(--gold-primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 1.7rem;
-            margin-bottom: 5px;
-        }
-
-        .sports-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px;
-            padding: 5px;
-        }
-
-        .sport-cell {
-            height: 140px;
-            border-radius: 12px;
-            position: relative;
-            cursor: pointer;
-            overflow: hidden;
-            border: 2px solid var(--gold-dark);
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            padding-bottom: 12px;
-            background-size: cover;
-            background-position: center;
-        }
-
-        .sport-cell::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to top, rgba(0,0,0,0.85) 20%, rgba(0,0,0,0.3) 100%);
-        }
-
-        .sport-title {
-            color: var(--gold-light);
-            font-weight: bold;
-            font-size: 1rem;
-            position: relative;
-            z-index: 2;
-        }
-
-        #sub-view { display: none; }
-        
-        .back-btn {
-            background: var(--gold-primary);
-            color: #000;
-            border: none;
-            padding: 8px 15px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-bottom: 12px;
-        }
-
-        .leagues-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            max-height: 70vh;
-            overflow-y: auto;
-            padding: 5px;
-        }
-
-        .match-card {
-            background: var(--card-bg);
-            border: 1px solid var(--gold-dark);
-            padding: 15px;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .match-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.8rem;
-            color: var(--gold-light);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
-            padding-bottom: 6px;
-        }
-
-        .teams-box {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: bold;
-            font-size: 1.05rem;
-            text-align: center;
-            padding: 5px 0;
-        }
-
-        .team { flex: 1; }
-
-        .score-box {
-            background: rgba(212, 175, 55, 0.15);
-            border: 1px solid var(--gold-primary);
-            padding: 4px 12px;
-            border-radius: 6px;
-            color: var(--gold-primary);
-            font-size: 1.1rem;
-            letter-spacing: 2px;
-        }
-
-        .analytics-section {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: 8px;
-            padding: 10px;
-            margin-top: 5px;
-        }
-
-        .analytics-title {
-            color: var(--gold-primary);
-            font-size: 0.9rem;
-            font-weight: bold;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            font-size: 0.8rem;
-            margin-bottom: 8px;
-        }
-
-        .stat-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 6px 8px;
-            border-radius: 6px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .predictions-box {
-            border-top: 1px dashed rgba(212, 175, 55, 0.3);
-            padding-top: 8px;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 6px;
-            font-size: 0.8rem;
-        }
-
-        .pred-badge {
-            background: rgba(212, 175, 55, 0.1);
-            border: 1px solid var(--gold-dark);
-            padding: 5px 8px;
-            border-radius: 6px;
-            text-align: center;
-        }
-
-        .loading-text, .error-text {
-            color: var(--gold-light);
-            text-align: center;
-            padding: 30px;
-            font-size: 0.95rem;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KELLA Analytics Pro - فحص مباشر</title>
+<style>
+:root {
+--gold-primary: #d4af37;
+--gold-light: #f3e5ab;
+--bg-dark: #0a0a0a;
+--card-bg: rgba(20, 20, 20, 0.95);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+body { background-color: var(--bg-dark); color: #ffffff; min-height: 100vh; padding: 15px; }
+header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--gold-primary); padding-bottom: 12px; }
+header h1 { color: var(--gold-primary); font-size: 1.5rem; }
+.box { background: var(--card-bg); border: 1px solid var(--gold-primary); padding: 15px; border-radius: 10px; margin-top: 15px; }
+pre { color: #00ffcc; font-size: 0.8rem; white-space: pre-wrap; word-break: break-all; max-height: 60vh; overflow-y: auto; text-align: left; direction: ltr; }
+.back-btn { background: var(--gold-primary); color: #000; border: none; padding: 8px 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 12px; }
+</style>
 </head>
 <body>
-
-    <div id="splash-screen">
-        <div class="gold-logo">KELLA Analytics Pro</div>
-        <div class="splash-sub">جاري قراءة البيانات الحقيقية من ملف live.json...</div>
-    </div>
-
-    <div class="overlay">
-        <div id="app-container">
-            <header>
-                <h1>KELLA Analytics Pro</h1>
-                <p style="color: var(--gold-light); font-size: 0.8rem;">منصة البيانات الحية والتحليلات عبر API</p>
-            </header>
-
-            <div id="main-dashboard" class="sports-grid">
-                <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=600&auto=format&fit=crop');" onclick="openLeagues()">
-                    <div class="sport-title">كرة القدم (مباريات الـ API)</div>
-                </div>
-            </div>
-
-            <div id="sub-view">
-                <button class="back-btn" onclick="goBackToMain()">← العودة للرئيسية</button>
-                <h2 style="color: var(--gold-primary); margin-bottom: 12px; font-size: 1.1rem;">مباريات الـ API الحية وتحليلات الرهان</h2>
-                <div class="leagues-grid" id="leagues-container">
-                    <div class="loading-text">جاري قراءة ملف live.json...</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // إخفاء شاشة الترحيب بعد التحميل
-        setTimeout(() => {
-            const splash = document.getElementById('splash-screen');
-            if(splash) {
-                splash.style.opacity = '0';
-                setTimeout(() => splash.style.display = 'none', 400);
-            }
-            document.getElementById('app-container').style.display = 'block';
-        }, 800);
-
-        function openLeagues() {
-            document.getElementById('main-dashboard').style.display = 'none';
-            document.getElementById('sub-view').style.display = 'block';
-            loadApiData();
-        }
-
-        function goBackToMain() {
-            document.getElementById('sub-view').style.display = 'none';
-            document.getElementById('main-dashboard').style.display = 'grid';
-        }
-
-        async function loadApiData() {
-            const container = document.getElementById('leagues-container');
-            container.innerHTML = `<div class="loading-text">جاري جلب البيانات من ملف live.json المرتبط بـ SportMonks...</div>`;
-
-            try {
-                const response = await fetch('live.json');
-                if (!response.ok) {
-                    throw new Error('تعذر قراءة ملف live.json');
-                }
-
-                const data = await response.json();
-                let matchesList = [];
-
-                // التعامل مع بنية رد SportMonks أو أي مصفوفة مطابقة
-                if (data.rounds) {
-                    data.rounds.forEach(round => {
-                        if (round.matches) matchesList = matchesList.concat(round.matches);
-                    });
-                } else if (Array.isArray(data)) {
-                    matchesList = data;
-                } else if (data.data && Array.isArray(data.data)) {
-                    matchesList = data.data;
-                }
-
-                if (matchesList.length === 0) {
-                    container.innerHTML = `<div class="error-text">ملف live.json لا يحتوي على مباريات حالياً. تأكد من عمل سكربت الباييثون وتحديثه للملف عبر الـ API.</div>`;
-                    return;
-                }
-
-                container.innerHTML = '';
-                matchesList.forEach((match, index) => {
-                    const card = document.createElement('div');
-                    card.className = 'match-card';
-                    
-                    let scoreText = match.score && match.score.ft ? `${match.score.ft[0]} - ${match.score.ft[1]}` : (match.scores ? match.scores.ft_score || "مباشر" : "قيد الانطلاق");
-                    let dateText = match.date || "اليوم";
-                    let team1Name = match.team1 || (match.home_team && match.home_team.name) || (match.participants && match.participants[0] && match.participants[0].name) || "الفريق المضيف";
-                    let team2Name = match.team2 || (match.away_team && match.away_team.name) || (match.participants && match.participants[1] && match.participants[1].name) || "الفريق الضيف";
-
-                    // تحليلات وتوقعات مبنية رياضياً على البيانات الحقيقية للمباراة
-                    let htGoals = ((index % 2) + 1);
-                    let ftGoals = htGoals + ((index % 3));
-                    let corners = 8 + (index % 4);
-                    let yellowCards = 3 + (index % 3);
-                    let redCards = (index % 7 === 0) ? 1 : 0;
-
-                    card.innerHTML = `
-                        <div class="match-header">
-                            <span>📅 ${dateText}</span>
-                            <span style="color: var(--gold-primary); font-weight: bold;">SportMonks API</span>
-                        </div>
-                        
-                        <div class="teams-box">
-                            <div class="team" style="text-align: right;">${team1Name}</div>
-                            <div class="score-box">${scoreText}</div>
-                            <div class="team" style="text-align: left;">${team2Name}</div>
-                        </div>
-
-                        <div class="analytics-section">
-                            <div class="analytics-title">📊 تحليلات الرهان وتوقعات الأهداف</div>
-                            <div class="stats-grid">
-                                <div class="stat-item"><span>أهداف الشوط 1:</span> <b>+${htGoals} هدف</b></div>
-                                <div class="stat-item"><span>أهداف الشوط 2:</span> <b>+${ftGoals} هدف</b></div>
-                                <div class="stat-item"><span>توقع الركنيات:</span> <b>+${corners} ركنية</b></div>
-                                <div class="stat-item"><span>البطاقات الصفراء:</span> <b>${yellowCards} بطاقات</b></div>
-                            </div>
-                            <div class="predictions-box">
-                                <div class="pred-badge">🎯 كلا الفريقين يسجلان: <b>${(index % 2 === 0) ? 'نعم (BTTS)' : 'لا'}</b></div>
-                                <div class="pred-badge">🟥 البطاقات الحمراء: <b>${redCards > 0 ? 'محتمل' : 'لا يوجد'}</b></div>
-                            </div>
-                        </div>
-                    `;
-                    container.appendChild(card);
-                });
-
-            } catch (error) {
-                container.innerHTML = `<div class="error-text">خطأ: تأكد من وجود ملف live.json في المستودع وأن سكربت الباييثون قام برفعه بنجاح.</div>`;
-            }
-        }
-    </script>
+<header>
+<h1>KELLA Analytics Pro - فحص البيانات الحية</h1>
+<p style="color: var(--gold-light); font-size: 0.8rem;">رصد محتوى live.json الخام القادم من SportMonks API</p>
+</header>
+<div style="max-width: 800px; margin: 0 auto;">
+<button class="back-btn" onclick="location.reload()">🔄 تحديث الصفحة وفحص live.json</button>
+<div class="box">
+<h3 style="color: var(--gold-primary); margin-bottom: 10px;">📄 محتوى ملف live.json الحالي:</h3>
+<div id="raw-output" style="color: var(--gold-light);">جاري فحص الملف...</div>
+</div>
+</div>
+<script>
+async function checkLiveJson() {
+const output = document.getElementById('raw-output');
+try {
+const response = await fetch('live.json?' + new Date().getTime());
+if (!response.ok) throw new Error('الملف غير موجود أو تعذر الوصول إليه (HTTP ' + response.status + ')');
+const data = await response.json();
+output.innerHTML = <pre>${JSON.stringify(data, null, 2)}</pre>;
+} catch (err) {
+output.innerHTML = <span style="color: #ff4444;">خطأ: ${err.message}</span>;
+}
+}
+checkLiveJson();
+</script>
 </body>
 </html>
