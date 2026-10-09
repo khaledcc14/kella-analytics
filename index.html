@@ -1,73 +1,151 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KELLA Analytics Pro - تحليل وتوقعات المباريات</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
-body { font-family: 'Cairo', sans-serif; background-color: #0b0f19; color: #f3f4f6; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KELLA Analytics Pro - التحليل والتوقعات المباشرة بالذكاء الاصطناعي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+        body { font-family: 'Cairo', sans-serif; background-color: #0b0f19; color: #f3f4f6; }
+    </style>
 </head>
 <body class="min-h-screen p-4 sm:p-6">
-<header class="max-w-3xl mx-auto text-center border-b border-amber-500/30 pb-4 mb-6">
-<h1 class="text-xl sm:text-2xl font-bold text-amber-400 flex items-center justify-center gap-2">
-<span>⚽</span> KELLA Analytics Pro - التحليل والتوقعات
-</h1>
-<p class="text-xs sm:text-sm text-gray-400 mt-1">تحديث البيانات تلقائياً مع تحليل ذكي وتوقعات للمباريات</p>
-</header>
-<main class="max-w-3xl mx-auto space-y-4">
-<div class="flex justify-between items-center bg-gray-900/80 p-4 rounded-xl border border-amber-500/20 backdrop-blur-sm">
-<div>
-<h2 class="text-sm font-semibold text-amber-300">حالة البيانات والتحليل الذكي</h2>
-<p id="status-text" class="text-xs text-gray-400">جاري قراءة ملف live.json...</p>
-</div>
-<button onclick="fetchData()" class="bg-amber-500 hover:bg-amber-400 text-gray-950 px-4 py-2 text-xs sm:text-sm font-bold rounded-lg shadow-lg transition duration-200 flex items-center gap-2 cursor-pointer">
-<span>🔄</span> تحديث وتحليل البيانات
-</button>
-</div>
-<div id="content-container" class="bg-gray-900/90 border border-gray-800 rounded-xl p-4 sm:p-6 shadow-xl min-h-[300px] flex flex-col justify-center items-center text-center">
-<div class="animate-pulse text-amber-400 text-sm">جاري جلب المباريات وإجراء التحليلات...</div>
-</div>
-</main>
-<script>
-async function fetchData() {
-const container = document.getElementById('content-container');
-const statusText = document.getElementById('status-text');
-container.innerHTML = <div class="flex flex-col items-center justify-center space-y-2 py-10"> <div class="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div> <p class="text-sm text-amber-300">جاري معالجة التحليلات والتوقعات...</p> </div>;
-statusText.textContent = "جاري الفحص...";
-try {
-const response = await fetch('live.json?t=' + new Date().getTime());
-if (!response.ok) throw new Error('تعذر الوصول إلى ملف live.json (رمز الخطأ: ' + response.status + ')');
-const data = await response.json();
-const matches = data.data || data.matches || [];
-if (Array.isArray(matches) && matches.length > 0) {
-statusText.textContent = تم العثور على ${matches.length} مباراة - جاري التحليل;
-let html = '<div class="w-full space-y-4 text-right"><h3 class="text-sm font-bold text-amber-400 mb-2">📊 جدول المباريات وتحليل التوقعات:</h3>';
-matches.slice(0, 15).forEach((match, index) => {
-// محاكاة تحليل ذكي وتوقعات بناءً على معطيات المباراة
-const team1 = match.team1 || match.homeTeam || match.team1_name || 'الفريق الأول';
-const team2 = match.team2 || match.awayTeam || match.team2_name || 'الفريق الثاني';
-const matchDate = match.date || match.utcDate || 'مباريات اليوم';
-// توليد نسبة توقع ذكية وثابتة لكل مباراة بناءً على الـ index
-const prob1 = 40 + (index * 7) % 35;
-const prob2 = 100 - prob1 - 15;
-const draw = 15;
-html += <div class="bg-gray-800/80 border border-amber-500/30 p-4 rounded-xl space-y-3"> <div class="flex justify-between items-center text-xs sm:text-sm border-b border-gray-700 pb-2"> <span class="font-bold text-amber-200">مباراة #${index + 1} (${matchDate})</span> <span class="text-xs bg-amber-500/10 text-amber-400 px-2 py-1 rounded font-mono">تحليل ذكي نشط</span> </div> <div class="flex justify-between items-center text-sm font-semibold"> <span class="text-gray-200">${typeof team1 === 'object' ? (team1.name || 'الفريق 1') : team1}</span> <span class="text-amber-400 text-xs">VS</span> <span class="text-gray-200">${typeof team2 === 'object' ? (team2.name || 'الفريق 2') : team2}</span> </div> <div class="bg-gray-950 p-3 rounded-lg border border-gray-800 space-y-1.5"> <p class="text-xs text-amber-300 font-semibold">🔮 توقعات وخلاصة الدراسة:</p> <p class="text-xs text-gray-300">نسبة فوز الفريق الأول (${prob1}%) - نسبة التعادل (${draw}%) - نسبة فوز الفريق الثاني (${prob2}%)</p> <p class="text-xs text-emerald-400 mt-1">💡 التوصية الفنية: ترجيح تسجيل أهداف من الطرفين بناءً على معدل الأداء الأخير.</p> </div> </div>;
-});
-html += '</div>';
-container.innerHTML = html;
-} else {
-statusText.textContent = "تم استلام الرد بنجاح (وضع العرض التحليلي)";
-container.innerHTML = <div class="w-full text-right space-y-3"> <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-lg text-xs flex items-start gap-2"> <span class="text-base">ℹ️</span> <div> <p class="font-bold">حالة النظام والتحليلات:</p> <p class="text-gray-300 mt-0.5">الملف يعمل، وإليك بيانات الاستجابة الخام مع تفعيل محرك التوقعات:</p> </div> </div> <pre class="bg-gray-950 border border-gray-800 p-4 rounded-lg text-left text-emerald-400 font-mono text-xs overflow-x-auto max-h-96" dir="ltr">${JSON.stringify(data, null, 4)}</pre> </div>;
-}
-} catch (err) {
-statusText.textContent = "خطأ في قراءة البيانات";
-container.innerHTML = <div class="text-red-400 text-xs sm:text-sm p-4 bg-red-950/30 border border-red-500/30 rounded-lg"> ❌ خطأ في تحميل البيانات: ${err.message}<br> <span class="text-gray-400 text-xs mt-1 block">تأكد من وجود ملف live.json وتحديث الـ Action بنجاح.</span> </div>;
-}
-}
-fetchData();
-</script>
+    <header class="max-w-3xl mx-auto text-center border-b border-amber-500/30 pb-4 mb-6">
+        <h1 class="text-xl sm:text-2xl font-bold text-amber-400 flex items-center justify-center gap-2">
+            <span>⚽</span> KELLA Analytics Pro - الذكاء الاصطناعي الحي 24/24
+        </h1>
+        <p class="text-xs sm:text-sm text-gray-400 mt-1">جلب وتحليل المباريات والنتائج الحية عبر محرك البحث المباشر لـ Gemini</p>
+    </header>
+
+    <main class="max-w-3xl mx-auto space-y-4">
+        <div class="flex justify-between items-center bg-gray-900/80 p-4 rounded-xl border border-amber-500/20 backdrop-blur-sm">
+            <div>
+                <h2 class="text-sm font-semibold text-amber-300">حالة الاتصال المباشر</h2>
+                <p id="status-text" class="text-xs text-gray-400">جاهز لجلب المباريات الحية وتحليلها الآن...</p>
+            </div>
+            <button onclick="fetchLiveMatchesWithGemini()" class="bg-amber-500 hover:bg-amber-400 text-gray-950 px-4 py-2 text-xs sm:text-sm font-bold rounded-lg shadow-lg transition duration-200 flex items-center gap-2 cursor-pointer">
+                <span>🔄</span> تحديث مباشر من الويب
+            </button>
+        </div>
+
+        <div id="content-container" class="bg-gray-900/90 border border-gray-800 rounded-xl p-4 sm:p-6 shadow-xl min-h-[300px] flex flex-col justify-center items-center text-center">
+            <div class="text-amber-400 text-sm mb-2">اضغط على زر التحديث لجلب أحدث مباريات اليوم وتحليلها فوراً عبر الذكاء الاصطناعي.</div>
+        </div>
+    </main>
+
+    <script>
+        async function fetchLiveMatchesWithGemini() {
+            const container = document.getElementById('content-container');
+            const statusText = document.getElementById('status-text');
+            
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-center space-y-2 py-10">
+                    <div class="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+                    <p class="text-sm text-amber-300">جاري البحث في الويب عن مباريات اليوم وجلب التحليلات الحية عبر Gemini...</p>
+                </div>
+            `;
+            statusText.textContent = "جاري الاتصال بقاعدة بيانات الويب الفورية...";
+
+            try {
+                const systemPrompt = "أنت محلل رياضي محترف. قم بالبحث الفوري عن أهم مباريات كرة القدم التي تُلعب اليوم (أو أقرب مباريات قادمة هامة)، واذكر أسماء الفريقين، النتيجة الحية أو التوقيت، ونسبة الفوز لكل فريق مع تحليل فصير وتوقع دقيق. أجب حصرياً بصيغة JSON متوافقة مع الهيكل التالي: [{\"team1\": \"اسم الفريق الأول\", \"team2\": \"اسم الفريق الثاني\", \"time_or_score\": \"النتيجة أو التوقيت\", \"league\": \"اسم البطولة\", \"prob1\": نسبة_فوز_الأول_رقم, \"prob2\": نسبة_فوز_الثاني_رقم, \"draw\": نسبة_التعادل_رقم, \"analysis\": \"تحليل قصير وتوصية للمباراة\"}]";
+                const userQuery = "ما هي مباريات كرة القدم المقررة اليوم أو الحالية مع تحليلها وتوقع نتيجتها بدقة؟";
+                
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: [{ parts: [{ text: userQuery }] }],
+                    tools: [{ "google_search": {} }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                    generationConfig: {
+                        responseMimeType: "application/json"
+                    }
+                };
+
+                let response = null;
+                // تطبيق تكرار ذكي في حال التباطؤ المؤقت
+                for (let i = 0; i < 3; i++) {
+                    try {
+                        response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        if (response.ok) break;
+                    } catch (e) {
+                        if (i === 2) throw e;
+                        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+                    }
+                }
+
+                if (!response || !response.ok) throw new Error('فشل الاتصال بخدمة الذكاء الاصطناعي');
+
+                const result = await response.json();
+                const candidate = result.candidates?.[0];
+                if (!candidate || !candidate.content?.parts?.[0]?.text) {
+                    throw new Error('لم يتم استلام بيانات صحيحة من الخادم');
+                }
+
+                const rawText = candidate.content.parts[0].text;
+                let matchesData = [];
+                try {
+                    matchesData = JSON.parse(rawText);
+                } catch (e) {
+                    // محاولة استخراج الـ JSON إذا وجد نص إضافي
+                    const jsonMatch = rawText.match(/\[[\s\S]*\]/);
+                    if (jsonMatch) {
+                        matchesData = JSON.parse(jsonMatch[0]);
+                    } else {
+                        throw new Error('تعذر قراءة هيكل المباريات المستلم');
+                    }
+                }
+
+                if (!Array.isArray(matchesData) || matchesData.length === 0) {
+                    throw new Error('لا توجد مباريات متاحة حالياً في تقرير البحث');
+                }
+
+                statusText.textContent = "تم جلب وتحليل مباريات اليوم الحقيقية بنجاح عبر Gemini!";
+                
+                let html = '<div class="w-full space-y-4 text-right"><h3 class="text-sm font-bold text-amber-400 mb-3">📊 تحليل وتوقعات مباريات اليوم المباشرة:</h3>';
+                
+                matchesData.forEach((match, index) => {
+                    html += `
+                        <div class="bg-gray-800/80 border border-amber-500/30 p-4 rounded-xl space-y-3 shadow-md text-right">
+                            <div class="flex justify-between items-center text-xs sm:text-sm border-b border-gray-700 pb-2">
+                                <span class="font-bold text-amber-200">🏆 ${match.league || 'مباراة رسمية'} #${index + 1}</span>
+                                <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded font-mono">⚡ ${match.time_or_score || 'مباشر'}</span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm font-semibold">
+                                <span class="text-gray-200">${match.team1}</span>
+                                <span class="text-amber-400 text-xs bg-gray-900 px-2 py-1 rounded">VS</span>
+                                <span class="text-gray-200">${match.team2}</span>
+                            </div>
+                            <div class="bg-gray-950 p-3 rounded-lg border border-gray-800 space-y-1.5">
+                                <p class="text-xs text-amber-300 font-semibold">🔮 خوارزمية التحليل والتوقعات الذكية:</p>
+                                <p class="text-xs text-gray-300">نسبة فوز ${match.team1}: <strong class="text-amber-400">${match.prob1}%</strong> | التعادل: <strong class="text-gray-400">${match.draw}%</strong> | نسبة فوز ${match.team2}: <strong class="text-amber-400">${match.prob2}%</strong></p>
+                                <p class="text-xs text-emerald-400 mt-1">💡 التوصية الفنية: ${match.analysis}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += '</div>';
+                container.innerHTML = html;
+
+            } catch (err) {
+                statusText.textContent = "خطأ في جلب البيانات الحية";
+                container.innerHTML = `
+                    <div class="p-6 text-center text-red-400 text-xs sm:text-sm space-y-2">
+                        <p>عذراً، حدث خطأ أثناء جلب المباريات الحية: ${err.message}</p>
+                        <button onclick="fetchLiveMatchesWithGemini()" class="mt-2 bg-amber-500 text-gray-950 px-3 py-1 rounded text-xs font-bold">إعادة المحاولة</button>
+                    </div>
+                `;
+            }
+        }
+
+        // جلب البيانات تلقائياً عند فتح الصفحة
+        fetchLiveMatchesWithGemini();
+    </script>
 </body>
 </html>
