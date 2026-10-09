@@ -22,9 +22,6 @@
 
         body {
             background-color: var(--bg-dark);
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
             color: #ffffff;
             min-height: 100vh;
         }
@@ -41,7 +38,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, #1a1a1a 0%, #000000 100%);
+            background: #000;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -63,7 +60,6 @@
             margin-top: 15px;
             color: var(--gold-light);
             font-size: 0.95rem;
-            letter-spacing: 1px;
             text-align: center;
         }
 
@@ -78,7 +74,6 @@
             margin-bottom: 25px;
             border-bottom: 2px solid var(--gold-primary);
             padding-bottom: 15px;
-            padding-top: 10px;
         }
 
         header h1 {
@@ -87,20 +82,6 @@
             -webkit-text-fill-color: transparent;
             font-size: 1.9rem;
             margin-bottom: 5px;
-        }
-
-        .sound-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(212, 175, 55, 0.15);
-            border: 1px solid var(--gold-primary);
-            color: var(--gold-light);
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            margin-top: 10px;
         }
 
         .sports-grid {
@@ -128,10 +109,7 @@
         .sport-cell::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(to top, rgba(0,0,0,0.85) 20%, rgba(0,0,0,0.3) 100%);
         }
 
@@ -143,10 +121,7 @@
             z-index: 2;
         }
 
-        #sub-view {
-            display: none;
-        }
-
+        #sub-view { display: none; }
         .back-btn {
             background: var(--gold-primary);
             color: #000;
@@ -209,47 +184,13 @@
             border-radius: 14px;
             padding: 18px;
         }
-
-        .match-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 18px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 12px;
-        }
-
-        .analytics-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-
-        .stat-box {
-            background: rgba(0,0,0,0.6);
-            border: 1px solid #333;
-            padding: 14px;
-            border-radius: 10px;
-        }
-
-        .stat-title {
-            color: #aaa;
-            font-size: 0.8rem;
-            margin-bottom: 5px;
-        }
-
-        .stat-value {
-            color: var(--gold-light);
-            font-size: 1.05rem;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
 
     <div id="splash-screen">
         <div class="gold-logo">KELLA Analytics Pro</div>
-        <div class="splash-sub" id="loading-text">جاري الاتصال بالسحابة... (0%)</div>
+        <div class="splash-sub" id="loading-text">جاري الاتصال بالسحابة...</div>
     </div>
 
     <div class="overlay">
@@ -257,11 +198,118 @@
             <header>
                 <h1>KELLA Analytics Pro</h1>
                 <p style="color: var(--gold-light); font-size: 0.85rem;">منصة التحليل والذكاء الاصطناعي الرياضي</p>
-                <button id="sound-toggle-btn" class="sound-btn" onclick="toggleMusic()">
-                    🔇 <span>تشغيل الموسيقى</span>
-                </button>
             </header>
 
             <div id="main-dashboard" class="sports-grid">
-                <div class="sport-cell" style
+                <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=600&auto=format&fit=crop');" onclick="openLeagues('football')">
+                    <div class="sport-title">كرة القدم (التحليل الذكي)</div>
+                </div>
+            </div>
+
+            <div id="sub-view">
+                <button class="back-btn" onclick="goBackToMain()">← العودة للرئيسية</button>
+                <h2 id="selected-sport-title" style="color: var(--gold-primary); margin-bottom: 10px; font-size: 1.2rem;"></h2>
                 
+                <div class="status-tabs" id="football-tabs">
+                    <button class="tab-btn active" onclick="filterMatches('ALL')">📋 كل النتائج</button>
+                    <button class="tab-btn" onclick="filterMatches('LIVE')">🔴 المباشرة</button>
+                </div>
+
+                <div class="leagues-grid" id="leagues-container"></div>
+            </div>
+
+            <div id="analytics-view">
+                <button class="back-btn" onclick="goBackToLeagues()">← العودة للقائمة</button>
+                <div id="match-details-content" style="color: #fff; padding: 10px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let matchesData = { ALL: [], LIVE: [] };
+
+        async function fetchMatches() {
+            try {
+                // جلب البيانات من live.json مع منع التخزين المؤقت نهائياً
+                const res = await fetch('https://raw.githubusercontent.com/khaledcc14/kella-analytics/main/live.json?t=' + Date.now(), {
+                    cache: 'no-store'
+                });
+                
+                const data = await res.json();
+                const rawList = Array.isArray(data) ? data : (data.matches || []);
+
+                let allParsed = [];
+                rawList.forEach((m, idx) => {
+                    allParsed.push({
+                        id: m.id || idx,
+                        homeTeam: { name: m.home || m.homeTeam || 'الفريق الأول' },
+                        awayTeam: { name: m.away || m.awayTeam || 'الفريق الثاني' },
+                        status: m.status || 'LIVE',
+                        competition: { name: m.league || 'الدوري العام' },
+                        aiRate: m.aiRate || 80
+                    });
+                });
+
+                matchesData.ALL = allParsed;
+                matchesData.LIVE = allParsed.filter(m => String(m.status).toUpperCase().includes('LIVE'));
+
+                // إخفاء شاشة التحميل وإظهار التطبيق
+                document.getElementById('splash-screen').style.display = 'none';
+                document.getElementById('app-container').style.display = 'block';
+
+            } catch (err) {
+                console.error("خطأ في الجلب:", err);
+                document.getElementById('splash-screen').style.display = 'none';
+                document.getElementById('app-container').style.display = 'block';
+            }
+        }
+
+        window.onload = fetchMatches;
+
+        function openLeagues(sportType) {
+            document.getElementById('main-dashboard').style.display = 'none';
+            document.getElementById('sub-view').style.display = 'block';
+            document.getElementById('selected-sport-title').innerText = 'تحليلات كرة القدم الحية';
+            renderList(matchesData.ALL);
+        }
+
+        function filterMatches(type) {
+            if (type === 'LIVE') renderList(matchesData.LIVE);
+            else renderList(matchesData.ALL);
+        }
+
+        function renderList(list) {
+            const container = document.getElementById('leagues-container');
+            container.innerHTML = '';
+            
+            if (!list || list.length === 0) {
+                container.innerHTML = '<p style="color: #aaa; text-align: center; grid-column: span 2; padding: 20px;">لا توجد أي مباريات حالياً في ملف السحابة (live.json فارغ).</p>';
+                return;
+            }
+
+            list.forEach(m => {
+                const card = document.createElement('div');
+                card.className = 'league-card';
+                card.innerHTML = `
+                    <div style="font-size: 0.75rem; color: var(--gold-light);">${m.competition.name}</div>
+                    <div style="font-weight: bold; font-size: 0.95rem; margin: 5px 0;">
+                        ${m.homeTeam.name} <span style="color: var(--gold-primary);">VS</span> ${m.awayTeam.name}
+                    </div>
+                    <div style="font-size: 0.75rem; color: #aaa;">الحالة: ${m.status}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function goBackToMain() {
+            document.getElementById('sub-view').style.display = 'none';
+            document.getElementById('main-dashboard').style.display = 'grid';
+        }
+
+        function goBackToLeagues() {
+            document.getElementById('analytics-view').style.display = 'none';
+            document.getElementById('sub-view').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
