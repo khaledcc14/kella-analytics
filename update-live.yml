@@ -1,30 +1,25 @@
 import requests
 import json
-from datetime import datetime
 
-API_TOKEN = "0ECl34kyfhiNM6tWxd3a0k3mbDzpHFmrYki3UpErwiDTfcUGraHOjzrU8WqH"
-# جلب تاريخ اليوم تلقائياً بصيغة YYYY-MM-DD
-today_date = datetime.now().strftime('%Y-%m-%d')
-URL = f"https://api.sportmonks.com/v3/football/fixtures/date/{today_date}?api_token={API_TOKEN}&include=participants"
+URL = "https://raw.githubusercontent.com/openfootball/football.json/master/2023-24/en.1.json"
 
-def fetch_and_save_fixtures():
-    print(f"جاري جلب مباريات تاريخ اليوم {today_date} من SportMonks API...")
+def fetch_and_save():
+    print("جاري جلب البيانات...")
     try:
         response = requests.get(URL, timeout=30)
-        
         if response.status_code == 200:
             data = response.json()
-            
-            with open('live.json', 'w', encoding='utf-8') as f:
-                json.dump(data, f, ensure_ascii=False, indent=4)
-                
-            print("تم تحديث ملف live.json بنجاح بجدول المباريات الحقيقي!")
         else:
-            print(f"خطأ في الاتصال بالـ API، رمز الاستجابة: {response.status_code}")
-            print(response.text)
+            data = {"error": "Failed to fetch, status code: " + str(response.status_code)}
+
+        with open('live.json', 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
             
+        print("تم الحفظ بنجاح!")
     except Exception as e:
-        print(f"حدث خطأ أثناء الاتصال: {str(e)}")
+        print(f"حدث خطأ: {str(e)}")
+        with open('live.json', 'w', encoding='utf-8') as f:
+            json.dump({"error": str(e)}, f, ensure_ascii=False, indent=4)
 
 if __name__ == "__main__":
-    fetch_and_save_fixtures()
+    fetch_and_save()
