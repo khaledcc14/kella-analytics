@@ -264,4 +264,16 @@
 
             <div id="main-dashboard" class="sports-grid">
                 <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=600&auto=format&fit=crop');" onclick="openLeagues('football')">
-                    <div class="
+                    <div class="sport-title">كرة القدم (التحليل الذكي)</div>
+                </div>
+                <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=600&auto=format&fit=crop');" onclick="openLeagues('basketball')">
+                    <div class="sport-title">كرة السلة</div>
+                </div>
+                <div class="sport-cell" style="background-image: url('https://images.unsplash.com/photo-1622163642998-1ea32b1ab639?q=80&w=600&auto=format&fit=crop');" onclick="openLeagues('tennis')">
+                    <div class="sport-title">التنس</div>
+                </div>
+            </div>
+
+            <div id="sub-view">
+                <button class="back-btn" onclick="goBackToMain()">← العودة للرئيسية</button>
+                <h2 id="selected-sport-title" style="color: var(--gold-primary); margin-bottom: 1
