@@ -9,7 +9,7 @@
             "group_id": null,
             "aggregate_id": null,
             "round_id": 407050,
-            "state_id": 2,
+            "state_id": 22,
             "venue_id": 342,
             "name": "FC Midtjylland vs FC København",
             "starting_at": "2026-10-11 16:00:00",
@@ -43,8 +43,8 @@
         }
     ],
     "rate_limit": {
-        "resets_in_seconds": 3600,
-        "remaining": 179,
+        "resets_in_seconds": 14,
+        "remaining": 178,
         "requested_entity": "Fixture"
     },
     "timezone": "UTC"
