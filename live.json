@@ -1,6 +1,28 @@
 {
-    "data": [],
-    "message": "No result(s) found matching your request. Either the query did not return any results or you don't have access to it via your current subscription.",
+    "data": [
+        {
+            "id": 19722777,
+            "sport_id": 1,
+            "league_id": 501,
+            "season_id": 28275,
+            "stage_id": 77482564,
+            "group_id": null,
+            "aggregate_id": null,
+            "round_id": 407966,
+            "state_id": 2,
+            "venue_id": 8922,
+            "name": "Motherwell vs Celtic",
+            "starting_at": "2026-10-11 11:00:00",
+            "result_info": null,
+            "leg": "1/1",
+            "details": null,
+            "length": 90,
+            "placeholder": false,
+            "has_odds": true,
+            "has_premium_odds": true,
+            "starting_at_timestamp": 1791716400
+        }
+    ],
     "subscription": [
         {
             "meta": [],
@@ -21,8 +43,8 @@
         }
     ],
     "rate_limit": {
-        "resets_in_seconds": 3600,
-        "remaining": 179,
+        "resets_in_seconds": 72,
+        "remaining": 178,
         "requested_entity": "Fixture"
     },
     "timezone": "UTC"
