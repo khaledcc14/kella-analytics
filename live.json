@@ -1,6 +1,28 @@
 {
-    "data": [],
-    "message": "No result(s) found matching your request. Either the query did not return any results or you don't have access to it via your current subscription.",
+    "data": [
+        {
+            "id": 19713909,
+            "sport_id": 1,
+            "league_id": 271,
+            "season_id": 27897,
+            "stage_id": 77482407,
+            "group_id": null,
+            "aggregate_id": null,
+            "round_id": 407050,
+            "state_id": 2,
+            "venue_id": 6184,
+            "name": "AGF vs Sønderjyske Fodbold",
+            "starting_at": "2026-10-12 17:00:00",
+            "result_info": null,
+            "leg": "1/1",
+            "details": null,
+            "length": 90,
+            "placeholder": false,
+            "has_odds": true,
+            "has_premium_odds": true,
+            "starting_at_timestamp": 1791824400
+        }
+    ],
     "subscription": [
         {
             "meta": [],
@@ -21,8 +43,8 @@
         }
     ],
     "rate_limit": {
-        "resets_in_seconds": 89,
-        "remaining": 178,
+        "resets_in_seconds": 3600,
+        "remaining": 179,
         "requested_entity": "Fixture"
     },
     "timezone": "UTC"
