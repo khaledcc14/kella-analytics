@@ -1,28 +1,6 @@
 {
-    "data": [
-        {
-            "id": 19713889,
-            "sport_id": 1,
-            "league_id": 271,
-            "season_id": 27897,
-            "stage_id": 77482407,
-            "group_id": null,
-            "aggregate_id": null,
-            "round_id": 407046,
-            "state_id": 5,
-            "venue_id": 318820,
-            "name": "Randers FC vs Brøndby IF",
-            "starting_at": "2026-10-23 17:00:00",
-            "result_info": "Brøndby IF won after full-time.",
-            "leg": "1/1",
-            "details": null,
-            "length": 90,
-            "placeholder": false,
-            "has_odds": true,
-            "has_premium_odds": true,
-            "starting_at_timestamp": 1792774800
-        }
-    ],
+    "data": [],
+    "message": "No result(s) found matching your request. Either the query did not return any results or you don't have access to it via your current subscription.",
     "subscription": [
         {
             "meta": [],
