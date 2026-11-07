@@ -1,6 +1,50 @@
 {
-    "data": [],
-    "message": "No result(s) found matching your request. Either the query did not return any results or you don't have access to it via your current subscription.",
+    "data": [
+        {
+            "id": 19722748,
+            "sport_id": 1,
+            "league_id": 501,
+            "season_id": 28275,
+            "stage_id": 77482564,
+            "group_id": null,
+            "aggregate_id": null,
+            "round_id": 407961,
+            "state_id": 22,
+            "venue_id": 219,
+            "name": "St. Johnstone vs Dundee",
+            "starting_at": "2026-11-07 15:00:00",
+            "result_info": null,
+            "leg": "1/1",
+            "details": null,
+            "length": 90,
+            "placeholder": false,
+            "has_odds": true,
+            "has_premium_odds": true,
+            "starting_at_timestamp": 1794063600
+        },
+        {
+            "id": 19722749,
+            "sport_id": 1,
+            "league_id": 501,
+            "season_id": 28275,
+            "stage_id": 77482564,
+            "group_id": null,
+            "aggregate_id": null,
+            "round_id": 407961,
+            "state_id": 22,
+            "venue_id": 8947,
+            "name": "Dundee United vs Motherwell",
+            "starting_at": "2026-11-07 15:00:00",
+            "result_info": null,
+            "leg": "1/1",
+            "details": null,
+            "length": 90,
+            "placeholder": false,
+            "has_odds": true,
+            "has_premium_odds": true,
+            "starting_at_timestamp": 1794063600
+        }
+    ],
     "subscription": [
         {
             "meta": [],
