@@ -1,28 +1,6 @@
 {
-    "data": [
-        {
-            "id": 19722747,
-            "sport_id": 1,
-            "league_id": 501,
-            "season_id": 28275,
-            "stage_id": 77482564,
-            "group_id": null,
-            "aggregate_id": null,
-            "round_id": 407961,
-            "state_id": 2,
-            "venue_id": 8879,
-            "name": "St. Mirren vs Rangers",
-            "starting_at": "2026-11-07 20:00:00",
-            "result_info": null,
-            "leg": "1/1",
-            "details": null,
-            "length": 90,
-            "placeholder": false,
-            "has_odds": true,
-            "has_premium_odds": true,
-            "starting_at_timestamp": 1794081600
-        }
-    ],
+    "data": [],
+    "message": "No result(s) found matching your request. Either the query did not return any results or you don't have access to it via your current subscription.",
     "subscription": [
         {
             "meta": [],
