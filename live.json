@@ -1,50 +1,6 @@
 {
-    "data": [
-        {
-            "id": 19735109,
-            "sport_id": 1,
-            "league_id": 82,
-            "season_id": 28321,
-            "stage_id": 77482714,
-            "group_id": null,
-            "aggregate_id": null,
-            "round_id": 409201,
-            "state_id": 1,
-            "venue_id": 2138,
-            "name": "Schalke 04 vs VfB Stuttgart",
-            "starting_at": "2026-11-21 17:30:00",
-            "result_info": null,
-            "leg": "1/1",
-            "details": null,
-            "length": 90,
-            "placeholder": false,
-            "has_odds": true,
-            "has_premium_odds": true,
-            "starting_at_timestamp": 1795282200
-        },
-        {
-            "id": 19722095,
-            "sport_id": 1,
-            "league_id": 8,
-            "season_id": 28083,
-            "stage_id": 77482558,
-            "group_id": null,
-            "aggregate_id": null,
-            "round_id": 407864,
-            "state_id": 1,
-            "venue_id": 449,
-            "name": "Newcastle United vs Arsenal",
-            "starting_at": "2026-11-21 17:30:00",
-            "result_info": null,
-            "leg": "1/1",
-            "details": null,
-            "length": 90,
-            "placeholder": false,
-            "has_odds": true,
-            "has_premium_odds": true,
-            "starting_at_timestamp": 1795282200
-        }
-    ],
+    "data": [],
+    "message": "No result(s) found matching your request. Either the query did not return any results or you don't have access to it via your current subscription.",
     "subscription": [
         {
             "meta": [],
