@@ -1,6 +1,28 @@
 {
-    "data": [],
-    "message": "No result(s) found matching your request. Either the query did not return any results or you don't have access to it via your current subscription.",
+    "data": [
+        {
+            "id": 19722101,
+            "sport_id": 1,
+            "league_id": 8,
+            "season_id": 28083,
+            "stage_id": 77482558,
+            "group_id": null,
+            "aggregate_id": null,
+            "round_id": 407864,
+            "state_id": 3,
+            "venue_id": 338817,
+            "name": "Brentford vs Everton",
+            "starting_at": "2026-11-23 20:00:00",
+            "result_info": null,
+            "leg": "1/1",
+            "details": null,
+            "length": 90,
+            "placeholder": false,
+            "has_odds": true,
+            "has_premium_odds": true,
+            "starting_at_timestamp": 1795464000
+        }
+    ],
     "subscription": [
         {
             "meta": [],
